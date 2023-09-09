@@ -4,11 +4,10 @@ import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { BsArrowRight, BsLinkedin } from "react-icons/bs";
-import { HiDownload } from "react-icons/hi";
-import { FaGithubSquare } from "react-icons/fa";
+import { BsArrowRight } from "react-icons/bs";
 import { useSectionInView } from "@/lib/hooks";
 import { useActiveSectionContext } from "@/context/active-section-context";
+import SectionHeading from "./SectionHeading";
 
 export default function Intro() {
   const { ref } = useSectionInView("Home", 0.5);
@@ -18,8 +17,18 @@ export default function Intro() {
     <section
       ref={ref}
       id="home"
-      className="mb-28 h-screen max-w-[50rem] scroll-mt-[100rem] text-center sm:mb-0"
+      className="h-fit min-h-screen max-w-[50rem] text-center"
     >
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          type: "tween",
+          duration: 0.2,
+        }}
+      >
+        <SectionHeading>Niklas Fulle</SectionHeading>
+      </motion.div>
       <div className="flex items-center justify-center">
         <div className="relative">
           <motion.div
@@ -37,7 +46,7 @@ export default function Intro() {
               height="192"
               quality="95"
               priority={true}
-              className="h-24 w-24 rounded-full border-[0.35rem] border-white object-cover shadow-xl"
+              className="h-24 w-24 rounded-full border-[0.2rem] border-white object-cover shadow-xl"
             />
           </motion.div>
 
@@ -83,14 +92,14 @@ export default function Intro() {
           <BsArrowRight className="opacity-70 transition group-hover:translate-x-1" />
         </Link>
 
-        <a
+        {/*<a
           className="borderBlack group flex cursor-pointer items-center gap-2 rounded-full bg-white px-7 py-3 outline-none transition hover:scale-110 focus:scale-110 active:scale-105 dark:bg-white/10"
           href="/CV.pdf"
           download
         >
           Download CV{" "}
           <HiDownload className="opacity-60 transition group-hover:translate-y-1" />
-        </a>
+        </a>*/}
       </motion.div>
     </section>
   );
