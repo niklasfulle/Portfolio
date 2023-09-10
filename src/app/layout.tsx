@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import UserButton from "@/components/User";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import Socials from "@/components/Socials";
+import NameAnimation from "@/components/NameAnimation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
         <div className="absolute right-[-5rem] top-[23rem] -z-20 h-[31.25rem] w-[31.25rem] rounded-full bg-[#a8b1da] blur-[12rem] dark:bg-[#627d94] sm:w-[68.75rem]"></div>
         <div className="absolute left-[-35rem] top-[26rem] -z-10 h-[31.25rem] w-[50rem] rounded-full bg-[#bbf1d3] blur-[12rem] dark:bg-[#948b63] sm:w-[68.75rem] "></div>
         <Providers>
+          <NameAnimation />
           <Header />
           <UserButton />
           <Socials />

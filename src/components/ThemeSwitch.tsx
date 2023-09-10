@@ -3,8 +3,6 @@
 import { useTheme } from "next-themes";
 import React from "react";
 import { motion } from "framer-motion";
-import { FaMoon, FaSun } from "react-icons/fa";
-import { BsSun } from "react-icons/bs";
 import { Moon, Sun } from "lucide-react";
 
 export default function ThemeSwitch() {
