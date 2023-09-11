@@ -3,15 +3,14 @@ import "@/styles/globals.css";
 import { Inter } from "next/font/google";
 import { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
-
 import Providers from "@/components/Providers";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import UserButton from "@/components/User";
-import ThemeSwitch from "@/components/ThemeSwitch";
 import Socials from "@/components/Socials";
 import NameAnimation from "@/components/NameAnimation";
 import Header from "@/components/Header";
+import Toggels from "@/components/Toggels";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,8 +40,8 @@ export default function RootLayout({
           <Socials />
           {children}
           <Footer />
+          <Toggels />
           <Toaster position="top-right" />
-          <ThemeSwitch />
         </Providers>
       </body>
     </html>

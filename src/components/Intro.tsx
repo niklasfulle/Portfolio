@@ -8,7 +8,6 @@ import { BsArrowRight } from "react-icons/bs";
 import { useSectionInView } from "@/lib/hooks";
 import { useActiveSectionContext } from "@/context/active-section-context";
 import SectionHeading from "./SectionHeading";
-import { Button } from "./ui/Button";
 
 export default function Intro() {
   const { ref } = useSectionInView("Home", 0.5);
@@ -18,7 +17,7 @@ export default function Intro() {
     <section
       ref={ref}
       id="home"
-      className=" h-fit min-h-screen max-w-[50rem] pt-28 text-center"
+      className="h-fit min-h-screen max-w-[50rem] scroll-mt-28 text-center"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
