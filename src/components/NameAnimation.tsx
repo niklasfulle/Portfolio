@@ -1,18 +1,19 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function NameAnimation() {
   return (
     <motion.div
-      className="fixed left-6 top-6 flex h-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-2xl backdrop-blur-[0.5rem] transition-all  dark:border-white dark:bg-gray-950"
+      className="fixed left-6 top-6 flex h-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all hover:cursor-pointer dark:border-black/40 dark:bg-gray-950"
       initial={{ opacity: 0, scale: 1 }}
       animate={{
         opacity: 1,
         scale: 1,
       }}
     >
-      <span>
+      <Link href="/">
         <motion.span className="text-lg font-extrabold">N</motion.span>
         <motion.span
           initial={{
@@ -26,7 +27,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.05 },
+            transition: { delay: 1.05, ease: "easeIn" },
           }}
         >
           i
@@ -43,7 +44,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.1 },
+            transition: { delay: 1.1, ease: "easeIn" },
           }}
         >
           k
@@ -60,7 +61,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.15 },
+            transition: { delay: 1.15, ease: "easeIn" },
           }}
         >
           l
@@ -77,7 +78,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.2 },
+            transition: { delay: 1.2, ease: "easeIn" },
           }}
         >
           a
@@ -94,7 +95,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.25 },
+            transition: { delay: 1.25, ease: "easeIn" },
           }}
         >
           s
@@ -118,7 +119,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.05 },
+            transition: { delay: 1.05, ease: "easeIn" },
           }}
         >
           u
@@ -135,7 +136,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.1 },
+            transition: { delay: 1.1, ease: "easeIn" },
           }}
         >
           l
@@ -152,7 +153,7 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.15 },
+            transition: { delay: 1.15, ease: "easeIn" },
           }}
         >
           l
@@ -169,12 +170,12 @@ export default function NameAnimation() {
             scale: 1,
             visibility: "visible",
             display: "inline",
-            transition: { delay: 1.2 },
+            transition: { delay: 1.2, ease: "easeIn" },
           }}
         >
           e
         </motion.span>
-      </span>
+      </Link>
     </motion.div>
   );
 }

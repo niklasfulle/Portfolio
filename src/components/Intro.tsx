@@ -8,6 +8,7 @@ import { BsArrowRight } from "react-icons/bs";
 import { useSectionInView } from "@/lib/hooks";
 import { useActiveSectionContext } from "@/context/active-section-context";
 import SectionHeading from "./SectionHeading";
+import { Button } from "./ui/Button";
 
 export default function Intro() {
   const { ref } = useSectionInView("Home", 0.5);
@@ -17,7 +18,7 @@ export default function Intro() {
     <section
       ref={ref}
       id="home"
-      className="h-fit min-h-screen max-w-[50rem] text-center"
+      className=" h-fit min-h-screen max-w-[50rem] pt-28 text-center"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
@@ -82,7 +83,7 @@ export default function Intro() {
       >
         <Link
           href="#contact"
-          className="group flex items-center gap-2 rounded-full bg-gray-900 px-7 py-3 text-white outline-none transition hover:scale-110 hover:bg-gray-950 focus:scale-110 active:scale-105"
+          className="group flex items-center gap-2 rounded-full bg-gray-900 px-7 py-3 text-white shadow-md outline-none transition hover:scale-110 hover:bg-gray-950 focus:scale-110 active:scale-105"
           onClick={() => {
             setActiveSection("Contact");
             setTimeOfLastClick(Date.now());
