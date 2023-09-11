@@ -1,11 +1,20 @@
 import { NextAuthOptions } from "next-auth"
 import { db } from "@/lib/db/prisma"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
+import { compare } from "bcrypt"
+import { z } from "zod"
+import { randomUUID } from "crypto"
 import { cookies } from "next/headers"
 import { decode } from "next-auth/jwt"
-import { getGithubCredentials } from "@/lib/auth/get-credentials"
+import { getGithubCredentials, getGoogleCredentials } from "@/lib/auth/get-credentials"
 
+const loginUserSchema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(5, 'Password should be minimum 5 characters'),
+});
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
@@ -16,30 +25,90 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login"
   },
   providers: [
+    GoogleProvider({
+      clientId: getGoogleCredentials().googleClientId,
+      clientSecret: getGoogleCredentials().googleClientSecret,
+    }),
     GitHubProvider({
       clientId: getGithubCredentials().githubClientId,
       clientSecret: getGithubCredentials().githubClientSecret,
     }),
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = loginUserSchema.parse(credentials);
+
+        const user = await db.user.findUnique({
+          where: {
+            email,
+          }
+        });
+
+        if (!user) {
+          throw new Error("Password or Email not correct");
+        }
+
+        const passwordsMatch = await compare(
+          password,
+          user?.password!
+        );
+
+        if (!passwordsMatch) {
+          throw new Error("Password or Email not correct");
+        }
+
+        if (!user.emailVerified) {
+          throw new Error("Email not verified");
+        }
+
+        return user;
+      },
+    }),
   ],
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, account }) {
+      if (account?.provider === "credentials") {
+        if (user) {
+          const sessionToken = randomUUID();
+          const sessionExpiry = new Date(
+            Date.now() + 60 * 60 * 24 * 30 * 1000
+          );
 
-      const { email } = user as any;
+          await db.session.create({
+            data: {
+              sessionToken,
+              userId: user.id,
+              userRole: user.role,
+              expires: sessionExpiry,
+            },
+          });
 
-      const dbUser = await db.user.findUnique({
-        where: {
-          email,
-        },
-      });
+          cookies().set("next-auth.session-token", sessionToken, {
+            expires: sessionExpiry,
+          });
+        }
+      } else if (account?.provider === "google" || account?.provider === "github") {
+        const { email } = user as any;
 
-      const accountDb = await db.account.findFirst({
-        where: {
-          userId: dbUser?.id,
-        },
-      });
+        const dbUser = await db.user.findUnique({
+          where: {
+            email,
+          },
+        });
 
-      if (accountDb?.provider == "credentials" && email == dbUser?.email) {
-        return false
+        const accountDb = await db.account.findFirst({
+          where: {
+            userId: dbUser?.id,
+          },
+        });
+
+        if (accountDb?.provider == "credentials" && email == dbUser?.email) {
+          return false
+        }
       }
 
       return true;
@@ -47,9 +116,17 @@ export const authOptions: NextAuthOptions = {
     async redirect({ baseUrl }) {
       return baseUrl;
     },
-    session: async ({ session }) => {
+    session: async ({ session, user }) => {
+      const account = await db.account.findFirst({
+        where: {
+          userId: user.id,
+        },
+      });
+
       session.user = {
-        ...session.user
+        ...session.user,
+        role: user.role,
+        provider: account?.provider,
       };
       return Promise.resolve(session);
     },

@@ -17,11 +17,13 @@
     "@react-email/components": "^0.0.7",
     "@react-email/tailwind": "^0.0.8",
     "@tailwindcss/typography": "^0.5.10",
+    "@types/bcrypt": "^5.0.0",
     "@types/node": "20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@types/three": "^0.155.1",
     "autoprefixer": "10.4.15",
+    "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "country-flag-icons": "^1.5.7",
@@ -48,7 +50,8 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.156.1",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@types/react-vertical-timeline-component": "^3.3.3",
