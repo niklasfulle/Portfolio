@@ -59,7 +59,7 @@ const UserButton: FC<Props> = ({ session }) => {
 
   return (
     <motion.div
-      className="fixed right-6 top-6 flex h-[3.25rem] w-[3.25rem] cursor-pointer items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 shadow-md transition-all duration-200 ease-in dark:border-black/40 dark:bg-gray-950"
+      className="fixed right-6 top-6 z-10 flex h-[3.25rem] w-[3.25rem] cursor-pointer items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 shadow-md transition-all duration-200 ease-in dark:border-black/40 dark:bg-gray-950"
       initial={{ opacity: 0, x: +200 }}
       animate={{ opacity: 1, x: 0, transition: { delay: 0.1 } }}
       whileHover={{
@@ -78,18 +78,18 @@ const UserButton: FC<Props> = ({ session }) => {
             borderRadius: "100%",
           }}
         >
-          <Tooltip title="Account" placement="left">
-            <Button
-              onClick={handleClick}
-              size="small"
-              aria-controls={open ? "account-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              sx={{
-                borderRadius: "100%",
-                ":hover": { backgroundColor: "transparent" },
-              }}
-            >
+          <Button
+            onClick={handleClick}
+            size="small"
+            aria-controls={open ? "account-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            sx={{
+              borderRadius: "100%",
+              ":hover": { backgroundColor: "transparent" },
+            }}
+          >
+            <Tooltip title="Account" placement="left">
               <Image
                 src={user.image}
                 alt=""
@@ -98,8 +98,8 @@ const UserButton: FC<Props> = ({ session }) => {
                 priority={true}
                 className="h-13 w-13 rounded-full border-[0.2rem] border-white object-cover"
               />
-            </Button>
-          </Tooltip>
+            </Tooltip>
+          </Button>
         </Box>
         <Menu
           anchorEl={anchorEl}

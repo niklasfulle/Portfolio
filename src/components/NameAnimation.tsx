@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function NameAnimation() {
   return (
     <motion.div
-      className="fixed left-6 top-6 flex h-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all hover:cursor-pointer dark:border-black/40 dark:bg-gray-950"
+      className="fixed left-6 top-6 z-10 flex h-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all hover:cursor-pointer dark:border-black/40 dark:bg-gray-950"
       initial={{ opacity: 0, scale: 1 }}
       animate={{
         opacity: 1,

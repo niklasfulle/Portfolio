@@ -1,20 +1,41 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import {
   VerticalTimeline,
   VerticalTimelineElement,
   /* @ts-ignore */
 } from "react-vertical-timeline-component";
 import "react-vertical-timeline-component/style.min.css";
-import { experiencesData } from "@/lib/data";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "./SectionHeading";
 import { useTheme } from "next-themes";
+import { CgWorkAlt } from "react-icons/cg";
+import { FaReact } from "react-icons/fa";
+import { LuGraduationCap } from "react-icons/lu";
 
-export default function Experience() {
+interface Props {
+  experience?: any;
+}
+
+const switchIcons = (icon: string) => {
+  switch (icon) {
+    case "FaReact":
+      return <FaReact />;
+    case "CgWorkAlt":
+      return <CgWorkAlt />;
+    case "LuGraduationCap":
+      return <LuGraduationCap />;
+    default:
+      return <FaReact />;
+  }
+};
+
+const Experience: FC<Props> = ({ experience }) => {
   const { ref } = useSectionInView("Experience");
   const [prefersDarkMode, setPrefersDarkMode] = useState<boolean>(false);
+
+  let { theme } = useTheme();
 
   useEffect(() => {
     if (localStorage.getItem("theme") === "system") {
@@ -24,13 +45,9 @@ export default function Experience() {
         localStorage.getItem("theme") === "dark" ? true : false
       );
     }
-  }, [open]);
+  }, [theme]);
 
-  let { theme } = useTheme();
-
-  if (!theme) {
-    theme = prefersDarkMode ? "dark" : "light";
-  }
+  theme = prefersDarkMode ? "dark" : "light";
 
   return (
     <section
@@ -40,9 +57,10 @@ export default function Experience() {
     >
       <div className="absolute left-1/2 top-[277rem] -z-10 h-[41.25rem] w-[11.25rem] translate-x-[50%] rounded-full bg-[#39d1ff] blur-[16rem] dark:bg-[#ff9a60] sm:w-[68.75rem]"></div>
       <div className="absolute right-1/2 top-[253rem] -z-20 h-[41.25rem] w-[11.25rem] translate-x-[-50%] rounded-full bg-[#965eff] blur-[16rem] dark:bg-[#654c81] sm:w-[68.75rem]"></div>
+
       <SectionHeading>My experience</SectionHeading>
       <VerticalTimeline lineColor="">
-        {experiencesData.map((item, index) => (
+        {experience.map((item: any, index: any) => (
           <React.Fragment key={index}>
             <VerticalTimelineElement
               contentStyle={{
@@ -59,7 +77,7 @@ export default function Experience() {
                     : "0.4rem solid rgb(31, 41, 55)",
               }}
               date={item.date}
-              icon={item.icon}
+              icon={switchIcons(item.icon)}
               iconStyle={{
                 border: "2px solid rgba(0, 0, 0, 0.4)",
                 background: theme === "light" ? "white" : "rgb(31, 41, 55)",
@@ -77,4 +95,6 @@ export default function Experience() {
       </VerticalTimeline>
     </section>
   );
-}
+};
+
+export default Experience;

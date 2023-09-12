@@ -71,4 +71,15 @@ model Skills {
   name          String
   projects      Projects[]
   image         String?
+  visible       Boolean  @default(false)
+}
+
+model Experience {
+  id            String   @id @default(cuid()) @unique
+  title         String
+  location      String
+  description   String
+  icon          String
+  date          String
+  visible       Boolean  @default(false)
 }
