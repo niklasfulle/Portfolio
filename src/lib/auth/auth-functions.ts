@@ -41,7 +41,7 @@ export const loginWithCredentials = async (e: FormEvent, setIsLoading: SetIsLoad
         setError(res.error);
       }
     } else {
-      //window.location.href = "/";
+      window.location.href = "/";
     }
   } catch (error) {
     shortToast("Error", "There was an error logging in.", "error", 5000);

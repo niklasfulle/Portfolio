@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -14,7 +14,23 @@ import { useTheme } from "next-themes";
 
 export default function Experience() {
   const { ref } = useSectionInView("Experience");
-  const { theme } = useTheme();
+  const [prefersDarkMode, setPrefersDarkMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("theme") === "system") {
+      setPrefersDarkMode(true);
+    } else {
+      setPrefersDarkMode(
+        localStorage.getItem("theme") === "dark" ? true : false
+      );
+    }
+  }, [open]);
+
+  let { theme } = useTheme();
+
+  if (!theme) {
+    theme = prefersDarkMode ? "dark" : "light";
+  }
 
   return (
     <section
@@ -30,7 +46,7 @@ export default function Experience() {
           <React.Fragment key={index}>
             <VerticalTimelineElement
               contentStyle={{
-                background: theme === "light" ? "#f3f4f6" : "rgb(31, 41, 55)",
+                background: theme === "light" ? "white" : "rgb(31, 41, 55)",
                 boxShadow: "none",
                 border: "2px solid rgba(0, 0, 0, 0.4)",
                 textAlign: "left",

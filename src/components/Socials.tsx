@@ -25,7 +25,7 @@ export default function Socials() {
           scale: 1.05,
         }}
       >
-        <Link href="/">
+        <Link href="https://github.com/niklasfulle" target="_blank">
           <FaGithub className="h-7 w-7" />
         </Link>
       </motion.div>
@@ -46,7 +46,10 @@ export default function Socials() {
           scale: 1.05,
         }}
       >
-        <Link href="/">
+        <Link
+          href="https://www.linkedin.com/in/niklas-fulle-61b422232/"
+          target="_blank"
+        >
           <FaLinkedin className="h-7 w-7" />
         </Link>
       </motion.div>

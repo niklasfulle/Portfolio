@@ -42,7 +42,7 @@ export default function Contact() {
 
       <form className="mt-10 flex flex-col items-center dark:text-black">
         <Input
-          className="mt-4 h-14 rounded-lg border border-gray-700 px-4 shadow-md transition-all focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
+          className="mt-4 h-14 rounded-lg border border-gray-700 px-4 shadow-md transition-all placeholder:text-gray-900 focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
           name="senderEmail"
           type="email"
           required
@@ -50,7 +50,7 @@ export default function Contact() {
           placeholder="Your email"
         />
         <Input
-          className="mt-4 h-14 rounded-lg border border-gray-700 px-4 shadow-md transition-all focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
+          className="mt-4 h-14 rounded-lg border border-gray-700 px-4 shadow-md transition-all placeholder:text-gray-900 focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
           name="senderEmail"
           type="email"
           required
@@ -58,7 +58,7 @@ export default function Contact() {
           placeholder="Your Topic"
         />
         <Textarea
-          className="mt-4 h-52 rounded-lg border border-gray-700 p-4 shadow-md transition-all focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
+          className="mt-4 h-52 rounded-lg border border-gray-700 p-4 shadow-md transition-all placeholder:text-gray-900 focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
           name="message"
           placeholder="Your message"
           required

@@ -6,13 +6,14 @@ import { Toaster } from "react-hot-toast";
 import Providers from "@/components/Providers";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
-import { UserButton } from "@/components/User";
 import Socials from "@/components/Socials";
 import NameAnimation from "@/components/NameAnimation";
 import Header from "@/components/Header";
 import Toggels from "@/components/Toggels";
 import { getSession } from "next-auth/react";
 import { headers } from "next/headers";
+import UserButton from "@/components/UserButton";
+import LoginButton from "@/components/LoginButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,7 +45,8 @@ export default async function RootLayout({
         <Providers>
           <NameAnimation />
           <Header />
-          <UserButton session={session} />
+          {!session && <LoginButton />}
+          {session && <UserButton session={session} />}
           <Socials />
           {children}
           <Footer />
