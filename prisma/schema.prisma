@@ -55,6 +55,11 @@ model User {
   sessions Session[]
 }
 
+model AboutMe {
+  id            String   @id @default(cuid()) @unique
+  text          String
+}
+
 model Projects {
   id            String   @id @default(cuid()) @unique
   title         String

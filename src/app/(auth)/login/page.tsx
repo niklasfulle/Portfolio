@@ -1,6 +1,5 @@
 "use client";
 import SignInForm from "@/components/auth/SignInForm";
-import { motion } from "framer-motion";
 
 export default function Home() {
   return (

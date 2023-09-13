@@ -2,7 +2,7 @@
 import React, { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import { motion } from "framer-motion";
-import SectionHeading from "./SectionHeading";
+import SectionHeading from "@/components/SectionHeading";
 
 interface Props {
   skills?: any;

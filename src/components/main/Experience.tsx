@@ -8,11 +8,11 @@ import {
 } from "react-vertical-timeline-component";
 import "react-vertical-timeline-component/style.min.css";
 import { useSectionInView } from "@/lib/hooks";
-import SectionHeading from "./SectionHeading";
 import { useTheme } from "next-themes";
 import { CgWorkAlt } from "react-icons/cg";
 import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
+import SectionHeading from "@/components/SectionHeading";
 
 interface Props {
   experience?: any;

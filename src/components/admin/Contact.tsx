@@ -1,34 +1,21 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
 import toast from "react-hot-toast";
-import SectionHeading from "./SectionHeading";
-import { Input } from "./ui/Input";
-import { Textarea } from "./ui/Textarea";
-import { Button } from "./ui/Button";
+import SectionHeading from "@/components/SectionHeading";
+import { Input } from "@/ui/Input";
+import { Textarea } from "@/ui/Textarea";
+import { Button } from "@/ui/Button";
 
 export default function Contact() {
   const { ref } = useSectionInView("Contact");
 
   return (
-    <motion.section
+    <section
       id="contact"
       ref={ref}
-      className="h-fit min-h-[79vh] w-[min(100%,38rem)] scroll-mt-28 text-center"
-      initial={{
-        opacity: 0,
-      }}
-      whileInView={{
-        opacity: 1,
-      }}
-      transition={{
-        duration: 1,
-      }}
-      viewport={{
-        once: true,
-      }}
+      className="flex h-fit min-h-screen w-5/6 scroll-mt-28 flex-col items-center border border-black text-center dark:border-white"
     >
       <SectionHeading>Contact me</SectionHeading>
 
@@ -40,7 +27,7 @@ export default function Contact() {
         or through this form.
       </p>
 
-      <form className="mt-10 flex flex-col items-center dark:text-black">
+      <form className="mt-10 flex w-[min(100%,38rem)] flex-col items-center dark:text-black">
         <Input
           className="mt-4 h-14 rounded-lg border border-gray-700 px-4 shadow-md transition-all placeholder:text-gray-900 focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
           name="senderEmail"
@@ -68,6 +55,6 @@ export default function Contact() {
           Send
         </Button>
       </form>
-    </motion.section>
+    </section>
   );
 }

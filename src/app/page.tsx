@@ -1,9 +1,9 @@
-import Intro from "@/components/Intro";
-import Projects from "@/components/Projects";
-import About from "@/components/About";
-import Skills from "@/components/Skills";
-import Experience from "@/components/Experience";
-import Contact from "@/components/Contact";
+import Intro from "@/main/Intro";
+import Projects from "@/main/Projects";
+import About from "@/main/About";
+import Skills from "@/main/Skills";
+import Experience from "@/main/Experience";
+import Contact from "@/main/Contact";
 import { getExperience, getProjects, getSkills } from "@/lib/db/functions";
 
 export default async function Home() {

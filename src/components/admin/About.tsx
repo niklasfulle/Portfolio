@@ -1,23 +1,20 @@
 "use client";
 import React from "react";
-import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
-import SectionHeading from "./SectionHeading";
+import SectionHeading from "@/components/SectionHeading";
+import { Button } from "@/ui/Button";
 
 export default function About() {
   const { ref } = useSectionInView("About");
 
   return (
-    <section className="h-fit min-h-screen max-w-[45rem]">
-      <div className="absolute right-1/2 top-[50rem] -z-20 h-[31.25rem] w-[21.25rem] translate-x-[-35%] rounded-full bg-[#866cb8] blur-[16rem] dark:bg-[#93b969] sm:w-[68.75rem]"></div>
-      <div className="absolute left-1/2 top-[50rem] -z-10 h-[11.25rem] w-[21.25rem] translate-x-[-50%] rounded-full bg-[#3ec750] blur-[16rem] dark:bg-[#d8a07f] sm:w-[68.75rem]"></div>
-      <div className="absolute left-1/2 top-[55rem] -z-20 h-[31.25rem] w-[21.25rem] translate-x-[35%] rounded-full bg-[#f1bbbb] blur-[16rem] dark:bg-[#ad6066] sm:w-[68.75rem]"></div>
-      <motion.div
+    <section className="relative flex h-fit min-h-screen w-5/6 scroll-mt-28 flex-col items-center border border-black text-center dark:border-white">
+      <Button className="absolute right-2 top-2 bg-gray-800 px-10 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400">
+        Edit
+      </Button>
+      <div
         ref={ref}
-        className=" scroll-mt-28 text-center leading-8"
-        initial={{ opacity: 0, y: 100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.175 }}
+        className="max-w-[45rem] scroll-mt-28 text-center leading-8"
         id="about"
       >
         <SectionHeading>About me</SectionHeading>
@@ -48,7 +45,7 @@ export default function About() {
           <span className="font-medium">history and philosophy</span>. I&apos;m
           also learning how to play the guitar.
         </p>
-      </motion.div>
+      </div>
     </section>
   );
 }

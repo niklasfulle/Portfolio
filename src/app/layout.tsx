@@ -6,14 +6,14 @@ import { Toaster } from "react-hot-toast";
 import Providers from "@/components/Providers";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
-import Socials from "@/components/Socials";
-import NameAnimation from "@/components/NameAnimation";
+import Socials from "@/ui/Socials";
+import NameAnimation from "@/ui/NameAnimation";
 import Header from "@/components/Header";
-import Toggels from "@/components/Toggels";
+import Toggels from "@/ui/Toggels";
 import { getSession } from "next-auth/react";
 import { headers } from "next/headers";
-import UserButton from "@/components/UserButton";
-import LoginButton from "@/components/LoginButton";
+import UserButton from "@/ui/UserButton";
+import LoginButton from "@/ui/LoginButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
