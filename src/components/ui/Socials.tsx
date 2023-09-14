@@ -7,9 +7,9 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 export default function Socials() {
   return (
-    <div className="fixed right-6 top-[40%] flex flex-col items-center justify-center gap-y-4">
+    <div className="fixed right-6 top-[40%] z-10 flex flex-col items-center justify-center gap-y-4">
       <motion.div
-        className="flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all duration-200 ease-in dark:border-black/40 dark:bg-gray-950"
+        className="flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all duration-200 ease-in dark:border-black/40 dark:bg-gray-900"
         initial={{ opacity: 0 }}
         animate={{
           opacity: 1,
@@ -30,7 +30,7 @@ export default function Socials() {
         </Link>
       </motion.div>
       <motion.div
-        className="flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all duration-200 ease-in dark:border-black/40 dark:bg-gray-950"
+        className="flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all duration-200 ease-in dark:border-black/40 dark:bg-gray-900"
         initial={{ opacity: 0 }}
         animate={{
           opacity: 1,

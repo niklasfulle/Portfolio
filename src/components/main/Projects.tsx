@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
-import { projectsData } from "@/lib/data";
+import React, { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import Project from "./Project";
 
-export default function Projects() {
+interface Props {
+  projects?: any;
+}
+const Projects: FC<Props> = ({ projects }) => {
   const { ref } = useSectionInView("Projects", 0.5);
 
   return (
@@ -17,7 +19,7 @@ export default function Projects() {
     >
       <SectionHeading>My projects</SectionHeading>
       <div>
-        {projectsData.map((project, index) => (
+        {projects.map((project: any, index: any) => (
           <React.Fragment key={index}>
             <Project {...project} />
           </React.Fragment>
@@ -25,4 +27,6 @@ export default function Projects() {
       </div>
     </section>
   );
-}
+};
+
+export default Projects;

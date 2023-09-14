@@ -6,9 +6,10 @@ import { Button } from "../ui/Button";
 
 interface Props {
   skills?: any;
+  learn?: any;
 }
 
-const Skills: FC<Props> = ({ skills }) => {
+const Skills: FC<Props> = ({ skills, learn }) => {
   const { ref } = useSectionInView("Skills");
 
   return (
@@ -21,13 +22,24 @@ const Skills: FC<Props> = ({ skills }) => {
         Edit
       </Button>
       <SectionHeading>My skills</SectionHeading>
-      <ul className="flex max-w-[53rem] flex-wrap justify-center gap-3 text-lg text-gray-800">
+      <ul className="mb-16 flex max-w-[53rem] flex-wrap justify-center gap-3 text-lg text-gray-800">
         {skills.map((skill: any, index: any) => (
           <li
             className="rounded-xl border border-black bg-white px-5 py-3 shadow-sm dark:border-white/30 dark:bg-gray-800 dark:text-white/80"
             key={index}
           >
             {skill}
+          </li>
+        ))}
+      </ul>
+      <SectionHeading>I want to learn</SectionHeading>
+      <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">
+        {learn.map((learn: any, index: any) => (
+          <li
+            className="rounded-xl border border-black bg-white px-5 py-3 shadow-sm dark:border-white/30 dark:bg-gray-800 dark:text-white/80"
+            key={index}
+          >
+            {learn}
           </li>
         ))}
       </ul>

@@ -16,4 +16,5 @@ html.dark {
 
 body::-webkit-scrollbar {
   display: none;
+  overflow-y: none;
 }

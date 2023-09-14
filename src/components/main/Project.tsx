@@ -1,20 +1,25 @@
 "use client";
 
 import { useRef } from "react";
-import { projectsData } from "@/lib/data";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import { Link2 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
-type ProjectProps = (typeof projectsData)[number];
+type ProjectProps = {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+  tags: string;
+};
 
 export default function Project({
   title,
   description,
+  image,
+  url,
   tags,
-  imageUrl,
 }: ProjectProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -23,6 +28,8 @@ export default function Project({
   });
   const scaleProgess = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
   const opacityProgess = useTransform(scrollYProgress, [0, 1], [0.6, 1]);
+
+  const tagsSplit = tags.split(",");
 
   return (
     <motion.div
@@ -42,7 +49,7 @@ export default function Project({
             </p>
 
             <ul className=" flex flex-wrap gap-2 sm:mt-auto">
-              {tags.map((tag, index) => (
+              {tagsSplit.map((tag, index) => (
                 <li
                   className="rounded-full bg-black/[0.7] px-3 py-1 text-[0.7rem] uppercase tracking-wider text-white dark:text-white/70"
                   key={index}
@@ -53,7 +60,8 @@ export default function Project({
             </ul>
           </div>
           <Link
-            href="/"
+            href={url}
+            target="_blank"
             className="flex w-fit flex-row items-center justify-center rounded-md bg-[#010409] px-3 py-2 text-[0.7rem] uppercase tracking-wider text-white hover:cursor-pointer hover:bg-[#010409]/[0.8] dark:text-white/70"
           >
             <FaGithub className="mr-2 h-4 w-4" />
@@ -62,9 +70,11 @@ export default function Project({
         </div>
 
         <Image
-          src={imageUrl}
+          src={image}
           alt="Project I worked on"
-          quality={95}
+          width="500"
+          height="500"
+          quality="95"
           className="absolute -right-40 top-6 hidden w-[28.25rem] rounded-t-lg shadow-2xl transition
         group-even:-left-40 
         group-even:right-[initial]

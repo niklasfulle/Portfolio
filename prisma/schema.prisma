@@ -58,6 +58,8 @@ model User {
 model AboutMe {
   id            String   @id @default(cuid()) @unique
   text          String
+  order         Int      @default(0)
+  visible       Boolean  @default(false)
 }
 
 model Projects {
@@ -65,8 +67,8 @@ model Projects {
   title         String
   description   String
   image         String
-  url           String
-  skills        Skills[]
+  url          String
+  tags          String
   visible       Boolean  @default(false)
   order         Int      @default(0)
 }
@@ -74,8 +76,8 @@ model Projects {
 model Skills {
   id            String   @id @default(cuid()) @unique
   name          String
-  projects      Projects[]
   image         String?
+  type          String?
   visible       Boolean  @default(false)
 }
 

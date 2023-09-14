@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import Socials from "@/ui/Socials";
 import NameAnimation from "@/ui/NameAnimation";
-import Header from "@/components/Header";
 import Toggels from "@/ui/Toggels";
 import { getSession } from "next-auth/react";
 import { headers } from "next/headers";
 import UserButton from "@/ui/UserButton";
 import LoginButton from "@/ui/LoginButton";
+import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,7 +37,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className={cn(
-        "light:bg-white scroll-smooth text-slate-900 antialiased dark:bg-slate-900",
+        "light:bg-white w-[100%] overflow-x-hidden scroll-smooth text-slate-900 antialiased dark:bg-gray-900",
         inter.className
       )}
     >

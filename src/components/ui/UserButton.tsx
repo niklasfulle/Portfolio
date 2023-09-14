@@ -112,12 +112,12 @@ const UserButton: FC<Props> = ({ session }) => {
           sx={{ margin: 0, padding: 0 }}
         >
           <div className="m-0 w-40 p-0 dark:bg-opacity-75">
-            <MenuItem className="h-10 ">
-              <Link href="/admin" className="flex w-full flex-row items-center">
+            <Link href="/admin" className="flexflex-row items-center">
+              <MenuItem className="h-10  w-full ">
                 <Lock className="mr-3 h-5 w-5" />
                 Admin
-              </Link>
-            </MenuItem>
+              </MenuItem>
+            </Link>
             <MenuItem
               onClick={signUserOut}
               disabled={isLoading}
