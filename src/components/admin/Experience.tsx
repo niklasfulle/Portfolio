@@ -33,6 +33,7 @@ const switchIcons = (icon: string) => {
 };
 
 const Experience: FC<Props> = ({ experience }) => {
+  const [edit, setEdit] = useState(false);
   const { ref } = useSectionInView("Experience");
   const [prefersDarkMode, setPrefersDarkMode] = useState<boolean>(false);
 
@@ -56,9 +57,24 @@ const Experience: FC<Props> = ({ experience }) => {
       ref={ref}
       className="relative flex h-fit min-h-screen w-5/6 scroll-mt-28 flex-col items-center border border-black text-center dark:border-white"
     >
-      <Button className="absolute right-2 top-2 bg-gray-800 px-10 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400">
-        Edit
-      </Button>
+      {!edit && (
+        <Button
+          className="absolute right-2 top-2 min-w-[6rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+          onClick={() => setEdit(true)}
+        >
+          Edit
+        </Button>
+      )}
+      {edit && (
+        <>
+          <Button
+            className="absolute right-2 top-2 min-w-[6rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+            onClick={() => setEdit(false)}
+          >
+            Close
+          </Button>
+        </>
+      )}
       <SectionHeading>My experience</SectionHeading>
       <VerticalTimeline lineColor="">
         {experience.map((item: any, index: any) => (

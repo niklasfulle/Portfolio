@@ -1,16 +1,18 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import Project from "./Project";
 import { Button } from "../ui/Button";
+import ProjectEdit from "./ProjectEdit";
 
 interface Props {
   projects?: any;
 }
 const Projects: FC<Props> = ({ projects }) => {
+  const [edit, setEdit] = useState(false);
   const { ref } = useSectionInView("Projects", 0.5);
 
   return (
@@ -19,17 +21,44 @@ const Projects: FC<Props> = ({ projects }) => {
       id="projects"
       className="relative flex h-fit min-h-screen w-5/6 scroll-mt-28 flex-col items-center border border-black text-center dark:border-white"
     >
-      <Button className="absolute right-2 top-2 bg-gray-800 px-10 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400">
-        Edit
-      </Button>
+      {!edit && (
+        <Button
+          className="absolute right-2 top-2 min-w-[6rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+          onClick={() => setEdit(true)}
+        >
+          Edit
+        </Button>
+      )}
+      {edit && (
+        <>
+          <Button
+            className="absolute right-2 top-2 min-w-[6rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+            onClick={() => setEdit(false)}
+          >
+            Close
+          </Button>
+        </>
+      )}
       <SectionHeading>My projects</SectionHeading>
-      <div className="mb-8">
-        {projects.map((project: any, index: any) => (
-          <React.Fragment key={index}>
-            <Project {...project} />
-          </React.Fragment>
-        ))}
-      </div>
+
+      {edit && (
+        <div className="mb-8 flex w-full flex-col items-center justify-center">
+          {projects.map((project: any, index: any) => (
+            <React.Fragment key={index}>
+              <ProjectEdit {...project} />
+            </React.Fragment>
+          ))}
+        </div>
+      )}
+      {!edit && (
+        <div className="mb-8">
+          {projects.map((project: any, index: any) => (
+            <React.Fragment key={index}>
+              <Project {...project} />
+            </React.Fragment>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
