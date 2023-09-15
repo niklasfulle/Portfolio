@@ -51,7 +51,7 @@ export default async function RootLayout({
           {children}
           <Footer />
           <Toggels />
-          <Toaster position="top-right" />
+          <Toaster position="bottom-right" />
         </Providers>
       </body>
     </html>

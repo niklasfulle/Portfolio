@@ -1,7 +1,7 @@
 import { db } from "./prisma";
 
 export const getAbout = async () => {
-  const aboutMe = await db.aboutMe.findMany({ where: { visible: true } });
+  const aboutMe = await db.aboutMe.findMany({ where: { visible: true }, orderBy: { order: "asc" } });
   return aboutMe;
 }
 

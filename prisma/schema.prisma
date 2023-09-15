@@ -56,8 +56,8 @@ model User {
 }
 
 model AboutMe {
-  id            String   @id @default(cuid()) @unique
-  text          String
+  id            String   @id @unique
+  text          String?
   order         Int      @default(0)
   visible       Boolean  @default(false)
 }

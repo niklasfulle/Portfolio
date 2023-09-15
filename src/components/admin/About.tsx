@@ -4,32 +4,78 @@ import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { Button } from "@/ui/Button";
 import { Textarea } from "@/ui/Textarea";
-import { Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { shortToast } from "@/lib/helpers/shorter-function";
+
+type AboutMe = {
+  id: number;
+  text: string;
+  order: number;
+  visible: boolean;
+};
 
 interface Props {
-  abouteMe?: any;
+  abouteMe: AboutMe[];
 }
 
 const About: FC<Props> = ({ abouteMe }) => {
   const [edit, setEdit] = useState(false);
-  const [count, setCount] = useState(abouteMe.length);
-  const [texts, setTexts] = useState(abouteMe);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const addTextarea = (e: any) => {
+  const save = async (e: any) => {
     e.preventDefault();
-    if (count > 3) return;
-    setCount(count + 1);
-    setTexts([...texts, { id: count + 1, text: "" }]);
-  };
+    setIsLoading(true);
 
-  const removeTextarea = (e: any, remove: string) => {
-    e.preventDefault();
-    if (count < 2) return;
-    setCount(count - 1);
-    const arrayRemove = abouteMe.filter(function (abouteMe: any) {
-      return abouteMe.id !== remove;
-    });
-    setTexts(arrayRemove);
+    try {
+      const target = e.target as typeof e.target & {
+        text1: { value: string };
+        text2: { value: string };
+        text3: { value: string };
+        text4: { value: string };
+      };
+
+      const text1 = target.text1.value;
+      const text2 = target.text2.value;
+      const text3 = target.text3.value;
+      const text4 = target.text4.value;
+
+      const data = {
+        text1,
+        text2,
+        text3,
+        text4,
+      };
+
+      const res = await fetch("/api/data/about", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (res.status === 200) {
+        shortToast(
+          "Success",
+          "The texts were updated successfully.",
+          "success",
+          5000
+        );
+      }
+    } catch (error) {
+      shortToast(
+        "Error",
+        "There was an error updating the texts.",
+        "error",
+        5000
+      );
+    }
+
+    setIsLoading(false);
+    setEdit(false);
+    window.location.href = "/admin#about";
+    router.refresh();
   };
 
   const { ref } = useSectionInView("About");
@@ -45,12 +91,14 @@ const About: FC<Props> = ({ abouteMe }) => {
         </Button>
       )}
       {edit && (
-        <Button
-          className="absolute right-2 top-2 min-w-[rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
-          onClick={() => setEdit(false)}
-        >
-          Close
-        </Button>
+        <>
+          <Button
+            className="absolute right-2 top-2 min-w-[6rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+            onClick={() => setEdit(false)}
+          >
+            Close
+          </Button>
+        </>
       )}
       <div
         ref={ref}
@@ -59,28 +107,31 @@ const About: FC<Props> = ({ abouteMe }) => {
       >
         <SectionHeading>About me</SectionHeading>
         {edit && (
-          <form>
-            {texts.map((abouteMe: any, index: any) => (
+          <form className="mb-12 flex flex-col" onSubmit={(e) => save(e)}>
+            {abouteMe.map((abouteMe: any, index: any) => (
               <>
                 <div className="flex flex-row items-center justify-between">
                   <h4 className="mx-4 text-left" key={"h4" + index}>
                     Text {abouteMe.id}:
                   </h4>
-                  <Trash
-                    className="hover:cursor-pointer"
-                    onClick={(e) => removeTextarea(e, abouteMe.id)}
+                </div>
+                <div className="flex flex-row">
+                  <Textarea
+                    key={"text" + index}
+                    id={"text" + abouteMe.id}
+                    className="mx-2 mb-2 h-[12rem] w-[32rem] dark:text-white lg:w-[45rem]"
+                    defaultValue={abouteMe.text}
                   />
                 </div>
-                <Textarea
-                  key={"text" + index}
-                  id={abouteMe.id}
-                  className="mx-2 mb-2 h-[12rem] w-[34rem] dark:text-white lg:w-[45rem]"
-                  defaultValue={abouteMe.text}
-                />
               </>
             ))}
-            <Button className="mb-12 mt-6" onClick={(e) => addTextarea(e)}>
-              Add
+            <Button
+              isLoading={isLoading}
+              disabled={isLoading}
+              className="mx-auto mt-4 min-w-[10rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+              type="submit"
+            >
+              Save
             </Button>
           </form>
         )}
