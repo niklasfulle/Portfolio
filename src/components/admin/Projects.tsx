@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import Project from "./Project";
 import { Button } from "../ui/Button";
 import ProjectEdit from "./ProjectEdit";
+import ProjectNew from "./ProjectNew";
 
 interface Props {
   projects?: any;
@@ -48,6 +49,7 @@ const Projects: FC<Props> = ({ projects }) => {
               <ProjectEdit {...project} />
             </React.Fragment>
           ))}
+          <ProjectNew />
         </div>
       )}
       {!edit && (
