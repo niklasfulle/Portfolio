@@ -1,30 +1,102 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import FormInput from "../ui/FormInput";
 import FormTextarea from "../ui/FormTextarea";
 import FormUpload from "../ui/FormUpload";
 import { Button } from "../ui/Button";
+import { shortToast } from "@/lib/helpers/shorter-function";
 
 type ProjectProps = {
+  id: string;
   title: string;
   description: string;
   image: string;
   url: string;
   tags: string;
+  series: number;
 };
 
 export default function ProjectEdit({
+  id,
   title,
   description,
   image,
   url,
   tags,
+  series,
 }: ProjectProps) {
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string>(image || "");
+  const [file, setFile] = useState<File>();
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleSumbit = (e: any) => {
+  const handleSumbit = async (e: any) => {
     e.preventDefault();
+    setUploading(true);
+
+    const target = e.target as typeof e.target & {
+      title: { value: string };
+      description: { value: string };
+      tags: { value: string };
+      url: { value: string };
+      series: { value: number };
+    };
+
+    const title = target.title.value;
+    const description = target.description.value;
+    const tags = target.tags.value;
+    const url = target.url.value;
+    const series = target.series.value;
+
+    try {
+      if (file) {
+        const data = new FormData();
+        data.set("file", file);
+        data.set("title", title);
+
+        const res1 = await fetch("/api/data/upload", {
+          method: "POST",
+          body: data,
+        });
+        // handle the error
+        if (!res1.ok) throw new Error(await res1.text());
+
+        const resObject = await res1.json();
+        image = resObject.fileName;
+      }
+
+      let imageSplit = image.split("/");
+      image = `/images/${imageSplit[imageSplit.length - 1]}`;
+
+      const project = {
+        id,
+        title,
+        description,
+        tags,
+        url,
+        image,
+        series: Number(series),
+      };
+      const res2 = await fetch("/api/data/projects", {
+        method: "PUT",
+        body: JSON.stringify(project),
+      });
+
+      if (res2.status === 200) {
+        shortToast(
+          "Success",
+          "The project was updated successfully.",
+          "success",
+          5000
+        );
+      }
+    } catch (e: any) {
+      // Handle errors here
+      console.error(e);
+    }
+
+    setUploading(false);
   };
 
   return (
@@ -41,16 +113,33 @@ export default function ProjectEdit({
                 id="description"
                 title="Description:"
                 value={description}
+                height="h-[9rem]"
               />
-              <FormTextarea id="tags" title="Tags:" value={tags} />
+              <FormTextarea
+                id="tags"
+                title="Tags:"
+                value={tags}
+                height="h-[4rem]"
+              />
             </div>
             <div className="h-full w-1/2 px-4 py-6">
               <FormInput id="url" title="Url:" value={url} />
-              <FormUpload id="image" title="Image:" image={image} />
+              <FormInput id="series" title="Order:" value={series} />
+              <FormUpload
+                id="image"
+                title="Image:"
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+                setFile={setFile}
+              />
             </div>
           </div>
         </section>
-        <Button className="mb-4 w-32 bg-[#5bb0ff] font-semibold text-gray-900 shadow-md hover:bg-[#4a8dcc] hover:text-gray-100 dark:bg-[#ff9a60] dark:text-white dark:hover:bg-[#fc8c4bd0]">
+        <Button
+          isLoading={uploading}
+          disabled={uploading}
+          className="mb-4 mt-1 w-32 bg-[#5bb0ff] font-semibold text-gray-900 shadow-md hover:bg-[#4a8dcc] hover:text-gray-100 dark:bg-[#ff9a60] dark:text-white dark:hover:bg-[#fc8c4bd0]"
+        >
           Save
         </Button>
       </form>

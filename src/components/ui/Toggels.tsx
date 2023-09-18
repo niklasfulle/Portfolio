@@ -29,7 +29,7 @@ export default function Toggels() {
   return (
     <div className="fixed bottom-6 right-6 flex flex-col items-center justify-center gap-y-4">
       <motion.div
-        className=" flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-800"
+        className=" flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-900"
         onClick={toggleLanguage}
         initial={{ opacity: 0 }}
         animate={{
@@ -51,7 +51,7 @@ export default function Toggels() {
         )}
       </motion.div>
       <motion.button
-        className=" flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-800"
+        className=" flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-900"
         onClick={toggleTheme}
         initial={{ opacity: 0 }}
         animate={{

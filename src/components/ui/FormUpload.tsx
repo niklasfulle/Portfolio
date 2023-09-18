@@ -1,39 +1,20 @@
-import React, { FC, useState } from "react";
-import { Button } from "./Button";
+import React, { FC} from "react";
 
 interface FormUploadProps {
   id: string;
   title: string;
-  image?: string;
+  selectedImage?: any;
+  setSelectedImage?: any;
+  setFile?: any;
 }
 
-const FormUpload: FC<FormUploadProps> = ({ id, title, image }) => {
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [selectedImage, setSelectedImage] = useState<string>(image || "");
-  const [file, setFile] = useState<File>();
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setUploading(true);
-    /*if (!file) return;
-
-    try {
-      const data = new FormData();
-      data.set("file", file);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: data,
-      });
-      // handle the error
-      if (!res.ok) throw new Error(await res.text());
-    } catch (e: any) {
-      // Handle errors here
-      console.error(e);
-    }*/
-    setUploading(false);
-  };
-
+const FormUpload: FC<FormUploadProps> = ({
+  id,
+  title,
+  selectedImage,
+  setSelectedImage,
+  setFile,
+}) => {
   return (
     <div className="mb-2.5">
       <label
@@ -45,6 +26,7 @@ const FormUpload: FC<FormUploadProps> = ({ id, title, image }) => {
       <div className="mb-4 mt-0.5">
         <label>
           <input
+            id={id}
             type="file"
             hidden
             onChange={({ target }) => {

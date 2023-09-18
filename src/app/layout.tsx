@@ -13,7 +13,7 @@ import { getSession } from "next-auth/react";
 import { headers } from "next/headers";
 import UserButton from "@/ui/UserButton";
 import LoginButton from "@/ui/LoginButton";
-import Header from "@/components/Header";
+import Header from "@/components/header";
 
 const inter = Inter({ subsets: ["latin"] });
 
