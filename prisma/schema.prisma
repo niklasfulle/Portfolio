@@ -58,8 +58,8 @@ model User {
 model AboutMe {
   id            String   @id @unique
   text          String?
-  order         Int      @default(0)
   visible       Boolean  @default(false)
+  series        Int      @default(0)
 }
 
 model Projects {
@@ -67,10 +67,10 @@ model Projects {
   title         String
   description   String
   image         String
-  url          String
+  url           String
   tags          String
   visible       Boolean  @default(false)
-  order         Int      @default(0)
+  series        Int      @default(0)
 }
 
 model Skills {
@@ -79,6 +79,7 @@ model Skills {
   image         String?
   type          String?
   visible       Boolean  @default(false)
+  series        Int      @default(0)
 }
 
 model Experience {
@@ -89,4 +90,5 @@ model Experience {
   icon          String
   date          String
   visible       Boolean  @default(false)
+  series        Int      @default(0)
 }

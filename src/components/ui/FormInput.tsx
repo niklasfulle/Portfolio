@@ -4,7 +4,7 @@ import React, { FC } from "react";
 interface FormInputProps {
   id: string;
   title: string;
-  value: string;
+  value: string | number;
 }
 
 const FormInput: FC<FormInputProps> = ({ id, title, value }) => {

@@ -35,17 +35,14 @@ const About: FC<Props> = ({ abouteMe }) => {
         text4: { value: string };
       };
 
-      const text1 = target.text1.value;
-      const text2 = target.text2.value;
-      const text3 = target.text3.value;
-      const text4 = target.text4.value;
-
       const data = {
-        text1,
-        text2,
-        text3,
-        text4,
+        text1: target.text1.value,
+        text2: target.text2.value,
+        text3: target.text3.value,
+        text4: target.text4.value,
       };
+
+      console.log(data);
 
       const res = await fetch("/api/data/about", {
         method: "PUT",
@@ -64,6 +61,7 @@ const About: FC<Props> = ({ abouteMe }) => {
         );
       }
     } catch (error) {
+      console.error(error);
       shortToast(
         "Error",
         "There was an error updating the texts.",
