@@ -5,7 +5,6 @@ export default withAuth(
   async function middleware(req) {
     // relative path
     const pathname = req.nextUrl.pathname
-
     // get session token
     const sessionToken = req.cookies.get('next-auth.session-token')
 
@@ -21,7 +20,7 @@ export default withAuth(
       !isAuth &&
       sensitiveRoutes.some((route) => pathname.startsWith(route))
     ) {
-      return NextResponse.redirect(new URL('/login', req.url))
+      return NextResponse.redirect(new URL('/', req.url))
     }
 
     // Check if user is authenticated and trying to access a route that is not allowed with session
@@ -45,5 +44,5 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ['/', '/login', '/admin'],
+  matcher: ['/', '/admin', '/login'],
 }

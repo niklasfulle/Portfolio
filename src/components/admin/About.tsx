@@ -42,8 +42,6 @@ const About: FC<Props> = ({ abouteMe }) => {
         text4: target.text4.value,
       };
 
-      console.log(data);
-
       const res = await fetch("/api/data/about", {
         method: "PUT",
         headers: {
