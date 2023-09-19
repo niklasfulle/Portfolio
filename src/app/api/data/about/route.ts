@@ -24,8 +24,6 @@ export async function PUT(
     const body: any = await req.json();
     const { text1, text2, text3, text4 } = body;
 
-    console.log(body)
-
     await db.aboutMe.update({
       where: { id: "1" },
       data: {

@@ -10,7 +10,7 @@ import { shortToast } from "@/lib/helpers/shorter-function";
 type AboutMe = {
   id: number;
   text: string;
-  order: number;
+  series: number;
   visible: boolean;
 };
 

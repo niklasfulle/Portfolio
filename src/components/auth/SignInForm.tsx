@@ -9,7 +9,6 @@ import { Eye, EyeOff } from "lucide-react";
 const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
 
   return (
     <motion.div
@@ -29,7 +28,7 @@ const SignInForm = () => {
       <div className="mt-3 sm:mx-auto sm:w-full sm:max-w-sm">
         <form
           className="space-y-6"
-          onSubmit={(e) => loginWithCredentials(e, setIsLoading, setError)}
+          onSubmit={(e) => loginWithCredentials(e, setIsLoading)}
         >
           <div>
             <label

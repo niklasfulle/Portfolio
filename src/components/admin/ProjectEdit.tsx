@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import FormInput from "../ui/FormInput";
 import FormTextarea from "../ui/FormTextarea";
 import FormUpload from "../ui/FormUpload";
@@ -94,6 +94,7 @@ export default function ProjectEdit({
           "success",
           5000
         );
+        router.refresh();
       }
     } catch (e: any) {
       // Handle errors here
@@ -121,7 +122,9 @@ export default function ProjectEdit({
         );
         router.refresh();
       }
-    } catch (e: any) {}
+    } catch (error: any) {
+      console.error(error);
+    }
 
     setIsLoading(false);
   };
@@ -134,7 +137,7 @@ export default function ProjectEdit({
       <Tooltip title="Delete" placement="right">
         <Trash
           onClick={() => deleteProject(id)}
-          className="absolute -right-4 -top-4  z-10 h-9 w-9 rounded-full bg-gray-200 p-2 shadow-md transition-all ease-in hover:cursor-pointer dark:bg-gray-950 dark:text-white  "
+          className="absolute -right-4 -top-4 z-10 h-9 w-9 rounded-full bg-gray-200 p-2 shadow-md transition-all ease-in hover:cursor-pointer hover:bg-red-300 dark:bg-gray-950 dark:text-white hover:dark:bg-red-800"
         />
       </Tooltip>
       <form onSubmit={updateProject}>

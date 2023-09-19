@@ -6,7 +6,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { signOut } from "next-auth/react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Box, Button, Divider, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import Link from "next/link";
 import { Loader2, Lock, LogOut } from "lucide-react";
 
@@ -33,7 +33,9 @@ const UserButton: FC<Props> = ({ session }) => {
 
     try {
       await signOut();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
     setIsLoading(false);
   };
 
