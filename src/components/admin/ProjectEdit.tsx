@@ -6,6 +6,9 @@ import FormTextarea from "../ui/FormTextarea";
 import FormUpload from "../ui/FormUpload";
 import { Button } from "../ui/Button";
 import { shortToast } from "@/lib/helpers/shorter-function";
+import { Trash } from "lucide-react";
+import { Tooltip } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 type ProjectProps = {
   id: string;
@@ -26,14 +29,15 @@ export default function ProjectEdit({
   tags,
   series,
 }: ProjectProps) {
-  const [uploading, setUploading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>(image || "");
   const [file, setFile] = useState<File>();
+  const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleSumbit = async (e: any) => {
+  const updateProject = async (e: any) => {
     e.preventDefault();
-    setUploading(true);
+    setIsLoading(true);
 
     const target = e.target as typeof e.target & {
       title: { value: string };
@@ -96,16 +100,45 @@ export default function ProjectEdit({
       console.error(e);
     }
 
-    setUploading(false);
+    setIsLoading(false);
+  };
+
+  const deleteProject = async (id: string) => {
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/data/projects", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      });
+
+      if (res.status === 200) {
+        shortToast(
+          "Success",
+          "The project was deleted successfully.",
+          "success",
+          5000
+        );
+        router.refresh();
+      }
+    } catch (e: any) {}
+
+    setIsLoading(false);
   };
 
   return (
     <div
       ref={ref}
-      className="group mb-3 rounded-lg shadow-lg last:mb-0 dark:bg-gray-800 sm:mb-8"
+      className="group relative mb-3 rounded-lg bg-gray-100 shadow-lg last:mb-0 dark:bg-gray-800 sm:mb-8"
     >
-      <form onSubmit={handleSumbit}>
-        <section className="relative min-w-[42rem] overflow-hidden bg-gray-100 transition dark:bg-gray-800 dark:text-white sm:h-[24rem]">
+      <Tooltip title="Delete" placement="right">
+        <Trash
+          onClick={() => deleteProject(id)}
+          className="absolute -right-4 -top-4  z-10 h-9 w-9 rounded-full bg-gray-200 p-2 shadow-md transition-all ease-in hover:cursor-pointer dark:bg-gray-950 dark:text-white  "
+        />
+      </Tooltip>
+      <form onSubmit={updateProject}>
+        <section className="relative min-w-[42rem] overflow-hidden rounded-lg bg-gray-100 transition dark:bg-gray-800 dark:text-white sm:h-[24rem]">
           <div className="flex h-full w-full flex-row">
             <div className="flex h-full w-1/2 flex-col px-4 py-6">
               <FormInput id="title" title="Title:" value={title} />
@@ -136,8 +169,8 @@ export default function ProjectEdit({
           </div>
         </section>
         <Button
-          isLoading={uploading}
-          disabled={uploading}
+          isLoading={isLoading}
+          disabled={isLoading}
           className="mb-4 mt-1 w-32 bg-[#5bb0ff] font-semibold text-gray-900 shadow-md hover:bg-[#4a8dcc] hover:text-gray-100 dark:bg-[#ff9a60] dark:text-white dark:hover:bg-[#fc8c4bd0]"
         >
           Save
