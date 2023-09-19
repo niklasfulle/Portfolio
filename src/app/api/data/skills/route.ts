@@ -49,6 +49,7 @@ export async function POST(
     return NextResponse.json({ message: "Skill created succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }
 
@@ -82,6 +83,7 @@ export async function PUT(
     return NextResponse.json({ message: "Skill updated succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }
 
@@ -113,5 +115,6 @@ export async function DELETE(
     return NextResponse.json({ message: "Skill updated succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }

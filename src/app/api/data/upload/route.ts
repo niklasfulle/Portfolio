@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const file: File | null = data.get("file") as unknown as File;
   const title: string | null = data.get("title") as string | null;
 
-  const fileName = title?.toLocaleLowerCase() + file.type.replace("image/", ".");
+  const fileName = title?.toLocaleLowerCase() + Date.now().toString() + file.type.replace("image/", ".");
 
   if (!file) {
     return NextResponse.json({ success: false });
