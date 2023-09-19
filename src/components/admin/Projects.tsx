@@ -43,7 +43,7 @@ const Projects: FC<Props> = ({ projects }) => {
       <SectionHeading>My projects</SectionHeading>
 
       {edit && (
-        <div className="mb-8 flex w-full flex-col items-center justify-center">
+        <div className="mb-8 flex w-full flex-col items-center justify-center rounded-lg">
           {projects.map((project: any, index: any) => (
             <React.Fragment key={index}>
               <ProjectEdit {...project} />
@@ -53,7 +53,7 @@ const Projects: FC<Props> = ({ projects }) => {
         </div>
       )}
       {!edit && (
-        <div className="mb-8">
+        <div className="mb-8 rounded-lg">
           {projects.map((project: any, index: any) => (
             <React.Fragment key={index}>
               <Project {...project} />

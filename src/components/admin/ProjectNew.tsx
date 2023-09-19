@@ -6,14 +6,16 @@ import FormTextarea from "../ui/FormTextarea";
 import FormUpload from "../ui/FormUpload";
 import { Button } from "../ui/Button";
 import { shortToast } from "@/lib/helpers/shorter-function";
+import { useRouter } from "next/navigation";
 
 export default function ProjectNew() {
   const [uploading, setUploading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [file, setFile] = useState<File>();
+  const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleSumbit = async (e: any) => {
+  const createProject = async (e: any) => {
     e.preventDefault();
     setUploading(true);
 
@@ -71,6 +73,10 @@ export default function ProjectNew() {
           "success",
           5000
         );
+
+        e.target.reset();
+        setSelectedImage("");
+        router.refresh();
       }
     } catch (e: any) {
       // Handle errors here
@@ -83,10 +89,10 @@ export default function ProjectNew() {
   return (
     <div
       ref={ref}
-      className="group mb-3 rounded-lg shadow-lg last:mb-0 dark:bg-gray-800 sm:mb-8"
+      className="group relative mb-3 rounded-lg bg-gray-100 shadow-lg last:mb-0 dark:bg-gray-800 sm:mb-8"
     >
-      <form onSubmit={handleSumbit}>
-        <section className="relative min-w-[42rem] overflow-hidden bg-gray-100 transition dark:bg-gray-800 dark:text-white sm:h-[24rem]">
+      <form onSubmit={createProject}>
+        <section className="relative min-w-[42rem] overflow-hidden rounded-lg bg-gray-100 transition dark:bg-gray-800 dark:text-white sm:h-[24rem]">
           <div className="flex h-full w-full flex-row">
             <div className="flex h-full w-1/2 flex-col px-4 py-6">
               <FormInput id="title" title="Title:" value={""} />
@@ -116,7 +122,11 @@ export default function ProjectNew() {
             </div>
           </div>
         </section>
-        <Button className="mb-4 mt-1 w-32 bg-[#5bb0ff] font-semibold text-gray-900 shadow-md hover:bg-[#4a8dcc] hover:text-gray-100 dark:bg-[#ff9a60] dark:text-white dark:hover:bg-[#fc8c4bd0]">
+        <Button
+          isLoading={uploading}
+          disabled={uploading}
+          className="mb-4 mt-1 w-32 bg-[#5bb0ff] font-semibold text-gray-900 shadow-md hover:bg-[#4a8dcc] hover:text-gray-100 dark:bg-[#ff9a60] dark:text-white dark:hover:bg-[#fc8c4bd0]"
+        >
           Add
         </Button>
       </form>

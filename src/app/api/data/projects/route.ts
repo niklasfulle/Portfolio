@@ -79,3 +79,33 @@ export async function PUT(
     console.log(error)
   }
 }
+
+export async function DELETE(
+  req: Request
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) return NextResponse.json({
+      error: 'Unauthorized to perform this action.', success: false
+    }, { status: 401 })
+
+    const user = await getUserWithouPassword(session?.user?.email)
+
+    if (!user || user.role !== "admin") return NextResponse.json({
+      error: 'Unauthorized to perform this action.', success: false
+    }, { status: 401 })
+
+    const body: any = await req.json();
+
+    await db.projects.delete({
+      where: {
+        id: body.id
+      }
+    })
+
+    return NextResponse.json({ message: "Project delete succsesful", success: true }, { status: 200 })
+  } catch (error) {
+    console.log(error)
+  }
+}
