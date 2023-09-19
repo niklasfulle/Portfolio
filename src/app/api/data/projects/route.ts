@@ -1,6 +1,7 @@
 import { authOptions } from "@/lib/auth/auth";
 import { db } from "@/lib/db/prisma";
 import { getUserWithouPassword } from "@/lib/db/user-functions";
+import { unlink } from "fs/promises";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -22,7 +23,6 @@ export async function POST(
 
     const body: any = await req.json();
 
-
     await db.projects.create({
       data: {
         title: body.title,
@@ -38,6 +38,7 @@ export async function POST(
     return NextResponse.json({ message: "Project created succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }
 
@@ -59,6 +60,17 @@ export async function PUT(
 
     const body: any = await req.json();
 
+    const project = await db.projects.findUnique({
+      where: {
+        id: body.id
+      }
+    })
+
+    if (!project) return NextResponse.json({
+      error: 'Project not found', success: false
+    }, { status: 400 })
+
+
     await db.projects.update({
       where: {
         id: body.id
@@ -74,9 +86,14 @@ export async function PUT(
       }
     })
 
+    const file = `${process.cwd()}/public${project.image}`;
+
+    await unlink(file)
+
     return NextResponse.json({ message: "Project updated succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }
 
@@ -98,14 +115,29 @@ export async function DELETE(
 
     const body: any = await req.json();
 
+    const project = await db.projects.findUnique({
+      where: {
+        id: body.id
+      }
+    })
+
+    if (!project) return NextResponse.json({
+      error: 'Project not found', success: false
+    }, { status: 400 })
+
     await db.projects.delete({
       where: {
         id: body.id
       }
     })
 
+    const file = `${process.cwd()}/public${project.image}`;
+
+    await unlink(file)
+
     return NextResponse.json({ message: "Project delete succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }

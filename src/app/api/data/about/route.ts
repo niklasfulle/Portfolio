@@ -51,5 +51,6 @@ export async function PUT(
     return NextResponse.json({ message: "About updated succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }

@@ -76,9 +76,11 @@ const Experience: FC<Props> = ({ experience }) => {
         </>
       )}
       <SectionHeading>My experience</SectionHeading>
+      {/* @ts-ignore */}
       <VerticalTimeline lineColor="">
         {experience.map((item: any, index: any) => (
           <React.Fragment key={index}>
+            {/* @ts-ignore */}
             <VerticalTimelineElement
               contentStyle={{
                 background: theme === "light" ? "white" : "rgb(31, 41, 55)",
