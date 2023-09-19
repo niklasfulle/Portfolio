@@ -20,22 +20,33 @@ export async function POST(
       error: 'Unauthorized to perform this action.', success: false
     }, { status: 401 })
 
+    const last = await db.skills.findMany({
+      orderBy: {
+        series: "desc"
+      },
+      take: 1
+    })
+
+    let series;
+
+    if (last.length === 0) {
+      series = 1
+    } else {
+      series = last[0].series + 1
+    }
+
     const body: any = await req.json();
 
-
-    await db.projects.create({
+    await db.skills.create({
       data: {
-        title: body.title,
-        description: body.description,
-        image: body.image,
-        url: body.url,
-        tags: body.tags,
+        name: body.data.name,
+        type: body.data.type,
         visible: true,
-        series: Number(body.series)
+        series: series
       }
     })
 
-    return NextResponse.json({ message: "Project created succsesful", success: true }, { status: 200 })
+    return NextResponse.json({ message: "Skill created succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
   }
@@ -59,22 +70,16 @@ export async function PUT(
 
     const body: any = await req.json();
 
-    await db.projects.update({
+    await db.skills.update({
       where: {
-        id: body.id
+        id: body.data.id
       },
       data: {
-        title: body.title,
-        description: body.description,
-        image: body.image,
-        url: body.link,
-        tags: body.tags,
-        visible: true,
-        series: Number(body.series)
+        name: body.data.name,
       }
     })
 
-    return NextResponse.json({ message: "Project updated succsesful", success: true }, { status: 200 })
+    return NextResponse.json({ message: "Skill updated succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
   }
@@ -98,13 +103,14 @@ export async function DELETE(
 
     const body: any = await req.json();
 
-    await db.projects.delete({
+    await db.skills.delete({
       where: {
         id: body.id
-      }
+      },
+
     })
 
-    return NextResponse.json({ message: "Project delete succsesful", success: true }, { status: 200 })
+    return NextResponse.json({ message: "Skill updated succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
   }

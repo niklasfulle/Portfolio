@@ -1,3 +1,4 @@
+import React from "react";
 import Intro from "@/main/Intro";
 import Projects from "@/main/Projects";
 import About from "@/main/About";

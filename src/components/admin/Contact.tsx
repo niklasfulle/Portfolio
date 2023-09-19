@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useSectionInView } from "@/lib/hooks";
-import toast from "react-hot-toast";
 import SectionHeading from "@/components/SectionHeading";
 import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";

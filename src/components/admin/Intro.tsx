@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import React from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 import { useSectionInView } from "@/lib/hooks";

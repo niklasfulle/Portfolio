@@ -6,12 +6,8 @@ import { Dispatch, FormEvent, SetStateAction } from "react";
 
 type SetIsLoading = Dispatch<SetStateAction<boolean>>;
 
-type SetError = Dispatch<SetStateAction<string>>;
-
-
-
 // handles the login with credentials
-export const loginWithCredentials = async (e: FormEvent, setIsLoading: SetIsLoading, setError: SetError) => {
+export const loginWithCredentials = async (e: FormEvent, setIsLoading: SetIsLoading) => {
   e.preventDefault();
   setIsLoading(true);
 
@@ -35,10 +31,8 @@ export const loginWithCredentials = async (e: FormEvent, setIsLoading: SetIsLoad
         const error: any = JSON.parse(res.error);
 
         shortToast("Error", error[0].message, "error", 5000);
-        setError(error[0].message);
       } else {
         shortToast("Error", res.error, "error", 5000);
-        setError(res.error);
       }
     } else {
       window.location.href = "/";

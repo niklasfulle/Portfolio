@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
@@ -64,7 +64,7 @@ export default function Project({
           width="500"
           height="500"
           quality="95"
-          className="absolute -right-40 top-6 hidden w-[28.25rem] rounded-t-lg shadow-2xl transition
+          className="absolute -right-40 top-6 hidden w-[28.25rem] rounded-lg shadow-2xl transition
         group-even:-left-40 
         group-even:right-[initial]
         group-hover:-translate-x-3
