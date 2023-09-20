@@ -20,6 +20,8 @@ export default async function Home() {
   const learn = await getLearn();
   const experience = await getExperience();
 
+  //console.log(experience);
+
   const skillsData = skills.map((skill) => skill.name);
   const learnData = learn.map((skill) => skill.name);
 

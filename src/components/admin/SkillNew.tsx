@@ -15,6 +15,9 @@ const SkillNew: FC<SkillNewProps> = ({ setNew, type }) => {
   const router = useRouter();
 
   const createSkill = async () => {
+    if (skill === "" || skill === " ")
+      return shortToast("Error", "The Skill cannot be empty.", "error", 5000);
+
     try {
       const data = {
         name: skill,
@@ -58,10 +61,11 @@ const SkillNew: FC<SkillNewProps> = ({ setNew, type }) => {
         />
       </Tooltip>
       <Input
+        autoFocus
         onChange={(e) => {
           setSkill(e.target.value);
         }}
-        placeholder="Learn"
+        placeholder={type}
         className="w-24 dark:text-white"
       />
     </div>

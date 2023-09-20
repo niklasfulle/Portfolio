@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import SkillEdit from "./SkillEdit";
 import SkillNew from "./SkillNew";
 import Skill from "./Skill";
+import { Tooltip } from "@mui/material";
 
 interface Props {
   skills?: any;
@@ -73,13 +74,15 @@ const Skills: FC<Props> = ({ skills, learn }) => {
                 <SkillNew setNew={setNewSkill} type="skill" />
               </li>
             ) : (
-              <li
-                key={"skillCreatePlus"}
-                onClick={() => setNewSkill(true)}
-                className="ml-4 rounded-full border border-black bg-white p-1.5 shadow-sm transition-all ease-in hover:cursor-pointer dark:border-white/30 dark:bg-gray-950 dark:text-white/80 hover:dark:bg-gray-900"
-              >
-                <Plus />
-              </li>
+              <Tooltip title="New" placement="right">
+                <li
+                  key={"skillCreatePlus"}
+                  onClick={() => setNewSkill(true)}
+                  className="ml-4 rounded-full border border-black bg-white p-1.5 shadow-sm transition-all ease-in hover:cursor-pointer dark:border-white/30 dark:bg-gray-950 dark:text-white/80 hover:dark:bg-gray-900"
+                >
+                  <Plus />
+                </li>
+              </Tooltip>
             )}
           </>
         )}
@@ -108,13 +111,15 @@ const Skills: FC<Props> = ({ skills, learn }) => {
                 <SkillNew setNew={setNewLearn} type="learn" />
               </li>
             ) : (
-              <li
-                key={"learnCreatePlus"}
-                onClick={() => setNewLearn(true)}
-                className="ml-4 rounded-full border border-black bg-white p-1.5 shadow-sm transition-all ease-in hover:cursor-pointer dark:border-white/30 dark:bg-gray-950 dark:text-white/80 hover:dark:bg-gray-900"
-              >
-                <Plus />
-              </li>
+              <Tooltip title="New" placement="right">
+                <li
+                  key={"learnCreatePlus"}
+                  onClick={() => setNewLearn(true)}
+                  className="ml-4 rounded-full border border-black bg-white p-1.5 shadow-sm transition-all ease-in hover:cursor-pointer dark:border-white/30 dark:bg-gray-950 dark:text-white/80 hover:dark:bg-gray-900"
+                >
+                  <Plus />
+                </li>
+              </Tooltip>
             )}
           </>
         )}
