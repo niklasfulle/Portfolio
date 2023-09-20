@@ -17,23 +17,27 @@ export async function POST(request: NextRequest) {
     error: 'Unauthorized to perform this action.', success: false
   }, { status: 401 })
 
-  const data = await request.formData();
-  const file: File | null = data.get("file") as unknown as File;
-  const title: string | null = data.get("title") as string | null;
+  try {
+    const data = await request.formData();
+    const file: File | null = data.get("file") as unknown as File;
+    const title: string | null = data.get("title") as string | null;
 
-  const fileName = title?.toLocaleLowerCase() + Date.now().toString() + file.type.replace("image/", ".");
+    const fileName = title?.toLocaleLowerCase().replaceAll(" ", "-") + Date.now().toString() + file.type.replace("image/", ".");
 
-  if (!file) {
-    return NextResponse.json({ success: false });
+    if (!file) {
+      return NextResponse.json({ success: false });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // With the file data in the buffer, you can do whatever you want with it.
+    // For this, we'll just write it to the filesystem in a new location
+    const path = `${process.cwd()}/public/images/${fileName}`;
+    await writeFile(path, buffer);
+
+    return NextResponse.json({ success: true, fileName: fileName });
+  } catch (error) {
+    console.log(error);
   }
-
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
-  // With the file data in the buffer, you can do whatever you want with it.
-  // For this, we'll just write it to the filesystem in a new location
-  const path = `${process.cwd()}/public/images/${fileName}`;
-  await writeFile(path, buffer);
-
-  return NextResponse.json({ success: true, fileName: fileName });
 }

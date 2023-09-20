@@ -17,7 +17,7 @@ const SkillEdit: FC<SkillEditProps> = ({ skill, id }) => {
 
   const updateSkill = async () => {
     try {
-      if (editSkill === "") {
+      if (editSkill === "" || editSkill === " ") {
         const res = await fetch(`/api/data/skills`, {
           method: "DELETE",
           headers: {
