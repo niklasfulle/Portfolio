@@ -6,7 +6,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { motion } from "framer-motion";
 import Timeline from "./Timeline/Timeline";
 
-type Experience = {
+type ExperienceType = {
   id: string;
   date: string;
   title: string;
@@ -17,7 +17,7 @@ type Experience = {
 };
 
 interface Props {
-  experience: Experience[];
+  experience: ExperienceType[];
 }
 
 const Experience: FC<Props> = ({ experience }) => {

@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, fileName: fileName });
   } catch (error) {
-    console.log(error);
+    console.log(error)
+    return NextResponse.json({ message: error, success: false }, { status: 400 })
   }
 }
