@@ -39,7 +39,7 @@ export default function Project({
       }}
       className="group mb-3 rounded-lg shadow-md last:mb-0 sm:mb-8"
     >
-      <section className="relative w-[42rem] overflow-hidden rounded-lg border border-black/5 bg-gray-100 transition hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 sm:h-[22rem] sm:pr-8 sm:group-even:pl-8">
+      <section className="relative h-[15rem] overflow-hidden rounded-lg border border-black/5 bg-gray-100 transition hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 sm:h-[22rem] sm:pr-8 sm:group-even:pl-8 md:w-[42rem]">
         <div className="flex h-full flex-col justify-between px-5 pb-5 pt-4 sm:max-w-[50%] sm:pl-6 sm:pr-2 sm:pt-8 sm:group-even:ml-[18rem]">
           <div className="flex flex-col">
             <h3 className="text-2xl font-semibold">{title}</h3>

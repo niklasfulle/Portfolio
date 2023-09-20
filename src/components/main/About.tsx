@@ -26,7 +26,7 @@ const About: FC<Props> = ({ abouteMe }) => {
         <SectionHeading>About me</SectionHeading>
         {abouteMe.map((abouteMe: any, index: any) => (
           <motion.p
-            className="mb-3"
+            className="mb-5 px-4 sm:px-0"
             key={index}
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
