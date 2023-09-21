@@ -1,36 +1,16 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import {
-  VerticalTimeline,
-  VerticalTimelineElement,
-  /* @ts-ignore */
-} from "react-vertical-timeline-component";
-import "react-vertical-timeline-component/style.min.css";
 import { useSectionInView } from "@/lib/hooks";
 import { useTheme } from "next-themes";
-import { CgWorkAlt } from "react-icons/cg";
-import { FaReact } from "react-icons/fa";
-import { LuGraduationCap } from "react-icons/lu";
 import SectionHeading from "../SectionHeading";
 import { Button } from "../ui/Button";
+import Timeline from "./Timeline/Timeline";
+import TimelineEdit from "./Timeline/TimelineEdit";
 
 interface Props {
   experience?: any;
 }
-
-const switchIcons = (icon: string) => {
-  switch (icon) {
-    case "FaReact":
-      return <FaReact />;
-    case "CgWorkAlt":
-      return <CgWorkAlt />;
-    case "LuGraduationCap":
-      return <LuGraduationCap />;
-    default:
-      return <FaReact />;
-  }
-};
 
 const Experience: FC<Props> = ({ experience }) => {
   const [edit, setEdit] = useState(false);
@@ -76,42 +56,9 @@ const Experience: FC<Props> = ({ experience }) => {
         </>
       )}
       <SectionHeading>My experience</SectionHeading>
-      {/* @ts-ignore */}
-      <VerticalTimeline lineColor="">
-        {experience.map((item: any, index: any) => (
-          <React.Fragment key={index}>
-            {/* @ts-ignore */}
-            <VerticalTimelineElement
-              contentStyle={{
-                background: theme === "light" ? "white" : "rgb(31, 41, 55)",
-                boxShadow: "none",
-                border: "2px solid rgba(0, 0, 0, 0.4)",
-                textAlign: "left",
-                padding: "1.3rem 2rem",
-              }}
-              contentArrowStyle={{
-                borderRight:
-                  theme === "light"
-                    ? "0.4rem solid #9ca3af"
-                    : "0.4rem solid rgb(31, 41, 55)",
-              }}
-              date={item.date}
-              icon={switchIcons(item.icon)}
-              iconStyle={{
-                border: "2px solid rgba(0, 0, 0, 0.4)",
-                background: theme === "light" ? "white" : "rgb(31, 41, 55)",
-                fontSize: "1.5rem",
-              }}
-            >
-              <h3 className="font-semibold capitalize">{item.title}</h3>
-              <p className="!mt-0 font-normal">{item.location}</p>
-              <p className="!mt-1 !font-normal text-gray-700 dark:text-white/75">
-                {item.description}
-              </p>
-            </VerticalTimelineElement>
-          </React.Fragment>
-        ))}
-      </VerticalTimeline>
+
+      {edit && <TimelineEdit data={experience} />}
+      {!edit && <Timeline data={experience} />}
     </section>
   );
 };

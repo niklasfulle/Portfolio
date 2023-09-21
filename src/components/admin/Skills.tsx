@@ -52,7 +52,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
         </>
       )}
       <SectionHeading>My skills</SectionHeading>
-      <ul className="mb-16 flex max-w-[53rem] flex-wrap items-center justify-center gap-x-5 gap-y-3 text-lg text-gray-800">
+      <ul className="mb-16 flex max-w-[53rem] flex-wrap items-center justify-center gap-8 text-lg text-gray-800">
         {!edit && (
           <>
             {skills.map((skill: any, index: number) => (
@@ -88,7 +88,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
         )}
       </ul>
       <SectionHeading>I want to learn</SectionHeading>
-      <ul className="mb-16 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-lg text-gray-800">
+      <ul className="mb-16 flex flex-wrap items-center justify-center gap-8 text-lg text-gray-800">
         {!edit && (
           <>
             {learn.map((learn: any, index: number) => (
