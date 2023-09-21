@@ -104,8 +104,8 @@ const About: FC<Props> = ({ abouteMe }) => {
         <SectionHeading>About me</SectionHeading>
         {edit && (
           <form className="mb-12 flex flex-col" onSubmit={(e) => save(e)}>
-            {abouteMe.map((abouteMe: any, index: any) => (
-              <>
+            {abouteMe.map((abouteMe: any, index: number) => (
+              <React.Fragment key={index}>
                 <div className="flex flex-row items-center justify-between">
                   <h4 className="mx-4 text-left" key={"h4" + index}>
                     Text {abouteMe.id}:
@@ -113,13 +113,12 @@ const About: FC<Props> = ({ abouteMe }) => {
                 </div>
                 <div className="flex flex-row">
                   <Textarea
-                    key={"text" + index}
                     id={"text" + abouteMe.id}
                     className="mx-2 mb-2 h-[12rem] w-[32rem] dark:text-white lg:w-[45rem]"
                     defaultValue={abouteMe.text}
                   />
                 </div>
-              </>
+              </React.Fragment>
             ))}
             <Button
               isLoading={isLoading}

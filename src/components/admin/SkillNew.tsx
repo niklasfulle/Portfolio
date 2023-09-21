@@ -1,5 +1,5 @@
 import { Tooltip } from "@mui/material";
-import { Check, X } from "lucide-react";
+import { Save, X } from "lucide-react";
 import React, { FC, useState } from "react";
 import { Input } from "../ui/Input";
 import { shortToast } from "@/lib/helpers/shorter-function";
@@ -55,7 +55,7 @@ const SkillNew: FC<SkillNewProps> = ({ setNew, type }) => {
         />
       </Tooltip>
       <Tooltip title="Save" placement="right">
-        <Check
+        <Save
           onClick={createSkill}
           className="absolute -bottom-4 -right-4 z-10 h-7 w-7 rounded-full bg-gray-300 p-1 shadow-md transition-all ease-in hover:cursor-pointer hover:bg-green-300 dark:bg-gray-950 dark:text-white hover:dark:bg-green-700"
         />

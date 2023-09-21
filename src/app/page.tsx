@@ -26,7 +26,7 @@ export default async function Home() {
   const learnData = learn.map((skill) => skill.name);
 
   return (
-    <main className="flex flex-col items-center px-4">
+    <main className="flex flex-col items-center scroll-smooth px-4">
       <Intro />
       <About abouteMe={about} />
       <Projects projects={projects} />
