@@ -11,7 +11,6 @@ import { CgWorkAlt } from "react-icons/cg";
 import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import IconCarousel from "./IconCarousel";
-import { set } from "zod";
 import { shortToast } from "@/lib/helpers/shorter-function";
 
 interface TimelineContainerEditProps {

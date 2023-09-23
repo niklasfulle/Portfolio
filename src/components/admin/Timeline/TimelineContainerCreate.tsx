@@ -4,12 +4,9 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@mui/material";
-import { MapPin, Pencil, Save, Trash, X } from "lucide-react";
+import { MapPin, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { FC, useState } from "react";
-import { CgWorkAlt } from "react-icons/cg";
-import { FaReact } from "react-icons/fa";
-import { LuGraduationCap } from "react-icons/lu";
 import IconCarousel from "./IconCarousel";
 import { shortToast } from "@/lib/helpers/shorter-function";
 
@@ -23,19 +20,6 @@ interface TimelineContainerCreateProps {
     icon: string;
   };
 }
-
-const switchIcons = (icon: string) => {
-  switch (icon) {
-    case "FaReact":
-      return <FaReact className="h-7 w-7" />;
-    case "CgWorkAlt":
-      return <CgWorkAlt className="h-7 w-7" />;
-    case "LuGraduationCap":
-      return <LuGraduationCap className="h-7 w-7" />;
-    default:
-      return <FaReact className="h-7 w-7" />;
-  }
-};
 
 const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
   position,
@@ -52,10 +36,6 @@ const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
     position === "left"
       ? "md:-right-[60%] lg:-right-[50%] xl:-right-[35%] md:text-left"
       : "md:-left-[60%] lg:-left-[50%] xl:-left-[35%] md:text-right";
-  const iconCSS =
-    position === "left"
-      ? "right-0 left-12 md:right-16 md:left-auto"
-      : " left-12 md:left-16 md:right-auto";
   const contentCSS =
     position === "left"
       ? "rounded-xl py-8 pl-20 pr-10 md:py-4 lg:py-8 md:pl-4 lg:pl-8 md:pr-24 lg:pr-28"

@@ -14,3 +14,123 @@ html.dark {
 .borderBlack {
   @apply border border-black/10;
 }
+
+#backgrounddiv1 {
+  position: absolute;
+  right: 70%;
+  top: -12rem;
+  height: 31.25rem;
+  width: 31.25rem;
+  filter: blur(16rem);
+  -webkit-filter: blur(16rem);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  background-color: #3553cb;
+  background-image: -webkit-linear-gradient(top, #3553cb, #2cb1ea);
+  background-image: -moz-linear-gradient(top, #3553cb, #2cb1ea);
+  background-image: -o-linear-gradient(top, #3553cb, #2cb1ea);
+  background-image: linear-gradient(to bottom, #3553cb, #2cb1ea);
+}
+
+#backgrounddiv2 {
+  position: absolute;
+  left: 70%;
+  top: -17rem;
+  height: 31.25rem;
+  width: 31.25rem;
+  filter: blur(16rem);
+  -webkit-filter: blur(16rem);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  background-color: #c135cb;
+  background-image: -webkit-linear-gradient(top, #c135cb, #ea2ca4);
+  background-image: -moz-linear-gradient(top, #c135cb, #ea2ca4);
+  background-image: -o-linear-gradient(top, #c135cb, #ea2ca4);
+  background-image: linear-gradient(to bottom, #c135cb, #ea2ca4);
+}
+
+#backgrounddiv3 {
+  position: absolute;
+  left: 30%;
+  top: -23rem;
+  height: 31.25rem;
+  width: 31.25rem;
+  filter: blur(16rem);
+  -webkit-filter: blur(16rem);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  background-color: #37cb35;
+  background-image: -webkit-linear-gradient(top, #37cb35, #00fc61);
+  background-image: -moz-linear-gradient(top, #37cb35, #00fc61);
+  background-image: -o-linear-gradient(top, #37cb35, #00fc61);
+  background-image: linear-gradient(to bottom, #37cb35, #00fc61);
+}
+
+#backgrounddiv4 {
+  position: absolute;
+  right: 65%;
+  top: 28rem;
+  height: 25.25rem;
+  width: 25.25rem;
+  filter: blur(16rem);
+  -webkit-filter: blur(16rem);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  background-color: #ef2c2c;
+  background-image: -webkit-linear-gradient(top, #ef2c2c, #ef2c2c);
+  background-image: -moz-linear-gradient(top, #ef2c2c, #ef2c2c);
+  background-image: -o-linear-gradient(top, #ef2c2c, #ef2c2c);
+  background-image: linear-gradient(to bottom, #ef2c2c, #ef2c2c);
+}
+
+#backgrounddiv5 {
+  position: absolute;
+  left: 85%;
+  top: 28rem;
+  height: 25.25rem;
+  width: 25.25rem;
+  filter: blur(16rem);
+  -webkit-filter: blur(16rem);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  background-color: #1adbb1;
+  background-image: -webkit-linear-gradient(top, #1adbb1, #1adb64);
+  background-image: -moz-linear-gradient(top, #1adbb1, #1adb64);
+  background-image: -o-linear-gradient(top, #1adbb1, #1adb64);
+  background-image: linear-gradient(to bottom, #1adbb1, #1adb64);
+}
+
+#backgrounddiv6 {
+  position: absolute;
+  left: 45%;
+  top: 32rem;
+  height: 25.25rem;
+  width: 25.25rem;
+  filter: blur(16rem);
+  -webkit-filter: blur(16rem);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  background-color: #a47b3e;
+  background-image: -webkit-linear-gradient(top, #a47b3e, #d18d27);
+  background-image: -moz-linear-gradient(top, #a47b3e, #d18d27);
+  background-image: -o-linear-gradient(top, #a47b3e, #d18d27);
+  background-image: linear-gradient(to bottom, #a47b3e, #d18d27);
+}
