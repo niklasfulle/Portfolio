@@ -75,6 +75,7 @@ const SkillEdit: FC<SkillEditProps> = ({ skill, id }) => {
               setEditSkill(e.target.value);
             }}
             className="w-24 dark:text-white"
+            required
           />
           <Tooltip title="Close" placement="right">
             <X

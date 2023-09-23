@@ -29,7 +29,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
     <section
       id="skills"
       ref={ref}
-      className="h-screen max-w-[53rem] scroll-mt-28 text-center"
+      className="h-fit min-h-screen max-w-[53rem] scroll-mt-28 text-center"
     >
       <SectionHeading>My skills</SectionHeading>
       <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">

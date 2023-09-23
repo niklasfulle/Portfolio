@@ -14,8 +14,3 @@ html.dark {
 .borderBlack {
   @apply border border-black/10;
 }
-
-body::-webkit-scrollbar {
-  display: none;
-  overflow-y: none;
-}

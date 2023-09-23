@@ -12,9 +12,6 @@ const About: FC<Props> = ({ abouteMe }) => {
 
   return (
     <section className="h-fit min-h-screen max-w-[45rem] scroll-mt-28">
-      <div className="absolute right-1/2 top-[50rem] -z-20 h-[31.25rem] w-[21.25rem] translate-x-[-35%] rounded-full bg-[#866cb8] blur-[16rem] dark:bg-[#93b969] sm:w-[68.75rem]"></div>
-      <div className="absolute left-1/2 top-[50rem] -z-10 h-[11.25rem] w-[21.25rem] translate-x-[-50%] rounded-full bg-[#3ec750] blur-[16rem] dark:bg-[#d8a07f] sm:w-[68.75rem]"></div>
-      <div className="absolute left-1/2 top-[55rem] -z-20 h-[31.25rem] w-[21.25rem] translate-x-[35%] rounded-full bg-[#f1bbbb] blur-[16rem] dark:bg-[#ad6066] sm:w-[68.75rem]"></div>
       <motion.div
         ref={ref}
         className="scroll-mt-28 text-center leading-8"

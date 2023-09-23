@@ -12,6 +12,7 @@ import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import IconCarousel from "./IconCarousel";
 import { set } from "zod";
+import { shortToast } from "@/lib/helpers/shorter-function";
 
 interface TimelineContainerEditProps {
   position: "left" | "right";
@@ -63,7 +64,7 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
       ? "rounded-xl py-8 pl-20 pr-10 md:py-4 lg:py-8 md:pl-4 lg:pl-8 md:pr-24 lg:pr-28"
       : "rounded-xl py-8 pl-20 pr-10 md:py-4 lg:py-8 md:pr-4 lg:pr-8 md:pl-24 lg:pl-28";
 
-  const updateExperience = (e: any, id: string, icon: string) => {
+  const updateExperience = async (e: any, id: string, icon: string) => {
     e.preventDefault();
 
     const target = e.target as typeof e.target & {
@@ -78,13 +79,51 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
     const location = target.location.value;
     const description = target.description.value;
 
-    console.log(id, date, title, location, description, icon);
+    const data = {
+      id: id,
+      date: date,
+      title: title,
+      location: location,
+      description: description,
+      icon: icon,
+    };
+
+    const res = await fetch("/api/data/experience", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      shortToast(
+        "Success",
+        "The Experience was updated successfully.",
+        "success",
+        5000
+      );
+      router.refresh();
+    }
     router.refresh();
   };
 
-  const deleteExperience = (id: string) => {
-    console.log(id);
-    router.refresh();
+  const deleteExperience = async (id: string) => {
+    const data = {
+      id: id,
+    };
+
+    const res = await fetch("/api/data/experience", {
+      method: "DELETE",
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      shortToast(
+        "Success",
+        "The Experience was deleted successfully.",
+        "success",
+        5000
+      );
+      router.refresh();
+    }
   };
 
   const closeEdit = () => {
@@ -160,6 +199,7 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
                 id="date"
                 placeholder="Date"
                 defaultValue={values.date}
+                required
               />
             </div>
             <IconCarousel position={position} icon={icon} setIcon={setIcon} />
@@ -175,6 +215,7 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
                   placeholder="Title"
                   id="title"
                   defaultValue={values.title}
+                  required
                 />
               </h2>
               <h4 className="mx-0 mb-2.5 mt-0 flex flex-row items-center gap-x-1 text-left text-base dark:text-white ">
@@ -184,6 +225,7 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
                   placeholder="Location"
                   id="location"
                   defaultValue={values.location}
+                  required
                 />
               </h4>
               <p className="m-0 text-left text-base leading-5 dark:text-white">
@@ -192,6 +234,7 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
                   placeholder="Description"
                   id="description"
                   defaultValue={values.description}
+                  required
                 />
               </p>
             </div>
