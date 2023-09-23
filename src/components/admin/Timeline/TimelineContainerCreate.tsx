@@ -11,6 +11,7 @@ import { CgWorkAlt } from "react-icons/cg";
 import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import IconCarousel from "./IconCarousel";
+import { shortToast } from "@/lib/helpers/shorter-function";
 
 interface TimelineContainerCreateProps {
   position: "left" | "right";
@@ -60,7 +61,7 @@ const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
       ? "rounded-xl py-8 pl-20 pr-10 md:py-4 lg:py-8 md:pl-4 lg:pl-8 md:pr-24 lg:pr-28"
       : "rounded-xl py-8 pl-20 pr-10 md:py-4 lg:py-8 md:pr-4 lg:pr-8 md:pl-24 lg:pl-28";
 
-  const createExperience = (e: any, icon: string) => {
+  const createExperience = async (e: any, icon: string) => {
     e.preventDefault();
 
     const target = e.target as typeof e.target & {
@@ -75,7 +76,28 @@ const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
     const location = target.location.value;
     const description = target.description.value;
 
-    console.log(date, title, location, description, icon);
+    const data = {
+      date,
+      title,
+      location,
+      description,
+      icon,
+    };
+
+    const res = await fetch("/api/data/experience", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      shortToast(
+        "Success",
+        "The Experience was created successfully.",
+        "success",
+        5000
+      );
+      router.refresh();
+    }
     router.refresh();
   };
 
@@ -98,6 +120,7 @@ const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
             id="date"
             placeholder="Date"
             defaultValue={values.date}
+            required
           />
         </div>
         <IconCarousel position={position} icon={icon} setIcon={setIcon} />
@@ -113,6 +136,7 @@ const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
               placeholder="Title"
               id="title"
               defaultValue={values.title}
+              required
             />
           </h2>
           <h4 className="mx-0 mb-2.5 mt-0 flex flex-row items-center gap-x-1 text-left text-base dark:text-white ">
@@ -122,6 +146,7 @@ const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
               placeholder="Location"
               id="location"
               defaultValue={values.location}
+              required
             />
           </h4>
           <p className="m-0 text-left text-base leading-5 dark:text-white">
@@ -130,6 +155,7 @@ const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({
               placeholder="Description"
               id="description"
               defaultValue={values.description}
+              required
             />
           </p>
         </div>

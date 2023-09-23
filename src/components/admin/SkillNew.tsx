@@ -67,6 +67,7 @@ const SkillNew: FC<SkillNewProps> = ({ setNew, type }) => {
         }}
         placeholder={type}
         className="w-24 dark:text-white"
+        required
       />
     </div>
   );

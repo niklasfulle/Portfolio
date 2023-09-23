@@ -22,6 +22,20 @@ export async function POST(
 
     const body: any = await req.json();
 
+    const odrder = await db.experience.count() + 1 || 1
+
+    const experience = await db.experience.create({
+      data: {
+        date: body.date,
+        icon: body.icon,
+        title: body.title,
+        location: body.location,
+        description: body.description,
+        visible: true,
+        series: odrder
+      }
+    })
+
     return NextResponse.json({ message: "Experience created succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
@@ -47,6 +61,19 @@ export async function PUT(
 
     const body: any = await req.json();
 
+    const experience = await db.experience.update({
+      where: {
+        id: body.id
+      },
+      data: {
+        date: body.date,
+        icon: body.icon,
+        title: body.title,
+        location: body.location,
+        description: body.description,
+      }
+    })
+
     return NextResponse.json({ message: "Experience updated succsesful", success: true }, { status: 200 })
   } catch (error) {
     console.log(error)
@@ -71,6 +98,12 @@ export async function DELETE(
     }, { status: 401 })
 
     const body: any = await req.json();
+
+    const experience = await db.experience.delete({
+      where: {
+        id: body.id
+      }
+    })
 
     return NextResponse.json({ message: "Experience delete succsesful", success: true }, { status: 200 })
   } catch (error) {

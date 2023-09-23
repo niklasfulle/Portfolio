@@ -37,7 +37,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className={cn(
-        "light:bg-white w-[100%] overflow-x-hidden scroll-smooth text-slate-900 antialiased dark:bg-gray-900",
+        "light:bg-white w-[100%] scroll-smooth text-slate-900 antialiased dark:bg-gray-800",
         inter.className
       )}
     >
