@@ -24,7 +24,7 @@ export async function POST(
 
     const odrder = await db.experience.count() + 1 || 1
 
-    const experience = await db.experience.create({
+    await db.experience.create({
       data: {
         date: body.date,
         icon: body.icon,
@@ -61,7 +61,7 @@ export async function PUT(
 
     const body: any = await req.json();
 
-    const experience = await db.experience.update({
+    await db.experience.update({
       where: {
         id: body.id
       },
@@ -99,7 +99,7 @@ export async function DELETE(
 
     const body: any = await req.json();
 
-    const experience = await db.experience.delete({
+    await db.experience.delete({
       where: {
         id: body.id
       }

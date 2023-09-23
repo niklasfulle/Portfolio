@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { FC } from "react";
 import { CgWorkAlt } from "react-icons/cg";
-import { FaGraduationCap, FaReact } from "react-icons/fa";
+import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 
 interface IconCarouselProps {

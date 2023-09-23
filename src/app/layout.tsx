@@ -14,6 +14,7 @@ import { headers } from "next/headers";
 import UserButton from "@/ui/UserButton";
 import LoginButton from "@/ui/LoginButton";
 import Header from "@/components/header";
+import Background from "@/components/Background";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -52,6 +53,7 @@ export default async function RootLayout({
           <Footer />
           <Toggels />
           <Toaster position="bottom-right" />
+          <Background />
         </Providers>
       </body>
     </html>
