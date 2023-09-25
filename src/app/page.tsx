@@ -7,6 +7,7 @@ import Experience from "@/main/Experience";
 import Contact from "@/main/Contact";
 import {
   getAbout,
+  getContactEmail,
   getExperience,
   getLearn,
   getProjects,
@@ -19,6 +20,7 @@ export default async function Home() {
   const skills = await getSkills();
   const learn = await getLearn();
   const experience = await getExperience();
+  const contactEmail = await getContactEmail();
 
   //console.log(experience);
 
@@ -32,7 +34,7 @@ export default async function Home() {
       <Projects projects={projects} />
       <Skills skills={skillsData} learn={learnData} />
       <Experience experience={experience} />
-      <Contact />
+      <Contact contactEmail={contactEmail[0].email} />
     </main>
   );
 }

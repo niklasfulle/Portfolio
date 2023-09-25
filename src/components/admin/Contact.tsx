@@ -1,27 +1,50 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";
 import { Button } from "@/ui/Button";
 
-export default function Contact() {
+interface Props {
+  contactEmail: string;
+}
+
+const Contact = ({ contactEmail }: Props) => {
+  const [edit, setEdit] = useState(false);
   const { ref } = useSectionInView("Contact");
 
   return (
     <section
       id="contact"
       ref={ref}
-      className="flex h-fit min-h-screen w-5/6 scroll-mt-28 flex-col items-center border border-black text-center dark:border-white"
+      className="relative flex h-fit min-h-screen w-5/6 scroll-mt-28 flex-col items-center border border-black text-center dark:border-white"
     >
+      {!edit && (
+        <Button
+          className="absolute right-2 top-2 min-w-[6rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+          onClick={() => setEdit(true)}
+        >
+          Edit
+        </Button>
+      )}
+      {edit && (
+        <>
+          <Button
+            className="absolute right-2 top-2 min-w-[6rem] bg-gray-800 font-semibold text-white shadow-md  hover:bg-gray-600 dark:text-black dark:hover:bg-gray-400"
+            onClick={() => setEdit(false)}
+          >
+            Close
+          </Button>
+        </>
+      )}
       <SectionHeading>Contact me</SectionHeading>
 
       <p className="-mt-6 text-gray-700 dark:text-white/80">
         Please contact me directly at{" "}
-        <a className="underline" href="mailto:example@gmail.com">
-          example@gmail.com
+        <a className="underline" href={`mailto:${contactEmail}`}>
+          {contactEmail}
         </a>{" "}
         or through this form.
       </p>
@@ -56,4 +79,6 @@ export default function Contact() {
       </form>
     </section>
   );
-}
+};
+
+export default Contact;

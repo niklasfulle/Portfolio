@@ -1,6 +1,5 @@
 "use client";
 import React, { FC } from "react";
-import "react-vertical-timeline-component/style.min.css";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { motion } from "framer-motion";
