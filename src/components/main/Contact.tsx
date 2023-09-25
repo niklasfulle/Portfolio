@@ -7,7 +7,11 @@ import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";
 import { Button } from "@/ui/Button";
 
-export default function Contact() {
+interface Props {
+  contactEmail: string;
+}
+
+const Contact = ({ contactEmail }: Props) => {
   const { ref } = useSectionInView("Contact");
 
   return (
@@ -32,8 +36,8 @@ export default function Contact() {
 
       <p className="-mt-6 text-gray-700 dark:text-white/80">
         Please contact me directly at{" "}
-        <a className="underline" href="mailto:example@gmail.com">
-          example@gmail.com
+        <a className="underline" href={`mailto:${contactEmail}`}>
+          {contactEmail}
         </a>{" "}
         or through this form.
       </p>
@@ -68,4 +72,6 @@ export default function Contact() {
       </form>
     </motion.section>
   );
-}
+};
+
+export default Contact;

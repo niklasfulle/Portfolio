@@ -7,6 +7,7 @@ import Experience from "@/admin/Experience";
 import Contact from "@/admin/Contact";
 import {
   getAbout,
+  getContactEmail,
   getExperience,
   getLearn,
   getProjects,
@@ -19,6 +20,7 @@ export default async function Home() {
   const skills = await getSkills();
   const learn = await getLearn();
   const experience = await getExperience();
+  const contactEmail = await getContactEmail();
 
   return (
     <main className="flex flex-col items-center px-4">
@@ -27,7 +29,7 @@ export default async function Home() {
       <Projects projects={projects} />
       <Skills skills={skills} learn={learn} />
       <Experience experience={experience} />
-      <Contact />
+      <Contact contactEmail={contactEmail[0].email} />
     </main>
   );
 }

@@ -24,3 +24,8 @@ export const getExperience = async () => {
   const experience = await db.experience.findMany({ where: { visible: true }, orderBy: { series: "asc" } });
   return experience;
 }
+
+export const getContactEmail = async () => {
+  const contactEmail = await db.contactEmail.findMany();
+  return contactEmail;
+}

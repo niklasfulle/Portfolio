@@ -92,3 +92,8 @@ model Experience {
   visible       Boolean  @default(false)
   series        Int      @default(0)
 }
+
+model ContactEmail {
+  id           String   @id @default(cuid()) @unique
+  email        String
+}
