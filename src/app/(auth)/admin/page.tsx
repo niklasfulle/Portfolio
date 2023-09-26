@@ -29,7 +29,7 @@ export default async function Home() {
       <Projects projects={projects} />
       <Skills skills={skills} learn={learn} />
       <Experience experience={experience} />
-      <Contact contactEmail={contactEmail[0].email} />
+      <Contact contactEmail={contactEmail[0].email} id={contactEmail[0].id} />
     </main>
   );
 }
