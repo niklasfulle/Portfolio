@@ -6,14 +6,50 @@ import SectionHeading from "@/components/SectionHeading";
 import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";
 import { Button } from "@/ui/Button";
+import { Save } from "lucide-react";
+import { Tooltip } from "@mui/material";
+import { shortToast } from "@/lib/helpers/shorter-function";
+import { useRouter } from "next/navigation";
 
 interface Props {
+  id: string;
   contactEmail: string;
 }
 
-const Contact = ({ contactEmail }: Props) => {
+const Contact = ({ contactEmail, id }: Props) => {
   const [edit, setEdit] = useState(false);
+  const [email, setEmail] = useState(contactEmail);
   const { ref } = useSectionInView("Contact");
+  const router = useRouter();
+
+  const saveContactEmail = async () => {
+    try {
+      const res = await fetch("/api/data/contact", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          email,
+        }),
+      });
+
+      if (res.status === 200) {
+        shortToast(
+          "Success",
+          "The contact email was updated successfully",
+          "success",
+          5000
+        );
+        router.refresh();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    setEdit(false);
+  };
 
   return (
     <section
@@ -43,9 +79,27 @@ const Contact = ({ contactEmail }: Props) => {
 
       <p className="-mt-6 text-gray-700 dark:text-white/80">
         Please contact me directly at{" "}
-        <a className="underline" href={`mailto:${contactEmail}`}>
-          {contactEmail}
-        </a>{" "}
+        {!edit && (
+          <a className="underline" href={`mailto:${email}`}>
+            {email}{" "}
+          </a>
+        )}
+        {edit && (
+          <span className="relative flex flex-row">
+            <Input
+              className="dark:border-white dark:text-white"
+              type="email"
+              defaultValue={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Tooltip title="Save" placement="right">
+              <Save
+                onClick={() => saveContactEmail()}
+                className="ml-3 h-10 w-10 cursor-pointer"
+              />
+            </Tooltip>
+          </span>
+        )}
         or through this form.
       </p>
 

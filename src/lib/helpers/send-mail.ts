@@ -1,7 +1,5 @@
 import nodemailer from 'nodemailer';
 
-
-
 function envCheck() {
   if (!process.env.NODEMAILER_EMAIL) {
     throw new Error('Please set NODEMAILER_EMAIL in .env file');
