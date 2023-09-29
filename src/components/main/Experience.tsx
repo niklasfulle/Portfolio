@@ -4,9 +4,10 @@ import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { motion } from "framer-motion";
 import Timeline from "./Timeline/Timeline";
+import { ExperienceType } from "@/lib/types";
 
 interface ExperienceProps {
-  experience: Experience[];
+  experience: ExperienceType[];
 }
 
 const Experience: FC<ExperienceProps> = ({ experience }) => {

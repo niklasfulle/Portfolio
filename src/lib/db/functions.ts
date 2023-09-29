@@ -1,11 +1,12 @@
+import { AbouteMeType, ContactEmailType, ExperienceType, ProjectType, SkillType } from "../types";
 import { db } from "./prisma";
 
 /**
  * Get all aboutMe text data
  * 
- * @returns {Promise<AbouteMe[]>} About me data
+ * @returns {Promise<AbouteMeType[]>} About me data
  */
-export const getAbout = async (): Promise<AbouteMe[]> => {
+export const getAbout = async (): Promise<AbouteMeType[]> => {
   const aboutMe = await db.aboutMe.findMany({ where: { visible: true }, orderBy: { series: "asc" } });
   return aboutMe;
 }
@@ -13,9 +14,9 @@ export const getAbout = async (): Promise<AbouteMe[]> => {
 /**
  * Get all projects data
  * 
- * @returns {Promise<Project[]>} Projects data
+ * @returns {Promise<ProjectType[]>} Projects data
  */
-export const getProjects = async (): Promise<Project[]> => {
+export const getProjects = async (): Promise<ProjectType[]> => {
   const projects = await db.projects.findMany({ where: { visible: true }, orderBy: { series: "asc" } });
   return projects;
 }
@@ -23,9 +24,9 @@ export const getProjects = async (): Promise<Project[]> => {
 /**
  * Get all skills data
  * 
- * @returns {Promise<Skill[]>} Skills data
+ * @returns {Promise<SkillType[]>} Skills data
  */
-export const getSkills = async (): Promise<Skill[]> => {
+export const getSkills = async (): Promise<SkillType[]> => {
   const skills = await db.skills.findMany({ where: { visible: true, type: "skill" }, orderBy: { series: "asc" } });
   return skills;
 }
@@ -33,9 +34,9 @@ export const getSkills = async (): Promise<Skill[]> => {
 /**
  * Get all learn data
  * 
- * @returns {Promise<Skill[]>} Learn data
+ * @returns {Promise<SkillType[]>} Learn data
  */
-export const getLearn = async (): Promise<Skill[]> => {
+export const getLearn = async (): Promise<SkillType[]> => {
   const learn = await db.skills.findMany({ where: { visible: true, type: "learn" }, orderBy: { series: "asc" } });
   return learn;
 }
@@ -43,9 +44,9 @@ export const getLearn = async (): Promise<Skill[]> => {
 /**
  * Get all experience data
  * 
- * @returns {Promise<Experience[]>} Experience data
+ * @returns {Promise<ExperienceType[]>} Experience data
  */
-export const getExperience = async (): Promise<Experience[]> => {
+export const getExperience = async (): Promise<ExperienceType[]> => {
   const experience = await db.experience.findMany({ where: { visible: true }, orderBy: { series: "asc" } });
   return experience;
 }
@@ -53,9 +54,9 @@ export const getExperience = async (): Promise<Experience[]> => {
 /**
  * Get all contact email data
  * 
- * @returns {Promise<ContactEmail[]>} Contact email data
+ * @returns {Promise<ContactEmailType[]>} Contact email data
  */
-export const getContactEmail = async () => {
+export const getContactEmail = async (): Promise<ContactEmailType[]> => {
   const contactEmail = await db.contactEmail.findMany();
   return contactEmail;
 }

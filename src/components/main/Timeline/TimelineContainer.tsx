@@ -6,18 +6,11 @@ import { CgWorkAlt } from "react-icons/cg";
 import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import { motion } from "framer-motion";
-
-type ExperienceReduced = {
-  date: string;
-  title: string;
-  location: string;
-  description: string;
-  icon: string;
-};
+import { ExperienceReducedType } from "@/lib/types";
 
 interface TimelineContainerProps {
   position: "left" | "right";
-  values: ExperienceReduced;
+  values: ExperienceReducedType;
   delay: number;
 }
 

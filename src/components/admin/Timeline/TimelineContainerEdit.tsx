@@ -12,10 +12,11 @@ import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import IconCarousel from "./IconCarousel";
 import { shortToast } from "@/lib/helpers/shorter-function";
+import { ExperienceReducedType } from "@/lib/types";
 
 interface TimelineContainerEditProps {
   position: "left" | "right";
-  values: ExperienceReduced;
+  values: ExperienceReducedType;
 }
 
 const switchIcons = (icon: string) => {

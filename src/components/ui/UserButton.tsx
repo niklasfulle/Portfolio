@@ -9,9 +9,10 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box, Button, Tooltip } from "@mui/material";
 import Link from "next/link";
 import { Loader2, Lock, LogOut } from "lucide-react";
+import { SessionType } from "@/lib/types";
 
 interface Props {
-  session: Session;
+  session: SessionType;
 }
 
 const UserButton: FC<Props> = ({ session }) => {

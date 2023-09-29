@@ -6,9 +6,10 @@ import { Button } from "@/ui/Button";
 import { Textarea } from "@/ui/Textarea";
 import { useRouter } from "next/navigation";
 import { shortToast } from "@/lib/helpers/shorter-function";
+import { AbouteMeType } from "@/lib/types";
 
 interface AboutProps {
-  abouteMe: AbouteMe[];
+  abouteMe: AbouteMeType[];
 }
 
 const About: FC<AboutProps> = ({ abouteMe }) => {
@@ -97,7 +98,7 @@ const About: FC<AboutProps> = ({ abouteMe }) => {
         <SectionHeading>About me</SectionHeading>
         {edit && (
           <form className="mb-12 flex flex-col" onSubmit={(e) => save(e)}>
-            {abouteMe.map((abouteMe: AbouteMe, index: number) => (
+            {abouteMe.map((abouteMe: AbouteMeType, index: number) => (
               <React.Fragment key={index}>
                 <div className="flex flex-row items-center justify-between">
                   <h4 className="mx-4 text-left" key={"h4" + index}>
@@ -125,7 +126,7 @@ const About: FC<AboutProps> = ({ abouteMe }) => {
         )}
         {!edit && (
           <>
-            {abouteMe.map((abouteMe: AbouteMe, index: number) => (
+            {abouteMe.map((abouteMe: AbouteMeType, index: number) => (
               <p
                 className="mb-3"
                 key={"text" + index}
