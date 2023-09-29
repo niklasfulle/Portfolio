@@ -8,9 +8,10 @@ import Project from "./Project";
 import { Button } from "../ui/Button";
 import ProjectEdit from "./ProjectEdit";
 import ProjectNew from "./ProjectNew";
+import { ProjectType } from "@/lib/types";
 
 interface ProjectsProps {
-  projects?: any;
+  projects: ProjectType[];
 }
 const Projects: FC<ProjectsProps> = ({ projects }) => {
   const [edit, setEdit] = useState(false);
@@ -44,7 +45,7 @@ const Projects: FC<ProjectsProps> = ({ projects }) => {
 
       {edit && (
         <div className="mb-8 flex w-full flex-col items-center justify-center rounded-lg">
-          {projects.map((project: any, index: any) => (
+          {projects.map((project: ProjectType, index: any) => (
             <React.Fragment key={index}>
               <ProjectEdit {...project} />
             </React.Fragment>
@@ -54,7 +55,7 @@ const Projects: FC<ProjectsProps> = ({ projects }) => {
       )}
       {!edit && (
         <div className="mb-8 rounded-lg">
-          {projects.map((project: any, index: any) => (
+          {projects.map((project: ProjectType, index: any) => (
             <React.Fragment key={index}>
               <Project {...project} />
             </React.Fragment>

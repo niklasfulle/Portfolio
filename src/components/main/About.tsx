@@ -3,9 +3,10 @@ import React, { FC } from "react";
 import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
+import { AbouteMeType } from "@/lib/types";
 
 interface AboutProps {
-  abouteMe: AbouteMe[];
+  abouteMe: AbouteMeType[];
 }
 const About: FC<AboutProps> = ({ abouteMe }) => {
   const { ref } = useSectionInView("About");
@@ -21,7 +22,7 @@ const About: FC<AboutProps> = ({ abouteMe }) => {
         id="about"
       >
         <SectionHeading>About me</SectionHeading>
-        {abouteMe.map((abouteMe: AbouteMe, index: number) => (
+        {abouteMe.map((abouteMe: AbouteMeType, index: number) => (
           <motion.p
             className="mb-5 px-4 sm:px-0"
             key={index}

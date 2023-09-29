@@ -7,9 +7,10 @@ import SectionHeading from "../SectionHeading";
 import { Button } from "../ui/Button";
 import Timeline from "./Timeline/Timeline";
 import TimelineEdit from "./Timeline/TimelineEdit";
+import { ExperienceType } from "@/lib/types";
 
 interface Props {
-  experience: Experience[];
+  experience: ExperienceType[];
 }
 
 const Experience: FC<Props> = ({ experience }) => {

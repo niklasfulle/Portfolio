@@ -9,10 +9,11 @@ import SkillEdit from "./SkillEdit";
 import SkillNew from "./SkillNew";
 import Skill from "./Skill";
 import { Tooltip } from "@mui/material";
+import { SkillType } from "@/lib/types";
 
 interface SkillsProps {
-  skills: Skill[];
-  learn: Skill[];
+  skills: SkillType[];
+  learn: SkillType[];
 }
 
 const Skills: FC<SkillsProps> = ({ skills, learn }) => {
@@ -55,7 +56,7 @@ const Skills: FC<SkillsProps> = ({ skills, learn }) => {
       <ul className="mb-16 flex max-w-[53rem] flex-wrap items-center justify-center gap-8 text-lg text-gray-800">
         {!edit && (
           <>
-            {skills.map((skill: Skill, index: number) => (
+            {skills.map((skill: SkillType, index: number) => (
               <li key={index + "skill"}>
                 <Skill name={skill.name} />
               </li>
@@ -64,7 +65,7 @@ const Skills: FC<SkillsProps> = ({ skills, learn }) => {
         )}
         {edit && (
           <>
-            {skills.map((skill: Skill, index: number) => (
+            {skills.map((skill: SkillType, index: number) => (
               <li key={index + "learnEdit"}>
                 <SkillEdit skill={skill.name} id={skill.id} />
               </li>
@@ -91,7 +92,7 @@ const Skills: FC<SkillsProps> = ({ skills, learn }) => {
       <ul className="mb-16 flex flex-wrap items-center justify-center gap-8 text-lg text-gray-800">
         {!edit && (
           <>
-            {learn.map((learn: Skill, index: number) => (
+            {learn.map((learn: SkillType, index: number) => (
               <li key={index + "learn"}>
                 <Skill name={learn.name} />
               </li>
@@ -100,7 +101,7 @@ const Skills: FC<SkillsProps> = ({ skills, learn }) => {
         )}
         {edit && (
           <>
-            {learn.map((learn: Skill, index: number) => (
+            {learn.map((learn: SkillType, index: number) => (
               <li key={index + "learnEdit"}>
                 <SkillEdit skill={learn.name} id={learn.id} />
               </li>

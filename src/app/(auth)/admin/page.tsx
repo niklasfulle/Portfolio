@@ -13,14 +13,21 @@ import {
   getProjects,
   getSkills,
 } from "@/lib/db/functions";
+import {
+  AbouteMeType,
+  ContactEmailType,
+  ExperienceType,
+  ProjectType,
+  SkillType,
+} from "@/lib/types";
 
 export default async function Home() {
-  const about = await getAbout();
-  const projects = await getProjects();
-  const skills = await getSkills();
-  const learn = await getLearn();
-  const experience = await getExperience();
-  const contactEmail = await getContactEmail();
+  const about: AbouteMeType[] = await getAbout();
+  const projects: ProjectType[] = await getProjects();
+  const skills: SkillType[] = await getSkills();
+  const learn: SkillType[] = await getLearn();
+  const experience: ExperienceType[] = await getExperience();
+  const contactEmail: ContactEmailType[] = await getContactEmail();
 
   return (
     <main className="flex flex-col items-center px-4">
