@@ -7,18 +7,11 @@ import { Textarea } from "@/ui/Textarea";
 import { useRouter } from "next/navigation";
 import { shortToast } from "@/lib/helpers/shorter-function";
 
-type AboutMe = {
-  id: number;
-  text: string;
-  series: number;
-  visible: boolean;
-};
-
-interface Props {
-  abouteMe: AboutMe[];
+interface AboutProps {
+  abouteMe: AbouteMe[];
 }
 
-const About: FC<Props> = ({ abouteMe }) => {
+const About: FC<AboutProps> = ({ abouteMe }) => {
   const [edit, setEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -104,7 +97,7 @@ const About: FC<Props> = ({ abouteMe }) => {
         <SectionHeading>About me</SectionHeading>
         {edit && (
           <form className="mb-12 flex flex-col" onSubmit={(e) => save(e)}>
-            {abouteMe.map((abouteMe: any, index: number) => (
+            {abouteMe.map((abouteMe: AbouteMe, index: number) => (
               <React.Fragment key={index}>
                 <div className="flex flex-row items-center justify-between">
                   <h4 className="mx-4 text-left" key={"h4" + index}>
@@ -115,7 +108,7 @@ const About: FC<Props> = ({ abouteMe }) => {
                   <Textarea
                     id={"text" + abouteMe.id}
                     className="mx-2 mb-2 h-[12rem] w-[32rem] dark:text-white lg:w-[45rem]"
-                    defaultValue={abouteMe.text}
+                    defaultValue={abouteMe.text as any}
                   />
                 </div>
               </React.Fragment>
@@ -132,11 +125,11 @@ const About: FC<Props> = ({ abouteMe }) => {
         )}
         {!edit && (
           <>
-            {abouteMe.map((abouteMe: any, index: any) => (
+            {abouteMe.map((abouteMe: AbouteMe, index: number) => (
               <p
                 className="mb-3"
                 key={"text" + index}
-                dangerouslySetInnerHTML={{ __html: abouteMe.text }}
+                dangerouslySetInnerHTML={{ __html: abouteMe.text as any }}
               ></p>
             ))}
           </>

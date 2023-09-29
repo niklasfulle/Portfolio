@@ -1,17 +1,8 @@
 "use client";
-
 import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
-
-type ProjectProps = {
-  title: string;
-  description: string;
-  image: string;
-  url: string;
-  tags: string;
-};
 
 export default function Project({
   title,
@@ -19,7 +10,7 @@ export default function Project({
   image,
   url,
   tags,
-}: ProjectProps) {
+}: Project) {
   const ref = useRef<HTMLDivElement>(null);
 
   const tagsSplit = tags.split(",");

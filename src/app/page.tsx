@@ -15,22 +15,20 @@ import {
 } from "@/lib/db/functions";
 
 export default async function Home() {
-  const about = await getAbout();
-  const projects = await getProjects();
-  const skills = await getSkills();
-  const learn = await getLearn();
-  const experience = await getExperience();
-  const contactEmail = await getContactEmail();
+  const abouteMe: AbouteMe[] = await getAbout();
+  const projects: Project[] = await getProjects();
+  const skills: Skill[] = await getSkills();
+  const learn: Skill[] = await getLearn();
+  const experience: Experience[] = await getExperience();
+  const contactEmail: ContactEmail[] = await getContactEmail();
 
-  //console.log(experience);
-
-  const skillsData = skills.map((skill) => skill.name);
-  const learnData = learn.map((skill) => skill.name);
+  const skillsData: String[] = skills.map((skill: Skill) => skill.name);
+  const learnData: String[] = learn.map((skill: Skill) => skill.name);
 
   return (
     <main className="flex flex-col items-center scroll-smooth px-4">
       <Intro />
-      <About abouteMe={about} />
+      <About abouteMe={abouteMe} />
       <Projects projects={projects} />
       <Skills skills={skillsData} learn={learnData} />
       <Experience experience={experience} />

@@ -9,10 +9,10 @@ import { Button } from "../ui/Button";
 import ProjectEdit from "./ProjectEdit";
 import ProjectNew from "./ProjectNew";
 
-interface Props {
+interface ProjectsProps {
   projects?: any;
 }
-const Projects: FC<Props> = ({ projects }) => {
+const Projects: FC<ProjectsProps> = ({ projects }) => {
   const [edit, setEdit] = useState(false);
   const { ref } = useSectionInView("Projects", 0.5);
 

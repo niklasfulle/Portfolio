@@ -12,13 +12,7 @@ import { shortToast } from "@/lib/helpers/shorter-function";
 
 interface TimelineContainerCreateProps {
   position: "left" | "right";
-  values: {
-    date: string;
-    title: string;
-    location: string;
-    description: string;
-    icon: string;
-  };
+  values: ExperienceReduced;
 }
 
 const TimelineContainerCreate: FC<TimelineContainerCreateProps> = ({

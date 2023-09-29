@@ -8,13 +8,7 @@ import { LuGraduationCap } from "react-icons/lu";
 
 interface TimelineContainerProps {
   position: "left" | "right";
-  values: {
-    date: string;
-    title: string;
-    location: string;
-    description: string;
-    icon: string;
-  };
+  values: ExperienceReduced;
   delay: number;
 }
 

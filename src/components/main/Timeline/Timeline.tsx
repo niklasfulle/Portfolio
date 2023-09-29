@@ -2,16 +2,6 @@
 import React, { FC } from "react";
 import TimelineContainer from "./TimelineContainer";
 
-type Experience = {
-  id: string;
-  date: string;
-  title: string;
-  location: string;
-  description: string;
-  icon: string;
-  series: number;
-};
-
 interface TimelineProps {
   data: Experience[];
 }

@@ -5,21 +5,13 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 
-type ProjectProps = {
-  title: string;
-  description: string;
-  image: string;
-  url: string;
-  tags: string;
-};
-
 export default function Project({
   title,
   description,
   image,
   url,
   tags,
-}: ProjectProps) {
+}: Project) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,

@@ -10,12 +10,12 @@ import SkillNew from "./SkillNew";
 import Skill from "./Skill";
 import { Tooltip } from "@mui/material";
 
-interface Props {
-  skills?: any;
-  learn?: any;
+interface SkillsProps {
+  skills: Skill[];
+  learn: Skill[];
 }
 
-const Skills: FC<Props> = ({ skills, learn }) => {
+const Skills: FC<SkillsProps> = ({ skills, learn }) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [newSkill, setNewSkill] = useState<boolean>(false);
   const [newLearn, setNewLearn] = useState<boolean>(false);
@@ -55,7 +55,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
       <ul className="mb-16 flex max-w-[53rem] flex-wrap items-center justify-center gap-8 text-lg text-gray-800">
         {!edit && (
           <>
-            {skills.map((skill: any, index: number) => (
+            {skills.map((skill: Skill, index: number) => (
               <li key={index + "skill"}>
                 <Skill name={skill.name} />
               </li>
@@ -64,7 +64,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
         )}
         {edit && (
           <>
-            {skills.map((skill: any, index: number) => (
+            {skills.map((skill: Skill, index: number) => (
               <li key={index + "learnEdit"}>
                 <SkillEdit skill={skill.name} id={skill.id} />
               </li>
@@ -91,7 +91,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
       <ul className="mb-16 flex flex-wrap items-center justify-center gap-8 text-lg text-gray-800">
         {!edit && (
           <>
-            {learn.map((learn: any, index: number) => (
+            {learn.map((learn: Skill, index: number) => (
               <li key={index + "learn"}>
                 <Skill name={learn.name} />
               </li>
@@ -100,7 +100,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
         )}
         {edit && (
           <>
-            {learn.map((learn: any, index: number) => (
+            {learn.map((learn: Skill, index: number) => (
               <li key={index + "learnEdit"}>
                 <SkillEdit skill={learn.name} id={learn.id} />
               </li>

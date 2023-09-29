@@ -5,21 +5,11 @@ import SectionHeading from "@/components/SectionHeading";
 import { motion } from "framer-motion";
 import Timeline from "./Timeline/Timeline";
 
-type ExperienceType = {
-  id: string;
-  date: string;
-  title: string;
-  location: string;
-  description: string;
-  icon: string;
-  series: number;
-};
-
-interface Props {
-  experience: ExperienceType[];
+interface ExperienceProps {
+  experience: Experience[];
 }
 
-const Experience: FC<Props> = ({ experience }) => {
+const Experience: FC<ExperienceProps> = ({ experience }) => {
   const { ref } = useSectionInView("Experience", 0.5);
 
   return (

@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 
-interface Props {
-  abouteMe?: any;
+interface AboutProps {
+  abouteMe: AbouteMe[];
 }
-const About: FC<Props> = ({ abouteMe }) => {
+const About: FC<AboutProps> = ({ abouteMe }) => {
   const { ref } = useSectionInView("About");
 
   return (
@@ -21,14 +21,14 @@ const About: FC<Props> = ({ abouteMe }) => {
         id="about"
       >
         <SectionHeading>About me</SectionHeading>
-        {abouteMe.map((abouteMe: any, index: any) => (
+        {abouteMe.map((abouteMe: AbouteMe, index: number) => (
           <motion.p
             className="mb-5 px-4 sm:px-0"
             key={index}
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.175 }}
-            dangerouslySetInnerHTML={{ __html: abouteMe.text }}
+            dangerouslySetInnerHTML={{ __html: abouteMe.text as any }}
           ></motion.p>
         ))}
       </motion.div>

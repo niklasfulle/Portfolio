@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
@@ -8,11 +8,11 @@ import { Textarea } from "@/ui/Textarea";
 import { Button } from "@/ui/Button";
 import { shortToast } from "@/lib/helpers/shorter-function";
 
-interface Props {
+interface ContactProps {
   contactEmail: string;
 }
 
-const Contact = ({ contactEmail }: Props) => {
+const Contact = ({ contactEmail }: ContactProps) => {
   const [sendingEmail, setSendingEmail] = useState(false);
   const { ref } = useSectionInView("Contact");
 

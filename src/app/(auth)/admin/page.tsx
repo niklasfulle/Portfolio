@@ -15,7 +15,7 @@ import {
 } from "@/lib/db/functions";
 
 export default async function Home() {
-  const about: any = await getAbout();
+  const about = await getAbout();
   const projects = await getProjects();
   const skills = await getSkills();
   const learn = await getLearn();
