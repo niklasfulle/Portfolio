@@ -9,7 +9,7 @@ import Timeline from "./Timeline/Timeline";
 import TimelineEdit from "./Timeline/TimelineEdit";
 
 interface Props {
-  experience?: any;
+  experience: Experience[];
 }
 
 const Experience: FC<Props> = ({ experience }) => {

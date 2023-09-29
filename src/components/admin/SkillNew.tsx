@@ -1,12 +1,12 @@
 import { Tooltip } from "@mui/material";
 import { Save, X } from "lucide-react";
-import React, { FC, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { Input } from "../ui/Input";
 import { shortToast } from "@/lib/helpers/shorter-function";
 import { useRouter } from "next/navigation";
 
 interface SkillNewProps {
-  setNew: any;
+  setNew: Dispatch<SetStateAction<boolean>>;
   type: string;
 }
 

@@ -1,14 +1,14 @@
 "use client";
-
 import React, { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import Project from "./Project";
+import { Projects } from "@prisma/client";
 
-interface Props {
-  projects?: any;
+interface ProjectsProps {
+  projects: Projects[];
 }
-const Projects: FC<Props> = ({ projects }) => {
+const Projects: FC<ProjectsProps> = ({ projects }) => {
   const { ref } = useSectionInView("Projects", 0.5);
 
   return (
@@ -19,7 +19,7 @@ const Projects: FC<Props> = ({ projects }) => {
     >
       <SectionHeading>My projects</SectionHeading>
       <div>
-        {projects.map((project: any, index: any) => (
+        {projects.map((project: Project, index: number) => (
           <React.Fragment key={index}>
             <Project {...project} />
           </React.Fragment>

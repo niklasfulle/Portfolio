@@ -7,15 +7,17 @@ import { FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import { motion } from "framer-motion";
 
+type ExperienceReduced = {
+  date: string;
+  title: string;
+  location: string;
+  description: string;
+  icon: string;
+};
+
 interface TimelineContainerProps {
   position: "left" | "right";
-  values: {
-    date: string;
-    title: string;
-    location: string;
-    description: string;
-    icon: string;
-  };
+  values: ExperienceReduced;
   delay: number;
 }
 

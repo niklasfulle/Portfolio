@@ -11,19 +11,20 @@ import Link from "next/link";
 import { Loader2, Lock, LogOut } from "lucide-react";
 
 interface Props {
-  session?: any;
+  session: Session;
 }
 
 const UserButton: FC<Props> = ({ session }) => {
   const { user } = session;
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [prefersDarkMode, setPrefersDarkMode] = useState<boolean>(false);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };

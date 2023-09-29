@@ -4,9 +4,9 @@ import { useSectionInView } from "@/lib/hooks";
 import { motion } from "framer-motion";
 import SectionHeading from "@/components/SectionHeading";
 
-interface Props {
-  skills?: any;
-  learn?: any;
+interface SkillsProps {
+  skills: String[];
+  learn: String[];
 }
 
 const fadeInAnimationVariants = {
@@ -22,7 +22,7 @@ const fadeInAnimationVariants = {
   }),
 };
 
-const Skills: FC<Props> = ({ skills, learn }) => {
+const Skills: FC<SkillsProps> = ({ skills, learn }) => {
   const { ref } = useSectionInView("Skills");
 
   return (
@@ -33,7 +33,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
     >
       <SectionHeading>My skills</SectionHeading>
       <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">
-        {skills.map((skill: any, index: any) => (
+        {skills.map((skill: String, index: number) => (
           <motion.li
             className="rounded-xl border border-black bg-white px-5 py-3 shadow-sm dark:border-white/30 dark:bg-gray-800 dark:text-white/80"
             key={index}
@@ -48,7 +48,7 @@ const Skills: FC<Props> = ({ skills, learn }) => {
       </ul>
       <SectionHeading>I want to learn</SectionHeading>
       <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">
-        {learn.map((learn: any, index: any) => (
+        {learn.map((learn: String, index: number) => (
           <motion.li
             className="rounded-xl border border-black bg-white px-5 py-3 shadow-sm dark:border-white/30 dark:bg-gray-800 dark:text-white/80"
             key={index}

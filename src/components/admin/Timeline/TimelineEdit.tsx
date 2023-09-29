@@ -3,16 +3,6 @@ import React, { FC } from "react";
 import TimelineContainerEdit from "./TimelineContainerEdit";
 import TimelineContainerCreate from "./TimelineContainerCreate";
 
-type Experience = {
-  id: string;
-  date: string;
-  title: string;
-  location: string;
-  description: string;
-  icon: string;
-  series: number;
-};
-
 interface TimelineEditProps {
   data: Experience[];
 }
@@ -22,7 +12,7 @@ const TimelineEdit: FC<TimelineEditProps> = ({ data }) => {
   return (
     <div className="relative mx-auto my-0 mb-10 w-full max-w-7xl px-0 py-[15px] after:absolute after:inset-y-0 after:left-24 after:-ml-px after:w-[.2rem] after:bg-black after:opacity-0 after:content-[''] after:dark:bg-white md:after:left-2/4 md:after:opacity-100">
       <>
-        {data.map((item: any, index: number) => (
+        {data.map((item: Experience, index: number) => (
           <React.Fragment key={index}>
             <TimelineContainerEdit
               position={index % 2 === 0 ? "left" : "right"}

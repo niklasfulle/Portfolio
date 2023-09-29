@@ -10,16 +10,6 @@ import { Trash } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-type ProjectProps = {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  url: string;
-  tags: string;
-  series: number;
-};
-
 export default function ProjectEdit({
   id,
   title,
@@ -28,7 +18,7 @@ export default function ProjectEdit({
   url,
   tags,
   series,
-}: ProjectProps) {
+}: Project) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>(image || "");
   const [file, setFile] = useState<File>();

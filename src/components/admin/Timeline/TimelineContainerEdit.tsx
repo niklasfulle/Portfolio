@@ -15,14 +15,7 @@ import { shortToast } from "@/lib/helpers/shorter-function";
 
 interface TimelineContainerEditProps {
   position: "left" | "right";
-  values: {
-    id: string;
-    date: string;
-    title: string;
-    location: string;
-    description: string;
-    icon: string;
-  };
+  values: ExperienceReduced;
 }
 
 const switchIcons = (icon: string) => {
@@ -186,7 +179,7 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
             containterCSS
           )}
         >
-          <form onSubmit={(e) => updateExperience(e, values.id, icon)}>
+          <form onSubmit={(e) => updateExperience(e, values.id!, icon)}>
             <div
               className={cn(
                 "absolute right-20 top-[calc(50%_-_18px)] z-10 flex w-48 flex-row text-right text-sm font-bold uppercase tracking-[1px] dark:text-white md:inline-block",
@@ -245,7 +238,7 @@ const TimelineContainerEdit: FC<TimelineContainerEditProps> = ({
             </Tooltip>
             <Tooltip title="Delete" placement="right">
               <Trash
-                onClick={() => deleteExperience(values.id)}
+                onClick={() => deleteExperience(values.id!)}
                 className="absolute bottom-[calc(50%_-_15px)] right-4 z-10 h-8 w-8 rounded-lg bg-gray-300 p-1 shadow-md transition-all ease-in hover:cursor-pointer hover:bg-red-300 dark:bg-gray-950 dark:text-white hover:dark:bg-red-700"
               />
             </Tooltip>
