@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "@/ui/Button";
-import { motion } from "framer-motion";
 import { Input } from "@/ui/Input";
 import { loginWithCredentials } from "@/lib/auth/auth-functions";
 import { Eye, EyeOff } from "lucide-react";
@@ -11,15 +10,7 @@ const SignInForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{
-        type: "tween",
-        duration: 0.2,
-      }}
-      className="flex h-fit flex-col items-center justify-center rounded-lg bg-white px-6 py-6 dark:bg-gray-700 lg:px-8"
-    >
+    <div className="flex h-fit flex-col items-center justify-center rounded-lg bg-white px-6 py-6 dark:bg-gray-700 lg:px-8">
       <div className="flex flex-col items-center justify-center sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-0 text-center text-2xl font-semibold leading-6 tracking-tight text-gray-900 dark:text-white">
           Sign in
@@ -91,7 +82,7 @@ const SignInForm = () => {
           </div>
         </form>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

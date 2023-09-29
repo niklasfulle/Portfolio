@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";
@@ -14,7 +12,7 @@ interface ContactProps {
 
 const Contact = ({ contactEmail }: ContactProps) => {
   const [sendingEmail, setSendingEmail] = useState(false);
-  const { ref } = useSectionInView("Contact");
+  //const { ref } = useSectionInView("Contact");
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -58,22 +56,10 @@ const Contact = ({ contactEmail }: ContactProps) => {
   };
 
   return (
-    <motion.section
+    <section
       id="contact"
-      ref={ref}
+      //ref={ref}
       className="h-fit min-h-[79vh] w-[min(100%,38rem)] scroll-mt-28 text-center"
-      initial={{
-        opacity: 0,
-      }}
-      whileInView={{
-        opacity: 1,
-      }}
-      transition={{
-        duration: 1,
-      }}
-      viewport={{
-        once: true,
-      }}
     >
       <SectionHeading>Contact me</SectionHeading>
 
@@ -120,7 +106,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
           Send
         </Button>
       </form>
-    </motion.section>
+    </section>
   );
 };
 

@@ -1,9 +1,9 @@
 "use client";
 import React, { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
+import { ProjectType } from "@/lib/types";
 
 export default function Project({
   title,
@@ -11,24 +11,14 @@ export default function Project({
   image,
   url,
   tags,
-}: Project) {
+}: ProjectType) {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["0 1", "1.33 1"],
-  });
-  const scaleProgess = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
-  const opacityProgess = useTransform(scrollYProgress, [0, 1], [0.6, 1]);
 
   const tagsSplit = tags.split(",");
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      style={{
-        scale: scaleProgess,
-        opacity: opacityProgess,
-      }}
       className="group mb-3 rounded-lg shadow-md last:mb-0 sm:mb-8"
     >
       <section className="relative h-[15rem] overflow-hidden rounded-lg border border-black/5 bg-gray-100 transition hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 sm:h-[22rem] sm:pr-8 sm:group-even:pl-8 md:w-[42rem]">
@@ -81,6 +71,6 @@ export default function Project({
         group-even:group-hover:rotate-2 sm:block"
         />
       </section>
-    </motion.div>
+    </div>
   );
 }

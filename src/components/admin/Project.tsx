@@ -3,6 +3,7 @@ import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
+import { ProjectType } from "@/lib/types";
 
 export default function Project({
   title,
@@ -10,7 +11,7 @@ export default function Project({
   image,
   url,
   tags,
-}: Project) {
+}: ProjectType) {
   const ref = useRef<HTMLDivElement>(null);
 
   const tagsSplit = tags.split(",");
