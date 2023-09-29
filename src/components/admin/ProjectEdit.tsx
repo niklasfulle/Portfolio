@@ -9,6 +9,7 @@ import { shortToast } from "@/lib/helpers/shorter-function";
 import { Trash } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { ProjectType } from "@/lib/types";
 
 export default function ProjectEdit({
   id,
@@ -18,7 +19,7 @@ export default function ProjectEdit({
   url,
   tags,
   series,
-}: Project) {
+}: ProjectType) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>(image || "");
   const [file, setFile] = useState<File>();

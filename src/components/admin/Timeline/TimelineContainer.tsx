@@ -1,4 +1,5 @@
 "use client";
+import { ExperienceReducedType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MapPin } from "lucide-react";
 import React, { FC } from "react";
@@ -8,7 +9,7 @@ import { LuGraduationCap } from "react-icons/lu";
 
 interface TimelineContainerProps {
   position: "left" | "right";
-  values: ExperienceReduced;
+  values: ExperienceReducedType;
   delay: number;
 }
 

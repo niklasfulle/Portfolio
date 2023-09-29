@@ -13,17 +13,24 @@ import {
   getProjects,
   getSkills,
 } from "@/lib/db/functions";
+import {
+  AbouteMeType,
+  ContactEmailType,
+  ExperienceType,
+  ProjectType,
+  SkillType,
+} from "@/lib/types";
 
 export default async function Home() {
-  const abouteMe: AbouteMe[] = await getAbout();
-  const projects: Project[] = await getProjects();
-  const skills: Skill[] = await getSkills();
-  const learn: Skill[] = await getLearn();
-  const experience: Experience[] = await getExperience();
-  const contactEmail: ContactEmail[] = await getContactEmail();
+  const abouteMe: AbouteMeType[] = await getAbout();
+  const projects: ProjectType[] = await getProjects();
+  const skills: SkillType[] = await getSkills();
+  const learn: SkillType[] = await getLearn();
+  const experience: ExperienceType[] = await getExperience();
+  const contactEmail: ContactEmailType[] = await getContactEmail();
 
-  const skillsData: String[] = skills.map((skill: Skill) => skill.name);
-  const learnData: String[] = learn.map((skill: Skill) => skill.name);
+  const skillsData: String[] = skills.map((skill: SkillType) => skill.name);
+  const learnData: String[] = learn.map((skill: SkillType) => skill.name);
 
   return (
     <main className="flex flex-col items-center scroll-smooth px-4">
