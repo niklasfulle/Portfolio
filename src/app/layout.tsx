@@ -9,10 +9,6 @@ import Footer from "@/components/Footer";
 import Socials from "@/ui/Socials";
 import NameAnimation from "@/ui/NameAnimation";
 import Toggels from "@/ui/Toggels";
-import { getSession } from "next-auth/react";
-import { headers } from "next/headers";
-import UserButton from "@/ui/UserButton";
-import LoginButton from "@/ui/LoginButton";
 import Header from "@/components/header";
 import Background from "@/components/Background";
 
@@ -28,12 +24,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession({
-    req: {
-      headers: Object.fromEntries(headers().entries()),
-    },
-  });
-
   return (
     <html
       lang="en"
@@ -46,8 +36,6 @@ export default async function RootLayout({
         <Providers>
           <NameAnimation />
           <Header />
-          {!session && <LoginButton />}
-          {session && <UserButton session={session} />}
           <Socials />
           {children}
           <Footer />
