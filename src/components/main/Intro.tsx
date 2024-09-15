@@ -16,7 +16,7 @@ export default function Intro() {
     <section
       ref={ref}
       id="home"
-      className="h-fit min-h-screen max-w-[50rem] scroll-mt-28 text-center"
+      className="mt-28 h-fit min-h-screen max-w-[50rem] scroll-mt-40 text-center"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
