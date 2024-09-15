@@ -1,14 +1,22 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { links } from "@/lib/data";
 import Link from "next/link";
 import clsx from "clsx";
 import { useActiveSectionContext } from "@/context/active-section-context";
+import { useSearchParams } from "next/navigation";
+
+function createLink(linkHash: string, language: string) {
+  return "?language=" + language + linkHash.replace("/", "");
+}
 
 export default function Header() {
   const { activeSection, setActiveSection, setTimeOfLastClick } =
     useActiveSectionContext();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("language");
+  const [language, setLanguag] = useState(search ?? "de");
 
   return (
     <header className="relative">
@@ -35,7 +43,7 @@ export default function Header() {
                       activeSection === link.name,
                   }
                 )}
-                href={link.hash}
+                href={createLink(link.hash, language)}
                 onClick={() => {
                   setActiveSection(link.name);
                   setTimeOfLastClick(Date.now());
