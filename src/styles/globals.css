@@ -134,3 +134,38 @@ html.dark {
   background-image: -o-linear-gradient(top, #a47b3e, #d18d27);
   background-image: linear-gradient(to bottom, #a47b3e, #d18d27);
 }
+
+.card-border::after,
+.card-border::before {
+  content: "";
+  position: absolute;
+  height: 101%;
+  width: 100.5%;
+  background-image: conic-gradient(#ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  border-radius: 0.5rem;
+  -webkit-border-radius: 0.5rem;
+  -moz-border-radius: 0.5rem;
+  -ms-border-radius: 0.5rem;
+  -o-border-radius: 0.5rem;
+  transition: all 100ms ease-in;
+  -webkit-transition: all 100ms ease-in;
+  -moz-transition: all 100ms ease-in;
+  -ms-transition: all 100ms ease-in;
+  -o-transition: all 100ms ease-in;
+}
+
+.card-border:hover::after,
+.card-border:hover::before {
+  height: 101%;
+  width: 100.75%;
+}
+
+.card-border:hover::before {
+  filter: blur(2rem);
+  -webkit-filter: blur(2rem);
+  opacity: 0.4;
+}

@@ -16,6 +16,7 @@ export default function Socials() {
           x: 0,
           transition: {
             delay: 0.3,
+            duration: 0.5,
           },
         }}
         whileHover={{
@@ -41,6 +42,7 @@ export default function Socials() {
           x: 0,
           transition: {
             delay: 0.3,
+            duration: 0.5,
           },
         }}
         whileHover={{
