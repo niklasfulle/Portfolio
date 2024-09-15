@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import "@/styles/globals.css";
 import { Inter } from "next/font/google";
 import { Metadata } from "next";
@@ -34,14 +34,16 @@ export default async function RootLayout({
     >
       <body className="relative scroll-smooth bg-gray-50 pt-28 text-gray-950 dark:bg-gray-900 dark:text-gray-50 dark:text-opacity-90 sm:pt-36">
         <Providers>
-          <NameAnimation />
-          <Header />
-          <Socials />
-          {children}
-          <Footer />
-          <Toggels />
-          <Toaster position="bottom-right" />
-          <Background />
+          <Suspense>
+            <NameAnimation />
+            <Header />
+            <Socials />
+            {children}
+            <Footer />
+            <Toggels />
+            <Toaster position="bottom-right" />
+            <Background />
+          </Suspense>
         </Providers>
       </body>
     </html>

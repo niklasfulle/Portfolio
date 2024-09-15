@@ -109,7 +109,7 @@ const TimelineContainer: FC<TimelineContainerProps> = ({
           once: true,
         }}
         className={cn(
-          "absolute top-14 z-10 flex h-12 w-12 flex-row items-center justify-center rounded-full border-[.14rem] border-solid border-black  text-center text-lg dark:border-white dark:text-white md:top-[calc(50%_-_24px)]",
+          "absolute top-14 z-10 flex h-12 w-12 flex-row items-center justify-center rounded-full border-[.14rem] border-solid border-black text-center text-lg dark:border-white dark:text-white md:top-[calc(50%_-_24px)]",
           iconCSS
         )}
       >
@@ -139,7 +139,7 @@ const TimelineContainer: FC<TimelineContainerProps> = ({
         <h2 className="mb-.5 mx-0 mt-0 text-lg dark:text-white">
           {values.title}
         </h2>
-        <h4 className="mx-0 mb-2.5 mt-0 flex flex-row items-center gap-x-1 text-base dark:text-white ">
+        <h4 className="mx-0 mb-2.5 mt-0 flex flex-row items-center gap-x-1 text-base dark:text-white">
           <MapPin className="h-4 w-4" />
           {values.location}
         </h4>

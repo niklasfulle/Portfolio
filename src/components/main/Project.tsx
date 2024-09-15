@@ -30,9 +30,9 @@ export default function Project({
         scale: scaleProgess,
         opacity: opacityProgess,
       }}
-      className="group mb-3 rounded-lg shadow-md last:mb-0 sm:mb-8"
+      className="card-border group relative mb-3 rounded-lg shadow-md last:mb-0 sm:mb-8"
     >
-      <section className="relative h-[15rem] overflow-hidden rounded-lg border border-black/5 bg-gray-100 transition hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 sm:h-[22rem] sm:pr-8 sm:group-even:pl-8 md:w-[42rem]">
+      <section className="relative h-[15rem] overflow-hidden rounded-lg border border-black/5 bg-gray-100 transition hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-800 sm:h-[22rem] sm:pr-8 sm:group-even:pl-8 md:w-[42rem]">
         <div className="flex h-full flex-col justify-between px-5 pb-5 pt-4 sm:max-w-[50%] sm:pl-6 sm:pr-2 sm:pt-8 sm:group-even:ml-[18rem]">
           <div className="flex flex-col">
             <h3 className="text-2xl font-semibold">{title}</h3>
@@ -40,7 +40,7 @@ export default function Project({
               {description}
             </p>
 
-            <ul className=" flex flex-wrap gap-2 sm:mt-auto">
+            <ul className="flex flex-wrap gap-2 sm:mt-auto">
               {tagsSplit.map((tag, index) => (
                 <li
                   className="rounded-full bg-black/[0.7] px-3 py-1 text-[0.7rem] uppercase tracking-wider text-white dark:text-white/70"
@@ -68,18 +68,7 @@ export default function Project({
           height="500"
           quality="95"
           priority
-          className="absolute -right-40 top-6 hidden w-[28.25rem] rounded-lg shadow-2xl transition
-        group-even:-left-40 
-        group-even:right-[initial]
-        group-hover:-translate-x-3
-        group-hover:translate-y-3
-        group-hover:-rotate-2
-
-        group-hover:scale-[1.04]
-        group-even:group-hover:translate-x-3
-        group-even:group-hover:translate-y-3
-
-        group-even:group-hover:rotate-2 sm:block"
+          className="absolute -right-40 top-6 hidden w-[28.25rem] rounded-lg shadow-2xl transition group-even:-left-40 group-even:right-[initial] group-hover:-translate-x-3 group-hover:translate-y-3 group-hover:-rotate-2 group-hover:scale-[1.04] group-even:group-hover:translate-x-3 group-even:group-hover:translate-y-3 group-even:group-hover:rotate-2 sm:block"
         />
       </section>
     </motion.div>
