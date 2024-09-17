@@ -11,6 +11,7 @@ import NameAnimation from "@/ui/NameAnimation";
 import Toggels from "@/ui/Toggels";
 import Header from "@/components/header";
 import Background from "@/components/Background";
+import MobileMenu from "@/components/ui/MobileMenu";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +42,7 @@ export default async function RootLayout({
             {children}
             <Footer />
             <Toggels />
+            <MobileMenu />
             <Toaster position="bottom-right" />
             <Background />
           </Suspense>

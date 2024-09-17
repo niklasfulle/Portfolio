@@ -1,18 +1,30 @@
 "use client";
-import React, { useRef } from "react";
+import React, { FC, useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 import { ProjectType } from "@/lib/types";
 
-export default function Project({
+interface ProjectProps {
+  title: String;
+  descriptionDe: String;
+  descriptionEn: String;
+  image: String;
+  url: String;
+  tags: String;
+  language: String;
+}
+
+const Project: FC<ProjectProps> = ({
   title,
-  description,
+  descriptionDe,
+  descriptionEn,
   image,
   url,
   tags,
-}: ProjectType) {
+  language,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -37,7 +49,9 @@ export default function Project({
           <div className="flex flex-col">
             <h3 className="text-2xl font-semibold">{title}</h3>
             <p className="my-2 leading-relaxed text-gray-700 dark:text-white/70">
-              {description}
+              {language === "de"
+                ? (descriptionDe ?? "")
+                : (descriptionEn ?? "")}
             </p>
 
             <ul className="flex flex-wrap gap-2 sm:mt-auto">
@@ -52,7 +66,7 @@ export default function Project({
             </ul>
           </div>
           <Link
-            href={url}
+            href={url as any}
             target="_blank"
             className="flex w-fit flex-row items-center justify-center rounded-md bg-[#010409] px-3 py-2 text-[0.7rem] uppercase tracking-wider text-white hover:cursor-pointer hover:bg-[#010409]/[0.8] dark:text-white/70"
           >
@@ -62,7 +76,7 @@ export default function Project({
         </div>
 
         <Image
-          src={image}
+          src={image as any}
           alt="Project I worked on"
           width="500"
           height="500"
@@ -73,4 +87,6 @@ export default function Project({
       </section>
     </motion.div>
   );
-}
+};
+
+export default Project;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Intro from "@/main/Intro";
 import Projects from "@/main/Projects";
 import About from "@/main/About";
@@ -20,6 +20,7 @@ import {
   ProjectType,
   SkillType,
 } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
 
 export default async function Home() {
   const abouteMe: AbouteMeType[] = await getAbout();
