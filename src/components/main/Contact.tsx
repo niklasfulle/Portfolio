@@ -7,12 +7,16 @@ import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";
 import { Button } from "@/ui/Button";
 import { shortToast } from "@/lib/helpers/shorter-function";
+import { useSearchParams } from "next/navigation";
 
 interface ContactProps {
   contactEmail: string;
 }
 
 const Contact = ({ contactEmail }: ContactProps) => {
+  const searchParams = useSearchParams();
+  const search = searchParams.get("language");
+  const [language, setLanguag] = useState(search ?? "de");
   const [sendingEmail, setSendingEmail] = useState(false);
   const { ref } = useSectionInView("Contact");
 
@@ -75,14 +79,20 @@ const Contact = ({ contactEmail }: ContactProps) => {
         once: true,
       }}
     >
-      <SectionHeading>Contact me</SectionHeading>
+      <SectionHeading>
+        {language === "de" ? ("Kontaktiere mich" ?? "") : ("Contact me" ?? "")}
+      </SectionHeading>
 
       <p className="-mt-6 text-gray-700 dark:text-white/80">
-        Please contact me directly at{" "}
+        {language === "de"
+          ? ("Bitte kontaktiere mich direkt unter " ?? "")
+          : ("Please contact me directly at " ?? "")}
         <a className="underline" href={`mailto:${contactEmail}`}>
           {contactEmail}
-        </a>{" "}
-        or through this form.
+        </a>
+        {language === "de"
+          ? (" oder über dieses Formular." ?? "")
+          : (" or through this form." ?? "")}
       </p>
 
       <form
@@ -95,7 +105,9 @@ const Contact = ({ contactEmail }: ContactProps) => {
           type="email"
           required
           maxLength={500}
-          placeholder="Your email"
+          placeholder={
+            language === "de" ? ("Deine E-Mail" ?? "") : ("Your email" ?? "")
+          }
         />
         <Input
           className="mt-4 h-14 rounded-lg border border-gray-700 px-4 shadow-md transition-all placeholder:text-gray-900 focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
@@ -103,12 +115,18 @@ const Contact = ({ contactEmail }: ContactProps) => {
           type="text"
           required
           maxLength={500}
-          placeholder="Your Topic"
+          placeholder={
+            language === "de" ? ("Deine Thema" ?? "") : ("Your Topic" ?? "")
+          }
         />
         <Textarea
           className="mt-4 h-52 rounded-lg border border-gray-700 p-4 shadow-md transition-all placeholder:text-gray-900 focus:ring-[#5bb0ff] dark:bg-white dark:outline-none dark:focus:ring-[#ff9a60]"
           name="message"
-          placeholder="Your message"
+          placeholder={
+            language === "de"
+              ? ("Deine Nachricht" ?? "")
+              : ("Your message" ?? "")
+          }
           required
           maxLength={5000}
         />
@@ -117,7 +135,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
           disabled={sendingEmail}
           className="mt-6 w-2/6 bg-[#5bb0ff] font-semibold text-gray-900 shadow-md hover:bg-[#4a8dcc] hover:text-gray-100 dark:bg-[#ff9a60] dark:text-white dark:hover:bg-[#fc8c4bd0]"
         >
-          Send
+          {language === "de" ? ("Senden" ?? "") : ("Send" ?? "")}
         </Button>
       </form>
     </motion.section>

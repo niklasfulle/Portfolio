@@ -1,14 +1,19 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 import { useSectionInView } from "@/lib/hooks";
 import { useActiveSectionContext } from "@/context/active-section-context";
 import SectionHeading from "@/components/SectionHeading";
+import { useSearchParams } from "next/navigation";
 
 export default function Intro() {
+  const searchParams = useSearchParams();
+  const search = searchParams.get("language");
+  const [language, setLanguag] = useState(search ?? "de");
+
   const { ref } = useSectionInView("Home", 0.5);
   const { setActiveSection, setTimeOfLastClick } = useActiveSectionContext();
 
@@ -16,7 +21,7 @@ export default function Intro() {
     <section
       ref={ref}
       id="home"
-      className="mt-28 h-fit min-h-screen max-w-[50rem] scroll-mt-40 text-center"
+      className="h-fit min-h-screen max-w-[50rem] scroll-mt-36 text-center"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
@@ -70,7 +75,11 @@ export default function Intro() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <span className="font-bold">Hello, I&apos;m Niklas.</span>
+        <span className="font-bold">
+          {language === "de"
+            ? ("Hallo, ich bin Niklas." ?? "")
+            : ("Hello, I'm Niklas." ?? "")}
+        </span>
       </motion.h1>
 
       <motion.div
@@ -89,9 +98,32 @@ export default function Intro() {
             setTimeOfLastClick(Date.now());
           }}
         >
-          Contact me here{" "}
+          {language === "de"
+            ? ("Kontaktiere mich hier " ?? "")
+            : ("Contact me here " ?? "")}
+
           <BsArrowRight className="opacity-70 transition group-hover:translate-x-1" />
         </Link>
+      </motion.div>
+      <motion.div
+        className="mt-8 flex flex-col items-center justify-center px-4"
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+        }}
+      >
+        <img src="https://github-readme-stats.vercel.app/api?username=niklasfulle&theme=algolia&show_icons=true&count_private=true&custom_title=Niklas%27s%20Github%20Stats&hide=contribs&card_width=500" />
+      </motion.div>
+      <motion.div
+        className="mt-4 flex flex-col items-center justify-center px-4"
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.4,
+        }}
+      >
+        <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=niklasfulle&theme=algolia&layout=compact&langs_count=20&hide_progress=false&hide=mdx,glsl&card_width=500&custom_title=My%20Most%20Used%20Languages" />
       </motion.div>
     </section>
   );

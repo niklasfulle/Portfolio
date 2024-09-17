@@ -1,8 +1,9 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import { motion } from "framer-motion";
 import SectionHeading from "@/components/SectionHeading";
+import { useSearchParams } from "next/navigation";
 
 interface SkillsProps {
   skills: String[];
@@ -23,6 +24,9 @@ const fadeInAnimationVariants = {
 };
 
 const Skills: FC<SkillsProps> = ({ skills, learn }) => {
+  const searchParams = useSearchParams();
+  const search = searchParams.get("language");
+  const [language, setLanguag] = useState(search ?? "de");
   const { ref } = useSectionInView("Skills");
 
   return (
@@ -31,7 +35,9 @@ const Skills: FC<SkillsProps> = ({ skills, learn }) => {
       ref={ref}
       className="h-fit min-h-screen max-w-[53rem] scroll-mt-28 text-center"
     >
-      <SectionHeading>My skills</SectionHeading>
+      <SectionHeading>
+        {language === "de" ? ("Meine Fähigkeiten" ?? "") : ("My skills" ?? "")}
+      </SectionHeading>
       <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">
         {skills.map((skill: String, index: number) => (
           <motion.li
@@ -46,7 +52,11 @@ const Skills: FC<SkillsProps> = ({ skills, learn }) => {
           </motion.li>
         ))}
       </ul>
-      <SectionHeading>I want to learn</SectionHeading>
+      <SectionHeading>
+        {language === "de"
+          ? ("Möchte ich noch lernen" ?? "")
+          : ("I want to learn" ?? "")}
+      </SectionHeading>
       <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">
         {learn.map((learn: String, index: number) => (
           <motion.li

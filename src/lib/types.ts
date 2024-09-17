@@ -5,7 +5,8 @@ export type SectionName = (typeof links)[number]["name"];
 
 export type AbouteMeType = {
   id: string;
-  text: string | null;
+  textDe: string | null;
+  textEn: string | null;
   visible: boolean;
   series: number;
 };
@@ -13,7 +14,8 @@ export type AbouteMeType = {
 export type ProjectType = {
   id: string;
   title: string;
-  description: string;
+  descriptionDe: string;
+  descriptionEn: string;
   image: string;
   url: string;
   tags: string;
@@ -32,9 +34,11 @@ export type SkillType = {
 
 export type ExperienceType = {
   id: string;
-  title: string;
+  titleDe: string;
+  titleEn: string;
   location: string;
-  description: string;
+  descriptionDe: string;
+  descriptionEn: string;
   icon: string;
   date: string;
   visible: boolean;
