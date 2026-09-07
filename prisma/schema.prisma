@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider     = "postgresql"
-  url          = env("POSTGRESQL_URL")
   relationMode = "prisma"
 }
 
@@ -68,8 +67,8 @@ model Projects {
   title         String
   descriptionDe   String
   descriptionEn   String
-  image         String
-  url           String
+  image         String?
+  url           String?
   tags          String
   visible       Boolean  @default(false)
   series        Int      @default(0)
@@ -86,6 +85,7 @@ model Skills {
 
 model Experience {
   id            String   @id @default(cuid()) @unique
+  category      String   @default("experience")
   titleDe         String
   titleEn         String
   location      String
@@ -100,4 +100,10 @@ model Experience {
 model ContactEmail {
   id           String   @id @default(cuid()) @unique
   email        String
+}
+
+model GithubStatsSnapshot {
+  id        String   @id
+  data      Json
+  fetchedAt DateTime @default(now()) @updatedAt
 }

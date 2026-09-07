@@ -2,13 +2,16 @@ import React from "react";
 
 const Background = () => {
   return (
-    <div className="fixed top-0 -z-10 h-screen w-screen">
-      <div id="backgrounddiv1"></div>
-      <div id="backgrounddiv2"></div>
-      <div id="backgrounddiv3"></div>
-      <div id="backgrounddiv4"></div>
-      <div id="backgrounddiv5"></div>
-      <div id="backgrounddiv6"></div>
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+    >
+      <div className="background-orb background-orb--1" />
+      <div className="background-orb background-orb--2" />
+      <div className="background-orb background-orb--3" />
+      <div className="background-orb background-orb--4" />
+      <div className="background-orb background-orb--5" />
+      <div className="background-orb background-orb--6" />
     </div>
   );
 };

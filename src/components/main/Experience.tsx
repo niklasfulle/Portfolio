@@ -1,47 +1,136 @@
 "use client";
-import React, { FC, useState } from "react";
+
+import { CalendarDays, MapPin } from "lucide-react";
+import { FC } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { CgWorkAlt } from "react-icons/cg";
+import { LuGraduationCap } from "react-icons/lu";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
-import { motion } from "framer-motion";
-import Timeline from "./Timeline/Timeline";
 import { ExperienceType } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/context/language-context";
 
 interface ExperienceProps {
   experience: ExperienceType[];
 }
 
-const Experience: FC<ExperienceProps> = ({ experience }) => {
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
-  const [language, setLanguag] = useState(search ?? "de");
+type ExperienceCardProps = {
+  item: ExperienceType;
+  language: "de" | "en";
+};
 
-  const { ref } = useSectionInView("Experience", 0.5);
+const ExperienceCard: FC<ExperienceCardProps> = ({ item, language }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const isEducation = item.category === "education";
+  const title = language === "de" ? item.titleDe : item.titleEn;
+  const description = language === "de" ? item.descriptionDe : item.descriptionEn;
+
+  return (
+    <motion.article
+      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white/75 p-5 shadow-sm backdrop-blur-sm transition-colors hover:border-cyan-500/60 hover:bg-white dark:border-white/10 dark:bg-slate-950/55 dark:hover:border-cyan-400/50 dark:hover:bg-slate-900/70"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+      whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.45 }}
+      viewport={{ once: true, margin: "-60px" }}
+    >
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 opacity-80" />
+
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700 dark:bg-cyan-400/10 dark:text-cyan-300">
+          {isEducation ? (
+            <LuGraduationCap aria-hidden="true" className="h-6 w-6" />
+          ) : (
+            <CgWorkAlt aria-hidden="true" className="h-6 w-6" />
+          )}
+        </div>
+        <p className="flex items-center gap-1.5 text-right text-sm font-medium tabular-nums text-slate-500 dark:text-slate-300">
+          <CalendarDays aria-hidden="true" className="h-4 w-4 shrink-0" />
+          <span>{item.date}</span>
+        </p>
+      </div>
+
+      <h4 className="text-lg font-semibold leading-snug text-slate-950 dark:text-white">
+        {title}
+      </h4>
+      <p className="mt-2 flex min-w-0 items-start gap-2 break-words text-sm font-medium text-slate-600 dark:text-slate-300">
+        <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-cyan-600 dark:text-cyan-300" />
+        <span>{item.location}</span>
+      </p>
+      <p className="mt-4 min-w-0 break-words text-sm leading-6 text-slate-600 dark:text-slate-300">
+        {description}
+      </p>
+    </motion.article>
+  );
+};
+
+type ExperienceGroupProps = {
+  id: string;
+  title: string;
+  items: ExperienceType[];
+  language: "de" | "en";
+};
+
+const ExperienceGroup: FC<ExperienceGroupProps> = ({
+  id,
+  title,
+  items,
+  language,
+}) => {
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <section aria-labelledby={id}>
+      <div className="mb-5 flex items-center gap-4">
+        <h3
+          id={id}
+          className="text-xl font-semibold text-slate-900 dark:text-white"
+        >
+          {title}
+        </h3>
+        <div aria-hidden="true" className="h-px flex-1 bg-slate-200 dark:bg-white/15" />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        {items.map((item) => (
+          <ExperienceCard key={item.id} item={item} language={language} />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const Experience: FC<ExperienceProps> = ({ experience }) => {
+  const { language } = useLanguage();
+  const { ref } = useSectionInView("Experience", 0.2);
+  const workExperience = experience.filter(
+    (item) => item.category !== "education"
+  );
+  const education = experience.filter((item) => item.category === "education");
 
   return (
     <section
       id="experience"
       ref={ref}
-      className="relative h-fit min-h-screen scroll-mt-28 pb-36"
+      className="relative h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28 pb-36"
     >
-      <SectionHeading>
-        {language === "de"
-          ? ("Meine Erfahrung" ?? "")
-          : ("My experience" ?? "")}
+      <SectionHeading eyebrow={language === "de" ? "Werdegang" : "Career"}>
+        {language === "de" ? "Erfahrung & Ausbildung" : "Experience & education"}
       </SectionHeading>
-      <motion.div
-        initial={{
-          opacity: 0,
-        }}
-        whileInView={{
-          opacity: 1,
-        }}
-        transition={{
-          duration: 1,
-        }}
-      >
-        <Timeline data={experience} language={language} />
-      </motion.div>
+      <div className="space-y-14">
+        <ExperienceGroup
+          id="work-experience-heading"
+          title={language === "de" ? "Berufserfahrung" : "Work experience"}
+          items={workExperience}
+          language={language}
+        />
+        <ExperienceGroup
+          id="education-heading"
+          title={language === "de" ? "Ausbildung" : "Education"}
+          items={education}
+          language={language}
+        />
+      </div>
     </section>
   );
 };

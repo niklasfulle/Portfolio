@@ -1,18 +1,16 @@
 "use client";
-import React, { FC, useState } from "react";
+import { FC } from "react";
 import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { AbouteMeType } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/context/language-context";
 
 interface AboutProps {
   abouteMe: AbouteMeType[];
 }
 const About: FC<AboutProps> = ({ abouteMe }) => {
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
-  const [language, setLanguag] = useState(search ?? "de");
+  const { language } = useLanguage();
 
   const { ref } = useSectionInView("About");
 
@@ -26,23 +24,21 @@ const About: FC<AboutProps> = ({ abouteMe }) => {
         transition={{ delay: 0.175 }}
         id="about"
       >
-        <SectionHeading>
-          {language === "de" ? ("Über mich" ?? "") : ("About me" ?? "")}
+        <SectionHeading eyebrow={language === "de" ? "Profil" : "Profile"}>
+          {language === "de" ? "Über mich" : "About me"}
         </SectionHeading>
-        {abouteMe.map((abouteMe: AbouteMeType, index: number) => (
+        {abouteMe.map((abouteMe: AbouteMeType) => (
           <motion.p
-            className="mb-5 px-4 sm:px-0"
-            key={index}
+            className="mb-5 whitespace-pre-line px-4 sm:px-0"
+            key={abouteMe.id}
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.175 }}
-            dangerouslySetInnerHTML={{
-              __html:
-                language === "de"
-                  ? (abouteMe.textDe ?? "")
-                  : (abouteMe.textEn ?? ""),
-            }}
-          ></motion.p>
+          >
+            {language === "de"
+              ? (abouteMe.textDe ?? "")
+              : (abouteMe.textEn ?? "")}
+          </motion.p>
         ))}
       </motion.div>
     </section>

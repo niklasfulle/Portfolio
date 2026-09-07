@@ -1,35 +1,42 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { ProjectType } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/context/language-context";
 import Project from "./Project";
 
-interface ProjectsProps {
-  projects: ProjectType[];
-}
+type ProjectsProps = {
+  readonly projects: ProjectType[];
+};
 const Projects: FC<ProjectsProps> = ({ projects }) => {
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
-  const [language, setLanguag] = useState(search ?? "de");
+  const { language } = useLanguage();
 
-  const { ref } = useSectionInView("Projects", 0.5);
+  const { ref } = useSectionInView("Projects", 0.1);
 
   return (
     <section
       ref={ref}
       id="projects"
-      className="mb-28 h-fit min-h-screen scroll-mt-28"
+      className="mb-28 h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28"
     >
-      <SectionHeading>
-        {language === "de" ? ("Meine Projekte" ?? "") : ("My projects" ?? "")}
-      </SectionHeading>
-      <div>
-        {projects.map((project: ProjectType, index: number) => (
-          <React.Fragment key={index}>
-            <Project {...project} language={language} />
-          </React.Fragment>
+      <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <SectionHeading
+            eyebrow={language === "de" ? "Ausgewählte Arbeiten" : "Selected work"}
+          >
+            {language === "de" ? "Meine Projekte" : "My projects"}
+          </SectionHeading>
+        </div>
+        <p className="max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-300 sm:text-right">
+          {language === "de"
+            ? "Eine Auswahl öffentlicher GitHub-Projekte und vertraulicher Arbeiten aus der Praxis."
+            : "A selection of public GitHub projects and confidential work from practice."}
+        </p>
+      </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        {projects.map((project: ProjectType) => (
+          <Project key={project.id} {...project} language={language} />
         ))}
       </div>
     </section>

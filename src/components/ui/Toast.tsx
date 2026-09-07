@@ -1,13 +1,13 @@
 "use client";
 import { cn } from "@/lib/utils";
 import React, { HTMLAttributes } from "react";
-import hotToast, { Toaster as HotToaster } from "react-hot-toast";
+import hotToast from "react-hot-toast";
 
-export const Toaster = HotToaster;
+export { Toaster } from "react-hot-toast";
 
-interface ToastProps extends HTMLAttributes<HTMLDivElement> {
-  visible: boolean;
-}
+type ToastProps = Readonly<HTMLAttributes<HTMLDivElement>> & {
+  readonly visible: boolean;
+};
 
 export function Toast({ visible, className, ...props }: ToastProps) {
   return (
@@ -21,13 +21,13 @@ export function Toast({ visible, className, ...props }: ToastProps) {
     />
   );
 }
-interface ToastTitleProps extends HTMLAttributes<HTMLHeadingElement> {}
+type ToastTitleProps = Readonly<HTMLAttributes<HTMLHeadingElement>>;
 
 Toast.Title = function ToastTitle({ className, ...props }: ToastTitleProps) {
   return <p className={cn("text-sm font-medium", className)} {...props} />;
 };
 
-interface ToastDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {}
+type ToastDescriptionProps = Readonly<HTMLAttributes<HTMLParagraphElement>>;
 
 Toast.Description = function ToastDescription({
   className,

@@ -1,17 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/context/language-context";
 
 function createLink(language: string) {
   return "/?language=" + language;
 }
 
 export default function NameAnimation() {
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
-  const [language, setLanguag] = useState(search ?? "de");
+  const { language } = useLanguage();
 
   return (
     <>

@@ -1,0 +1,190 @@
+import { expect, test, type Page } from "@playwright/test";
+
+const navigationItems = [
+  { label: "Startseite", id: "home" },
+  { label: "Über mich", id: "about" },
+  { label: "Projekte", id: "projects" },
+  { label: "Fähigkeiten", id: "skills" },
+  { label: "Erfahrung", id: "experience" },
+  { label: "Kontakt", id: "contact" },
+] as const;
+
+async function openGermanPortfolio(page: Page) {
+  await page.goto("/?language=de", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#home")).toBeVisible();
+}
+
+async function hasThemeClass(
+  page: Page,
+  className: string
+) {
+  return page.locator("html").evaluate(
+    (element, themeClass) => element.classList.contains(themeClass),
+    className
+  );
+}
+
+test.describe("Portfolio shell", () => {
+  test("loads the home page with its primary content", async ({ page }) => {
+    await openGermanPortfolio(page);
+
+    await expect(
+      page.getByRole("heading", { name: "Niklas Fulle", level: 2 })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Hallo, ich bin Niklas.", level: 1 })
+    ).toBeVisible();
+    await expect(page.locator("main")).toBeVisible();
+  });
+
+  test("renders the animated GitHub statistic cards", async ({ page }) => {
+    await openGermanPortfolio(page);
+
+    await expect(page.getByTestId("github-stats")).toBeVisible();
+    await expect(page.getByTestId("github-stats-card")).toContainText(
+      "GitHub-Aktivität"
+    );
+    await expect(page.getByTestId("github-streak-card")).toContainText(
+      "Gesamtbeiträge"
+    );
+    await expect(page.getByTestId("github-languages-card")).toContainText(
+      "TypeScript"
+    );
+    await expect(page.getByTestId("github-languages-card")).toContainText("#1");
+    await expect(page.getByTestId("github-languages-card")).toContainText("Top:");
+
+    const topLanguages = page.getByTestId("github-top-languages");
+    expect(await topLanguages.locator("li").count()).toBeLessThanOrEqual(8);
+
+    const moreLanguages = page.getByTestId("github-more-languages");
+    if (await moreLanguages.count()) {
+      expect(await moreLanguages.getAttribute("open")).toBeNull();
+      await moreLanguages.locator("summary").click();
+      await expect(moreLanguages).toHaveAttribute("open", "");
+      await expect(moreLanguages).toContainText("#9");
+    }
+
+    const ring = page.getByTestId("github-current-streak-ring");
+    const value = page.getByTestId("github-current-streak-value");
+    const icon = page.getByTestId("github-current-streak-icon");
+    const ringBox = await ring.boundingBox();
+    const valueBox = await value.boundingBox();
+    const iconBox = await icon.boundingBox();
+
+    expect(ringBox).not.toBeNull();
+    expect(valueBox).not.toBeNull();
+    expect(iconBox).not.toBeNull();
+    expect(valueBox!.x).toBeGreaterThanOrEqual(ringBox!.x);
+    expect(valueBox!.x + valueBox!.width).toBeLessThanOrEqual(
+      ringBox!.x + ringBox!.width
+    );
+    expect(iconBox!.y).toBeLessThan(ringBox!.y);
+  });
+
+  test("navigates to every visible section through the anchor navigation", async ({
+    page,
+  }) => {
+    await openGermanPortfolio(page);
+
+    const navigation = page.locator("nav");
+
+    for (const item of navigationItems) {
+      const link = navigation.getByRole("link", {
+        name: item.label,
+        exact: true,
+      });
+
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAttribute(
+        "href",
+        new RegExp(`language=de#${item.id}$`)
+      );
+
+      await link.click();
+
+      await expect(page).toHaveURL(new RegExp(`#${item.id}$`));
+      await expect(page.locator(`#${item.id}`)).toBeVisible();
+      await expect(page.locator(`#${item.id}`)).toBeInViewport();
+    }
+  });
+
+  test("marks the section from the URL hash as active", async ({ page }) => {
+    await page.goto("/?language=de#experience", {
+      waitUntil: "domcontentloaded",
+    });
+
+    const navigation = page.locator("nav");
+    await expect(
+      navigation.getByRole("link", { name: "Erfahrung", exact: true })
+    ).toHaveAttribute("aria-current", "location");
+    await expect(
+      navigation.getByRole("link", { name: "Startseite", exact: true })
+    ).not.toHaveAttribute("aria-current");
+  });
+
+  test("switches between German and English", async ({ page }) => {
+    await openGermanPortfolio(page);
+    let loadEvents = 0;
+    page.on("load", () => {
+      loadEvents += 1;
+    });
+
+    await expect(
+      page.getByRole("heading", { name: "Hallo, ich bin Niklas.", level: 1 })
+    ).toBeVisible();
+
+    const languageToggle = page.getByRole("button", {
+      name: "Toggle Language",
+    });
+    await expect(languageToggle).toBeVisible();
+
+    await languageToggle.click();
+
+    await expect(page).toHaveURL(/language=en/);
+    await expect(
+      page.getByRole("heading", { name: "Hello, I'm Niklas.", level: 1 })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "About me", exact: true })
+    ).toBeVisible();
+    expect(loadEvents).toBe(0);
+
+    await languageToggle.click();
+
+    await expect(page).toHaveURL(/language=de/);
+    await expect(
+      page.getByRole("heading", { name: "Hallo, ich bin Niklas.", level: 1 })
+    ).toBeVisible();
+  });
+
+  test("switches the document theme between light and dark mode", async ({
+    page,
+  }) => {
+    await openGermanPortfolio(page);
+
+    const themeToggle = page.getByRole("button", { name: "Toggle Theme" });
+    await expect(themeToggle).toBeVisible();
+
+    await expect
+      .poll(() => hasThemeClass(page, "light"))
+      .toBe(true);
+
+    await themeToggle.click();
+
+    await expect
+      .poll(() => hasThemeClass(page, "dark"))
+      .toBe(true);
+    await expect
+      .poll(() => hasThemeClass(page, "light"))
+      .toBe(false);
+
+    await themeToggle.click();
+
+    await expect
+      .poll(() => hasThemeClass(page, "light"))
+      .toBe(true);
+    await expect
+      .poll(() => hasThemeClass(page, "dark"))
+      .toBe(false);
+  });
+});

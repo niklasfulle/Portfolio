@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "types": ["jest", "node"],
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -12,7 +17,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -20,15 +25,33 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/ui/*": ["./src/components/ui/*"],
-      "@/navigation/*": ["./src/components/navigation/*"],
-      "@/auth/*": ["./src/components/auth/*"],
-      "@/admin/*": ["./src/components/admin/*"],
-      "@/main/*": ["./src/components/main/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/styles/*": [
+        "./src/styles/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/ui/*": [
+        "./src/components/ui/*"
+      ],
+      "@/navigation/*": [
+        "./src/components/navigation/*"
+      ],
+      "@/auth/*": [
+        "./src/components/auth/*"
+      ],
+      "@/admin/*": [
+        "./src/components/admin/*"
+      ],
+      "@/main/*": [
+        "./src/components/main/*"
+      ]
     }
   },
   "include": [
@@ -36,7 +59,10 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/lib/db/schema"
+    "src/lib/db/schema",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

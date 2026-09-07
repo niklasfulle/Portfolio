@@ -23,30 +23,33 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         "light:bg-white w-[100%] scroll-smooth text-slate-900 antialiased dark:bg-gray-800",
         inter.className
       )}
     >
-      <body className="relative scroll-smooth bg-gray-50 pt-28 text-gray-950 dark:bg-gray-900 dark:text-gray-50 dark:text-opacity-90 sm:pt-36">
-        <Providers>
-          <Suspense>
-            <NameAnimation />
-            <Header />
-            <Socials />
-            {children}
-            <Footer />
-            <Toggels />
-            <MobileMenu />
-            <Toaster position="bottom-right" />
-            <Background />
-          </Suspense>
-        </Providers>
+      <body className="relative isolate scroll-smooth bg-transparent pt-28 text-gray-950 dark:bg-transparent dark:text-gray-50 dark:text-opacity-90 sm:pt-36">
+        <Background />
+        <div className="relative z-10">
+          <Providers>
+            <Suspense>
+              <NameAnimation />
+              <Header />
+              <Socials />
+              {children}
+              <Footer />
+              <Toggels />
+              <MobileMenu />
+              <Toaster position="bottom-right" />
+            </Suspense>
+          </Providers>
+        </div>
       </body>
     </html>
   );

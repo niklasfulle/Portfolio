@@ -3,19 +3,17 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { DE, US } from "country-flag-icons/react/3x2";
-import { useSearchParams } from "next/navigation";
+import { DE as GermanFlag, US as UnitedStatesFlag } from "country-flag-icons/react/3x2";
 import Link from "next/link";
+import { useLanguage } from "@/context/language-context";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { CgMenuGridR } from "react-icons/cg";
 import { IoClose } from "react-icons/io5";
 
 export default function MobileMenu() {
   const { theme, setTheme } = useTheme();
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
   const [MobileMenu, setMobileMenu] = useState(false);
-  const [language, setLanguage] = useState(search ?? "de");
+  const { language, toggleLanguage } = useLanguage();
 
   const toggleMobileMenu = () => {
     setMobileMenu(!MobileMenu);
@@ -26,42 +24,6 @@ export default function MobileMenu() {
       setTheme("dark");
     } else {
       setTheme("light");
-    }
-  };
-
-  const toggleLanguage = () => {
-    let url = window.location.href;
-    if (url != undefined) {
-      let newUrl = "";
-      let urlSplit: string[] = url.split("?");
-      let hook = "";
-      if (urlSplit.length == 2) {
-        let urlSplit2 = urlSplit[1].split("#");
-        newUrl = urlSplit[0];
-        hook = urlSplit2[1];
-        if (hook == undefined) {
-          hook = "";
-        } else {
-          hook = "#" + hook;
-        }
-      } else if (urlSplit.length == 1) {
-        let urlSplit2 = url.split("#");
-        newUrl = urlSplit2[0];
-        hook = urlSplit2[1];
-        if (hook == undefined) {
-          hook = "";
-        } else {
-          hook = "#" + hook;
-        }
-      }
-
-      if (language === "de") {
-        setLanguage("en");
-        window.location.href = newUrl + "?language=en" + hook;
-      } else {
-        setLanguage("de");
-        window.location.href = newUrl + "?language=de" + hook;
-      }
     }
   };
 
@@ -144,9 +106,9 @@ export default function MobileMenu() {
             }}
           >
             {language === "de" ? (
-              <DE title="Deutschland" className="absolute h-7 w-7" />
+              <GermanFlag title="Deutschland" className="absolute h-7 w-7" />
             ) : (
-              <US title="United States" className="absolute h-7 w-7" />
+              <UnitedStatesFlag title="United States" className="absolute h-7 w-7" />
             )}
           </motion.button>
         </div>

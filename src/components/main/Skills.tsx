@@ -1,13 +1,16 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import { motion } from "framer-motion";
 import SectionHeading from "@/components/SectionHeading";
-import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/context/language-context";
+import { LanguagesCard } from "./GithubStats";
+import type { GithubStatsData } from "@/lib/github-stats";
 
 interface SkillsProps {
-  skills: String[];
-  learn: String[];
+  skills: string[];
+  learn: string[];
+  stats: GithubStatsData;
 }
 
 const fadeInAnimationVariants = {
@@ -23,26 +26,26 @@ const fadeInAnimationVariants = {
   }),
 };
 
-const Skills: FC<SkillsProps> = ({ skills, learn }) => {
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
-  const [language, setLanguag] = useState(search ?? "de");
+const Skills: FC<SkillsProps> = ({ skills, learn, stats }) => {
+  const { language } = useLanguage();
   const { ref } = useSectionInView("Skills");
 
   return (
     <section
       id="skills"
       ref={ref}
-      className="h-fit min-h-screen max-w-[53rem] scroll-mt-28 text-center"
+      className="h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28 text-center"
     >
-      <SectionHeading>
-        {language === "de" ? ("Meine Fähigkeiten" ?? "") : ("My skills" ?? "")}
+      <SectionHeading
+        eyebrow={language === "de" ? "Technologie-Stack" : "Technology stack"}
+      >
+        {language === "de" ? "Meine Fähigkeiten" : "My skills"}
       </SectionHeading>
       <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">
-        {skills.map((skill: String, index: number) => (
+        {skills.map((skill: string, index: number) => (
           <motion.li
             className="rounded-xl border border-black bg-white px-5 py-3 shadow-sm dark:border-white/30 dark:bg-gray-800 dark:text-white/80"
-            key={index}
+            key={skill}
             variants={fadeInAnimationVariants}
             initial="initial"
             whileInView="animate"
@@ -52,22 +55,27 @@ const Skills: FC<SkillsProps> = ({ skills, learn }) => {
           </motion.li>
         ))}
       </ul>
-      <SectionHeading>
+      <div className="mb-16 w-full text-left">
+        <LanguagesCard language={language} stats={stats} />
+      </div>
+      <SectionHeading
+        eyebrow={language === "de" ? "Als Nächstes" : "Next up"}
+      >
         {language === "de"
-          ? ("Möchte ich noch lernen" ?? "")
-          : ("I want to learn" ?? "")}
+          ? "Möchte ich noch lernen"
+          : "I want to learn"}
       </SectionHeading>
       <ul className="mb-16 flex flex-wrap justify-center gap-3 text-lg text-gray-800">
-        {learn.map((learn: String, index: number) => (
+        {learn.map((learnItem: string, index: number) => (
           <motion.li
             className="rounded-xl border border-black bg-white px-5 py-3 shadow-sm dark:border-white/30 dark:bg-gray-800 dark:text-white/80"
-            key={index}
+            key={learnItem}
             variants={fadeInAnimationVariants}
             initial="initial"
             whileInView="animate"
             custom={index}
           >
-            {learn}
+            {learnItem}
           </motion.li>
         ))}
       </ul>

@@ -1,0 +1,69 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+      POSTGRESQL_URL: "postgresql://portfolio:${POSTGRES_PASSWORD}@db:5432/portfolio?schema=public"
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: "${NEXTAUTH_SECRET:-}"
+      NODEMAILER_EMAIL: "${NODEMAILER_EMAIL:-}"
+      NODEMAILER_PW: "${NODEMAILER_PW:-}"
+      CONTACT_EMAIL: "${CONTACT_EMAIL:-}"
+      GITHUB_USERNAME: "${GITHUB_USERNAME:-niklasfulle}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN:-}"
+    command:
+      - sh
+      - -c
+      - >-
+        if [ -z "$$NEXTAUTH_SECRET" ]; then
+        export NEXTAUTH_SECRET="$$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")";
+        fi;
+        yarn prisma generate && yarn prisma db push && yarn dev
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - .:/app
+      - portfolio_node_modules:/app/node_modules
+      - portfolio_next:/app/.next
+    depends_on:
+      db:
+        condition: service_healthy
+
+  github-stats-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+      POSTGRESQL_URL: "postgresql://portfolio:${POSTGRES_PASSWORD}@db:5432/portfolio?schema=public"
+      GITHUB_USERNAME: "${GITHUB_USERNAME:-niklasfulle}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN:-}"
+    command: ["sh", "-c", "yarn prisma generate && yarn prisma db push && yarn worker:github-stats"]
+    volumes:
+      - .:/app
+      - portfolio_node_modules:/app/node_modules
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - portfolio_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  portfolio_node_modules:
+  portfolio_next:
+  portfolio_postgres:

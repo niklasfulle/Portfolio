@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import Intro from "@/main/Intro";
+import { getCachedGithubStats } from "@/lib/github-stats-cache";
 import Projects from "@/main/Projects";
 import About from "@/main/About";
 import Skills from "@/main/Skills";
@@ -14,33 +14,33 @@ import {
   getSkills,
 } from "@/lib/db/functions";
 import {
-  AbouteMeType,
-  ContactEmailType,
-  ExperienceType,
-  ProjectType,
   SkillType,
 } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
 
 export default async function Home() {
-  const abouteMe: AbouteMeType[] = await getAbout();
-  const projects: ProjectType[] = await getProjects();
-  const skills: SkillType[] = await getSkills();
-  const learn: SkillType[] = await getLearn();
-  const experience: ExperienceType[] = await getExperience();
-  const contactEmail: ContactEmailType[] = await getContactEmail();
+  const [abouteMe, projects, skills, learn, experience, contactEmail, githubStats] =
+    await Promise.all([
+      getAbout(),
+      getProjects(),
+      getSkills(),
+      getLearn(),
+      getExperience(),
+      getContactEmail(),
+      getCachedGithubStats(),
+    ]);
+  const recipientEmail = contactEmail[0]?.email ?? "";
 
-  const skillsData: String[] = skills.map((skill: SkillType) => skill.name);
-  const learnData: String[] = learn.map((skill: SkillType) => skill.name);
+  const skillsData: string[] = skills.map((skill: SkillType) => skill.name);
+  const learnData: string[] = learn.map((skill: SkillType) => skill.name);
 
   return (
     <main className="flex flex-col items-center scroll-smooth px-4">
-      <Intro />
+      <Intro stats={githubStats} />
       <About abouteMe={abouteMe} />
       <Projects projects={projects} />
-      <Skills skills={skillsData} learn={learnData} />
+      <Skills skills={skillsData} learn={learnData} stats={githubStats} />
       <Experience experience={experience} />
-      <Contact contactEmail={contactEmail[0].email} />
+      <Contact contactEmail={recipientEmail} />
     </main>
   );
 }

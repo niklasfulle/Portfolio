@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
@@ -7,28 +7,26 @@ import { Input } from "@/ui/Input";
 import { Textarea } from "@/ui/Textarea";
 import { Button } from "@/ui/Button";
 import { shortToast } from "@/lib/helpers/shorter-function";
-import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/context/language-context";
 
 interface ContactProps {
   contactEmail: string;
 }
 
 const Contact = ({ contactEmail }: ContactProps) => {
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
-  const [language, setLanguag] = useState(search ?? "de");
+  const { language } = useLanguage();
   const [sendingEmail, setSendingEmail] = useState(false);
   const { ref } = useSectionInView("Contact");
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setSendingEmail(true);
 
     try {
-      const formData = new FormData(e.currentTarget);
+      const form = event.currentTarget;
+      const formData = new FormData(form);
 
       const data = {
-        contactEmail,
         senderEmail: formData.get("senderEmail"),
         topic: formData.get("topic"),
         message: formData.get("message"),
@@ -36,20 +34,23 @@ const Contact = ({ contactEmail }: ContactProps) => {
 
       const res = await fetch("/api/email/send", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      if (res.status === 200) {
-        shortToast(
-          "Success",
-          "The message was sent successfully.",
-          "success",
-          5000
-        );
+      if (!res.ok) {
+        throw new Error(`Contact request failed with status ${res.status}`);
       }
 
-      e.target.reset();
+      shortToast(
+        "Success",
+        "The message was sent successfully.",
+        "success",
+        5000,
+      );
+      form.reset();
     } catch (error) {
+      console.error("Failed to send contact form", error);
       shortToast(
         "Error",
         "There was an error sending the message.",
@@ -79,20 +80,20 @@ const Contact = ({ contactEmail }: ContactProps) => {
         once: true,
       }}
     >
-      <SectionHeading>
-        {language === "de" ? ("Kontaktiere mich" ?? "") : ("Contact me" ?? "")}
+      <SectionHeading eyebrow={language === "de" ? "Kontakt" : "Get in touch"}>
+        {language === "de" ? "Kontaktiere mich" : "Contact me"}
       </SectionHeading>
 
       <p className="-mt-6 text-gray-700 dark:text-white/80">
         {language === "de"
-          ? ("Bitte kontaktiere mich direkt unter " ?? "")
-          : ("Please contact me directly at " ?? "")}
+          ? "Bitte kontaktiere mich direkt unter "
+          : "Please contact me directly at "}
         <a className="underline" href={`mailto:${contactEmail}`}>
           {contactEmail}
         </a>
         {language === "de"
-          ? (" oder über dieses Formular." ?? "")
-          : (" or through this form." ?? "")}
+          ? " oder über dieses Formular."
+          : " or through this form."}
       </p>
 
       <form
@@ -104,9 +105,9 @@ const Contact = ({ contactEmail }: ContactProps) => {
           name="senderEmail"
           type="email"
           required
-          maxLength={500}
+          maxLength={254}
           placeholder={
-            language === "de" ? ("Deine E-Mail" ?? "") : ("Your email" ?? "")
+            language === "de" ? "Deine E-Mail" : "Your email"
           }
         />
         <Input
@@ -114,9 +115,9 @@ const Contact = ({ contactEmail }: ContactProps) => {
           name="topic"
           type="text"
           required
-          maxLength={500}
+          maxLength={200}
           placeholder={
-            language === "de" ? ("Deine Thema" ?? "") : ("Your Topic" ?? "")
+            language === "de" ? "Deine Thema" : "Your Topic"
           }
         />
         <Textarea
@@ -124,8 +125,8 @@ const Contact = ({ contactEmail }: ContactProps) => {
           name="message"
           placeholder={
             language === "de"
-              ? ("Deine Nachricht" ?? "")
-              : ("Your message" ?? "")
+              ? "Deine Nachricht"
+              : "Your message"
           }
           required
           maxLength={5000}
@@ -135,7 +136,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
           disabled={sendingEmail}
           className="mt-6 w-2/6 bg-[#5bb0ff] font-semibold text-gray-900 shadow-md hover:bg-[#4a8dcc] hover:text-gray-100 dark:bg-[#ff9a60] dark:text-white dark:hover:bg-[#fc8c4bd0]"
         >
-          {language === "de" ? ("Senden" ?? "") : ("Send" ?? "")}
+          {language === "de" ? "Senden" : "Send"}
         </Button>
       </form>
     </motion.section>

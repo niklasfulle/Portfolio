@@ -1,59 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { DE, US } from "country-flag-icons/react/3x2";
-import { useSearchParams } from "next/navigation";
+import { DE as GermanFlag, US as UnitedStatesFlag } from "country-flag-icons/react/3x2";
+import { useLanguage } from "@/context/language-context";
 
 export default function Toggels() {
-  const { theme, setTheme } = useTheme();
-  const searchParams = useSearchParams();
-  const search = searchParams.get("language");
-  const [language, setLanguage] = useState(search ?? "de");
+  const { setTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
 
   const toggleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
-  };
+    const isDark = globalThis.document.documentElement.classList.contains("dark");
 
-  const toggleLanguage = () => {
-    let url = window.location.href;
-    if (url != undefined) {
-      let newUrl = "";
-      let urlSplit: string[] = url.split("?");
-      let hook = "";
-      if (urlSplit.length == 2) {
-        let urlSplit2 = urlSplit[1].split("#");
-        newUrl = urlSplit[0];
-        hook = urlSplit2[1];
-        if (hook == undefined) {
-          hook = "";
-        } else {
-          hook = "#" + hook;
-        }
-      } else if (urlSplit.length == 1) {
-        let urlSplit2 = url.split("#");
-        newUrl = urlSplit2[0];
-        hook = urlSplit2[1];
-        if (hook == undefined) {
-          hook = "";
-        } else {
-          hook = "#" + hook;
-        }
-      }
-
-      if (language === "de") {
-        setLanguage("en");
-        window.location.href = newUrl + "?language=en" + hook;
-      } else {
-        setLanguage("de");
-        window.location.href = newUrl + "?language=de" + hook;
-      }
-    }
+    setTheme(isDark ? "light" : "dark");
   };
 
   return (
@@ -76,9 +36,9 @@ export default function Toggels() {
         }}
       >
         {language === "de" ? (
-          <DE title="Deutschland" className="h-7 w-7" />
+          <GermanFlag title="Deutschland" className="h-7 w-7" />
         ) : (
-          <US title="United States" className="h-7 w-7" />
+          <UnitedStatesFlag title="United States" className="h-7 w-7" />
         )}
       </motion.button>
       <motion.button

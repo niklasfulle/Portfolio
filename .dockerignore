@@ -1,0 +1,10 @@
+.git
+.next
+node_modules
+*.log
+.env
+.env.*
+!.env.example
+backup.sql
+.scannerwork
+coverage

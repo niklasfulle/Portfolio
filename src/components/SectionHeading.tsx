@@ -1,13 +1,26 @@
 import React from "react";
 
 type SectionHeadingProps = {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
+  readonly eyebrow?: React.ReactNode;
+  readonly align?: "left" | "center";
 };
 
-export default function SectionHeading({ children }: SectionHeadingProps) {
+export default function SectionHeading({
+  children,
+  eyebrow,
+  align = "left",
+}: SectionHeadingProps) {
   return (
-    <h2 className="mb-8 w-full text-center text-3xl font-medium capitalize">
-      {children}
-    </h2>
+    <div className={`mb-8 w-full ${align === "center" ? "text-center" : "text-left"}`}>
+      {eyebrow ? (
+        <p className="mb-2 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">
+          {eyebrow}
+        </p>
+      ) : null}
+      <h2 className="text-3xl font-medium tracking-tight text-slate-950 dark:text-white sm:text-4xl">
+        {children}
+      </h2>
+    </div>
   );
 }

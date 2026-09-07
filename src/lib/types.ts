@@ -16,8 +16,8 @@ export type ProjectType = {
   title: string;
   descriptionDe: string;
   descriptionEn: string;
-  image: string;
-  url: string;
+  image: string | null;
+  url: string | null;
   tags: string;
   visible: boolean;
   series: number;
@@ -34,6 +34,7 @@ export type SkillType = {
 
 export type ExperienceType = {
   id: string;
+  category?: "experience" | "education" | string;
   titleDe: string;
   titleEn: string;
   location: string;

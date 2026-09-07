@@ -61,3 +61,32 @@ This is a portfolio website for myself. It is built with Next.js and Tailwind CS
 | zod                         | ^3.22.2  | https://www.npmjs.com/package/zod                         |
 
 ## Screenshots
+
+## Development with Docker Compose
+
+Start the Next.js development server and a local PostgreSQL database with:
+
+```bash
+docker compose up --build
+```
+
+The portfolio is available at http://localhost:3000. Stop the services with
+`Ctrl+C`; the PostgreSQL data remains in the named Docker volume.
+
+## Tests and SonarQube
+
+Run the Jest test suite with LCOV coverage using:
+
+```bash
+yarn test:coverage
+```
+
+For a SonarQube scan, set `SONAR_HOST_URL` and `SONAR_TOKEN`, then run:
+
+```bash
+yarn sonar:scan
+```
+
+The scan runs the tests first and starts SonarQube only when they pass. The
+project key defaults to `portfolio` and can be overridden with
+`SONAR_PROJECT_KEY`.

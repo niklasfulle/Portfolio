@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
+import React, { FC, MouseEvent, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Menu from "@mui/material/Menu";
@@ -10,6 +10,7 @@ import { Box, Button, Tooltip } from "@mui/material";
 import Link from "next/link";
 import { Loader2, Lock, LogOut } from "lucide-react";
 import { SessionType } from "@/lib/types";
+import { useTheme } from "next-themes";
 
 interface Props {
   session: SessionType;
@@ -17,9 +18,10 @@ interface Props {
 
 const UserButton: FC<Props> = ({ session }) => {
   const { user } = session;
+  const { resolvedTheme } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [prefersDarkMode, setPrefersDarkMode] = useState<boolean>(false);
+  const prefersDarkMode = resolvedTheme === "dark";
   const open = Boolean(anchorEl);
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -40,16 +42,6 @@ const UserButton: FC<Props> = ({ session }) => {
     }
     setIsLoading(false);
   };
-
-  useEffect(() => {
-    if (localStorage.getItem("theme") === "system") {
-      setPrefersDarkMode(true);
-    } else {
-      setPrefersDarkMode(
-        localStorage.getItem("theme") === "dark" ? true : false
-      );
-    }
-  }, [open]);
 
   const theme = useMemo(
     () =>
