@@ -84,10 +84,8 @@ function formatBytes(bytes: number) {
   return `${value.toFixed(value >= 10 ? 0 : 1)} ${units[unitIndex]}`;
 }
 
-function getLanguageDetails(item: GithubLanguageStat, isGerman: boolean) {
-  if (item.bytes) return formatBytes(item.bytes);
-  if (isGerman) return "Detaildaten nicht verfügbar";
-  return "Details unavailable";
+function getLanguageDetails(item: GithubLanguageStat) {
+  return item.bytes ? formatBytes(item.bytes) : null;
 }
 
 function AnimatedNumber({ value }: { readonly value: number }) {
@@ -329,7 +327,7 @@ function LanguageRow({
   readonly item: GithubLanguageStat;
   readonly reducedMotion: boolean | null;
 }) {
-  const languageDetails = getLanguageDetails(item, isGerman);
+  const languageDetails = getLanguageDetails(item);
 
   return (
     <li
@@ -364,16 +362,16 @@ function LanguageRow({
           value={item.percentage}
         />
       </motion.div>
-      <div className="ml-7 mt-1 flex justify-between gap-2 text-[0.62rem] text-slate-500 dark:text-slate-400">
-        <span>
-          {languageDetails}
-        </span>
-        {item.repositoryCount ? (
-          <span>
-            {item.repositoryCount} {isGerman ? "Repos" : "repos"}
-          </span>
-        ) : null}
-      </div>
+      {languageDetails || item.repositoryCount ? (
+        <div className="ml-7 mt-1 flex justify-between gap-2 text-[0.62rem] text-slate-500 dark:text-slate-400">
+          {languageDetails ? <span>{languageDetails}</span> : <span />}
+          {item.repositoryCount ? (
+            <span>
+              {item.repositoryCount} {isGerman ? "Repos" : "repos"}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
     </li>
   );
 }

@@ -19,6 +19,52 @@ type ExperienceCardProps = {
   language: "de" | "en";
 };
 
+const organizationLinks = [
+  {
+    name: "biqx GmbH",
+    url: "https://www.linkedin.com/company/biqx-gmbh/",
+  },
+  {
+    name: "Pintsch GmbH",
+    url: "https://www.linkedin.com/company/pintsch/",
+  },
+  {
+    name: "Ostfalia",
+    url: "https://www.linkedin.com/school/ostfalia---university-of-applied-sciences/",
+  },
+  {
+    name: "Heinrich-Büssing-Schule",
+    url: "https://www.linkedin.com/school/heinrich-b%C3%BCssing-schule-braunschweig/",
+  },
+] as const;
+
+const LinkedLocation: FC<{ location: string }> = ({ location }) => {
+  const organization = organizationLinks.find(({ name }) =>
+    location.includes(name)
+  );
+
+  if (!organization) {
+    return <>{location}</>;
+  }
+
+  const [before, after] = location.split(organization.name);
+
+  return (
+    <>
+      {before}
+      <a
+        href={organization.url}
+        target="_blank"
+        rel="noreferrer"
+        className="font-semibold text-cyan-700 underline decoration-cyan-500/40 underline-offset-2 transition-colors hover:text-cyan-500 dark:text-cyan-300 dark:hover:text-cyan-200"
+      >
+        {organization.name}
+      </a>
+      {after}
+    </>
+  );
+};
+
 const ExperienceCard: FC<ExperienceCardProps> = ({ item, language }) => {
   const shouldReduceMotion = useReducedMotion();
   const isEducation = item.category === "education";
@@ -54,7 +100,9 @@ const ExperienceCard: FC<ExperienceCardProps> = ({ item, language }) => {
       </h4>
       <p className="mt-2 flex min-w-0 items-start gap-2 break-words text-sm font-medium text-slate-600 dark:text-slate-300">
         <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-cyan-600 dark:text-cyan-300" />
-        <span>{item.location}</span>
+        <span>
+          <LinkedLocation location={item.location} />
+        </span>
       </p>
       <p className="mt-4 min-w-0 break-words text-sm leading-6 text-slate-600 dark:text-slate-300">
         {description}

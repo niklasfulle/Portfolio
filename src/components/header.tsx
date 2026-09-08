@@ -43,8 +43,8 @@ export default function Header() {
         animate={{ y: 0, x: "-50%", opacity: 1, scale: 1 }}
       ></motion.div>
 
-      <nav className="fixed left-1/2 top-[0.15rem] z-20 flex min-h-12 w-[calc(100%-1rem)] max-w-[42rem] -translate-x-1/2 items-center justify-center py-1 sm:top-[1.7rem] sm:w-[calc(100%-2rem)] sm:py-0">
-        <ul className="grid w-full max-w-full grid-cols-3 items-center text-[0.82rem] font-medium text-gray-500 sm:flex sm:flex-nowrap sm:justify-center sm:gap-1 sm:text-[0.84rem] md:gap-2 md:text-[0.9rem]">
+      <nav className="fixed left-1/2 top-[0.15rem] z-20 flex min-h-12 w-[calc(100%-1rem)] max-w-[42rem] -translate-x-1/2 items-center justify-center px-1.5 py-1 sm:top-[1.7rem] sm:w-[calc(100%-2rem)] sm:px-1.5 sm:py-0">
+        <ul className="grid w-full max-w-full grid-cols-3 items-center gap-0.5 text-[0.82rem] font-medium text-gray-500 sm:flex sm:flex-nowrap sm:justify-center sm:gap-1 sm:text-[0.84rem] md:gap-1.5 md:text-[0.9rem]">
           {links.map((link) => {
             const isActive = isHydrated && activeSection === link.name;
 

@@ -16,7 +16,8 @@
     "test:e2e": "playwright test",
     "test:all": "yarn test:coverage --runInBand && yarn test:e2e",
     "sonar:scan": "node scripts/sonar-scan.mjs",
-    "worker:github-stats": "node scripts/github-stats-worker.mjs"
+    "worker:github-stats": "node scripts/github-stats-worker.mjs",
+    "worker:github-stats:once": "node scripts/github-stats-worker.mjs --once"
   },
   "resolutions": {
     "next-auth/openid-client/jose": "4.15.9",

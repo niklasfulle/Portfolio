@@ -12,7 +12,7 @@ services:
       NODEMAILER_PW: "${NODEMAILER_PW:-}"
       CONTACT_EMAIL: "${CONTACT_EMAIL:-}"
       GITHUB_USERNAME: "${GITHUB_USERNAME:-niklasfulle}"
-      GITHUB_TOKEN: "${GITHUB_TOKEN:-}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN:?GITHUB_TOKEN must be set in .env}"
     command:
       - sh
       - -c
@@ -39,7 +39,7 @@ services:
       NODE_ENV: development
       POSTGRESQL_URL: "postgresql://portfolio:${POSTGRES_PASSWORD}@db:5432/portfolio?schema=public"
       GITHUB_USERNAME: "${GITHUB_USERNAME:-niklasfulle}"
-      GITHUB_TOKEN: "${GITHUB_TOKEN:-}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN:?GITHUB_TOKEN must be set in .env}"
     command: ["sh", "-c", "yarn prisma generate && yarn prisma db push && yarn worker:github-stats"]
     volumes:
       - .:/app

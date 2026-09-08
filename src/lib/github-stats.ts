@@ -341,7 +341,6 @@ const contributionCalendarQuery = `
       contributionsCollection(
         from: $from
         to: $to
-        includePrivateContributions: true
       ) {
         contributionCalendar {
           weeks {
@@ -418,7 +417,6 @@ const repositoriesQuery = `
         first: 100
         after: $after
         ownerAffiliations: OWNER
-        privacy: ALL
         orderBy: { field: UPDATED_AT, direction: DESC }
       ) {
         nodes {
@@ -549,7 +547,11 @@ export async function getGithubStats(): Promise<GithubStatsData> {
       longestStreakDates: calculatedContributions.longestStreakDates,
       languages: buildLanguageStats(languageTotals, languageRepositoryCounts),
     };
-  } catch {
+  } catch (error) {
+    console.error(
+      "GitHub statistics request failed:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
     return fallbackGithubStats;
   }
 }

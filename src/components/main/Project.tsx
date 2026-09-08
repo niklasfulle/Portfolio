@@ -33,6 +33,12 @@ function getImageCaption(image: string | null, language: string) {
       : "Image: original screenshot, cropped for presentation";
   }
 
+  if (image === "/project-portfolio-intro.png") {
+    return language === "de"
+      ? "Bild: Original-Screenshot des Portfolio-Intros"
+      : "Image: original screenshot of the portfolio intro";
+  }
+
   if (image?.startsWith("/project-")) {
     return language === "de"
       ? "Bild: KI-generierte Illustration"
