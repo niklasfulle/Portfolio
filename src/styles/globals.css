@@ -119,6 +119,192 @@ html.dark .background-orb--6 {
   background: linear-gradient(145deg, #a16207, #b45309);
 }
 
+.background-stars,
+.background-sparkle,
+.shooting-star {
+  display: none;
+}
+
+html.dark .background-stars {
+  display: block;
+  position: absolute;
+  inset: 0;
+  opacity: 0.52;
+  background-image:
+    radial-gradient(circle at 8% 18%, rgba(255, 255, 255, 0.9) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 19% 72%, rgba(125, 211, 252, 0.8) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.75) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 48% 83%, rgba(165, 180, 252, 0.75) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 63% 16%, rgba(255, 255, 255, 0.8) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 78% 58%, rgba(125, 211, 252, 0.7) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 91% 30%, rgba(255, 255, 255, 0.85) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 86% 88%, rgba(165, 180, 252, 0.7) 0 0.7px, transparent 1.2px),
+    radial-gradient(circle at 4% 51%, rgba(255, 255, 255, 0.7) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 27% 10%, rgba(125, 211, 252, 0.8) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 42% 57%, rgba(255, 255, 255, 0.8) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 57% 38%, rgba(165, 180, 252, 0.8) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 72% 91%, rgba(255, 255, 255, 0.75) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 96% 70%, rgba(125, 211, 252, 0.85) 0 0.8px, transparent 1.3px);
+  animation: stars-twinkle 7s ease-in-out infinite;
+}
+
+html.dark .background-sparkle {
+  display: block;
+  position: absolute;
+  height: 1.8rem;
+  width: 1.8rem;
+  opacity: 0.18;
+  transform: rotate(45deg);
+  animation: sparkle-pulse 8s ease-in-out infinite;
+}
+
+html.dark .background-sparkle::before,
+html.dark .background-sparkle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.9), transparent);
+  transform: translate(-50%, -50%);
+}
+
+html.dark .background-sparkle::before {
+  height: 100%;
+  width: 1px;
+}
+
+html.dark .background-sparkle::after {
+  height: 1px;
+  width: 100%;
+}
+
+html.dark .background-sparkle--one {
+  left: 14%;
+  top: 24%;
+  animation-delay: -2s;
+}
+
+html.dark .background-sparkle--two {
+  right: 17%;
+  top: 67%;
+  height: 1.3rem;
+  width: 1.3rem;
+  opacity: 0.13;
+  animation-delay: -5s;
+}
+
+html.dark .background-sparkle--three {
+  left: 57%;
+  top: 12%;
+  height: 1rem;
+  width: 1rem;
+  opacity: 0.1;
+  animation-delay: -7s;
+}
+
+html.dark .shooting-star {
+  display: block;
+  position: absolute;
+  top: var(--shooting-star-start-top);
+  left: var(--shooting-star-start-left);
+  width: 10rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.08) 35%, rgba(125, 211, 252, 0.55) 78%, rgba(255, 255, 255, 0.95));
+  box-shadow: 0 0 10px rgba(125, 211, 252, 0.5);
+  opacity: 0;
+  transform: rotate(32deg);
+  animation: shooting-star 31s linear infinite;
+}
+
+html.dark .shooting-star::before {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 7px 2px rgba(125, 211, 252, 0.85);
+  transform: translateY(-50%);
+}
+
+html.dark .shooting-star--two {
+  --shooting-star-start-top: 42%;
+  --shooting-star-start-left: 12%;
+  --shooting-star-end-top: 90%;
+  --shooting-star-end-left: 90%;
+  width: 8rem;
+  animation-delay: -17s;
+  animation-duration: 43s;
+}
+
+html.dark .shooting-star--one {
+  --shooting-star-start-top: 16%;
+  --shooting-star-start-left: -12rem;
+  --shooting-star-end-top: 64%;
+  --shooting-star-end-left: 78%;
+}
+
+@keyframes stars-twinkle {
+  0%,
+  100% {
+    opacity: 0.42;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes sparkle-pulse {
+  0%,
+  72%,
+  100% {
+    opacity: 0.12;
+    transform: rotate(45deg) scale(0.7);
+  }
+  80% {
+    opacity: 0.65;
+    transform: rotate(45deg) scale(1);
+  }
+  87% {
+    opacity: 0.16;
+    transform: rotate(45deg) scale(0.82);
+  }
+}
+
+@keyframes shooting-star {
+  0%,
+  86% {
+    opacity: 0;
+    left: var(--shooting-star-start-left);
+    top: var(--shooting-star-start-top);
+  }
+  89% {
+    opacity: 0.85;
+  }
+  97% {
+    opacity: 0;
+    left: var(--shooting-star-end-left);
+    top: var(--shooting-star-end-top);
+  }
+  100% {
+    opacity: 0;
+    left: var(--shooting-star-end-left);
+    top: var(--shooting-star-end-top);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.dark .background-stars,
+  html.dark .background-sparkle,
+  html.dark .shooting-star {
+    animation: none;
+  }
+}
+
 .card-border::after,
 .card-border::before {
   content: "";

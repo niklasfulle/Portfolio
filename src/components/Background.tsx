@@ -12,6 +12,12 @@ const Background = () => {
       <div className="background-orb background-orb--4" />
       <div className="background-orb background-orb--5" />
       <div className="background-orb background-orb--6" />
+      <div className="background-stars" />
+      <div className="background-sparkle background-sparkle--one" />
+      <div className="background-sparkle background-sparkle--two" />
+      <div className="background-sparkle background-sparkle--three" />
+      <div className="shooting-star shooting-star--one" />
+      <div className="shooting-star shooting-star--two" />
     </div>
   );
 };

@@ -6,6 +6,24 @@ import { Cloud, Code2, ShieldCheck, TestTube2 } from "lucide-react";
 import type { ComponentType } from "react";
 import {
   SiBlazor,
+  SiAnsible,
+  SiApple,
+  SiExpress,
+  SiGithubactions,
+  SiGnubash,
+  SiHibernate,
+  SiIntellijidea,
+  SiLatex,
+  SiLinux,
+  SiMongodb,
+  SiMysql,
+  SiNpm,
+  SiPostman,
+  SiRedis,
+  SiRaspberrypi,
+  SiSpring,
+  SiTerraform,
+  SiThreedotjs,
   SiCmake,
   SiCplusplus,
   SiCss,
@@ -29,6 +47,8 @@ import {
   SiSqlite,
   SiTailwindcss,
   SiTypescript,
+  SiUbuntu,
+  SiYarn,
 } from "react-icons/si";
 import SectionHeading from "@/components/SectionHeading";
 import { useLanguage } from "@/context/language-context";
@@ -75,7 +95,53 @@ const skillDetails: Record<
   MicroPython: { descriptionDe: "Python für Mikrocontroller", descriptionEn: "Python for microcontrollers", icon: SiMicropython },
   Azure: { descriptionDe: "Cloud- und Infrastrukturplattform", descriptionEn: "Cloud and infrastructure platform", icon: Cloud },
   Intune: { descriptionDe: "Geräte- und Endpoint-Verwaltung", descriptionEn: "Device and endpoint management", icon: ShieldCheck },
+  npm: { descriptionDe: "Paketverwaltung für JavaScript", descriptionEn: "Package manager for JavaScript", icon: SiNpm },
+  Yarn: { descriptionDe: "Schnelle JavaScript-Paketverwaltung", descriptionEn: "Fast JavaScript package manager", icon: SiYarn },
+  "Express.js": { descriptionDe: "Web-Framework für Node.js", descriptionEn: "Web framework for Node.js", icon: SiExpress },
+  "Three.js": { descriptionDe: "3D-Grafiken im Browser", descriptionEn: "3D graphics in the browser", icon: SiThreedotjs },
+  Spring: { descriptionDe: "Framework für Java-Anwendungen", descriptionEn: "Framework for Java applications", icon: SiSpring },
+  Hibernate: { descriptionDe: "Objektrelationales Mapping für Java", descriptionEn: "Object-relational mapping for Java", icon: SiHibernate },
+  MongoDB: { descriptionDe: "Dokumentenorientierte Datenbank", descriptionEn: "Document-oriented database", icon: SiMongodb },
+  MySQL: { descriptionDe: "Relationale SQL-Datenbank", descriptionEn: "Relational SQL database", icon: SiMysql },
+  Redis: { descriptionDe: "In-Memory-Datenbank und Cache", descriptionEn: "In-memory database and cache", icon: SiRedis },
+  Terraform: { descriptionDe: "Infrastructure as Code", descriptionEn: "Infrastructure as code", icon: SiTerraform },
+  Ansible: { descriptionDe: "Automatisierung und Konfigurationsmanagement", descriptionEn: "Automation and configuration management", icon: SiAnsible },
+  "GitHub Actions": { descriptionDe: "CI/CD-Automatisierung auf GitHub", descriptionEn: "CI/CD automation on GitHub", icon: SiGithubactions },
+  LaTeX: { descriptionDe: "Dokumente mit typografischer Kontrolle", descriptionEn: "Documents with typographic control", icon: SiLatex },
+  Windows: { descriptionDe: "Microsoft-Betriebssystem", descriptionEn: "Microsoft operating system", icon: Code2 },
+  Apple: { descriptionDe: "Apple-Plattformen und -Werkzeuge", descriptionEn: "Apple platforms and tooling", icon: SiApple },
+  Linux: { descriptionDe: "Open-Source-Betriebssystem", descriptionEn: "Open-source operating system", icon: SiLinux },
+  Ubuntu: { descriptionDe: "Linux-Distribution", descriptionEn: "Linux distribution", icon: SiUbuntu },
+  "Raspberry Pi": { descriptionDe: "Einplatinencomputer und Prototyping", descriptionEn: "Single-board computing and prototyping", icon: SiRaspberrypi },
+  "VS Code": { descriptionDe: "Erweiterbarer Code-Editor", descriptionEn: "Extensible code editor", icon: Code2 },
+  "IntelliJ IDEA": { descriptionDe: "IDE für Java und JVM-Projekte", descriptionEn: "IDE for Java and JVM projects", icon: SiIntellijidea },
+  Postman: { descriptionDe: "API-Entwicklung und Tests", descriptionEn: "API development and testing", icon: SiPostman },
+  Bash: { descriptionDe: "Shell-Skripting unter Unix", descriptionEn: "Shell scripting on Unix", icon: SiGnubash },
+  AWS: { descriptionDe: "Cloud-Plattform von Amazon", descriptionEn: "Amazon cloud platform", icon: Cloud },
 };
+
+const skillGroups = [
+  {
+    de: "Frontend & UI",
+    en: "Frontend & UI",
+    skills: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "Tailwind CSS", "Framer Motion", "Three.js"],
+  },
+  {
+    de: "Backend & Datenbanken",
+    en: "Backend & databases",
+    skills: ["Node.js", "npm", "Yarn", "Express.js", "Python", "Java", "Spring", "Hibernate", "Prisma", "PostgreSQL", "SQLite", "MongoDB", "MySQL", "Redis"],
+  },
+  {
+    de: "DevOps & Qualität",
+    en: "DevOps & quality",
+    skills: ["Git", "GitHub", "GitLab CI/CD", "GitHub Actions", "Docker", "Terraform", "Ansible", "SonarQube", "Jest", "Playwright"],
+  },
+  {
+    de: "Plattformen & Tools",
+    en: "Platforms & tools",
+    skills: [".NET", ".NET MAUI", "Blazor", "C++", "CMake", "MicroPython", "PowerShell", "Azure", "AWS", "Windows", "Apple", "Linux", "Ubuntu", "Raspberry Pi", "VS Code", "IntelliJ IDEA", "Postman", "Bash", "LaTeX", "Intune"],
+  },
+] as const;
 
 const skillCloudVariants = {
   hidden: {},
@@ -164,22 +230,42 @@ const Skills: FC<SkillsProps> = ({ skills, stats }) => {
           animate={shouldReduceMotion ? undefined : { x: [0, -28, 0], y: [0, -20, 0] }}
           transition={{ duration: 11, ease: "easeInOut", repeat: Infinity }}
         />
-        <motion.ul
-          className="relative z-10 flex flex-wrap justify-center gap-3 text-lg text-gray-800"
-          variants={skillCloudVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.25 }}
-        >
-          {skills.map((skill: string) => (
-            <SkillPill
-              key={skill}
-              language={language}
-              shouldReduceMotion={shouldReduceMotion}
-              skill={skill}
-            />
-          ))}
-        </motion.ul>
+        <div className="relative z-10 grid gap-8 md:grid-cols-2">
+          {skillGroups.map((group) => {
+            const groupSkills = skills.filter((skill) =>
+              group.skills.some((groupSkill) => groupSkill === skill)
+            );
+
+            if (groupSkills.length === 0) return null;
+
+            return (
+              <div key={group.en}>
+                <div className="mb-3 flex items-center gap-2 text-left">
+                  <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_10px_2px_rgba(34,211,238,0.35)]" />
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+                    {language === "de" ? group.de : group.en}
+                  </h3>
+                </div>
+                <motion.ul
+                  className="flex flex-wrap justify-start gap-3 text-lg text-gray-800"
+                  variants={skillCloudVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                >
+                  {groupSkills.map((skill) => (
+                    <SkillPill
+                      key={skill}
+                      language={language}
+                      shouldReduceMotion={shouldReduceMotion}
+                      skill={skill}
+                    />
+                  ))}
+                </motion.ul>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <motion.div
@@ -194,11 +280,6 @@ const Skills: FC<SkillsProps> = ({ skills, stats }) => {
         <motion.span
           className="absolute left-1/2 top-0 h-full w-px origin-top -translate-x-1/2 bg-gradient-to-b from-cyan-400/80 via-cyan-400/40 to-transparent"
           animate={shouldReduceMotion ? undefined : { opacity: [0.45, 1, 0.45] }}
-          transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
-        />
-        <motion.span
-          className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300 shadow-[0_0_18px_5px_rgba(34,211,238,0.35)]"
-          animate={shouldReduceMotion ? undefined : { scale: [0.8, 1.25, 0.8], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
         />
       </motion.div>
