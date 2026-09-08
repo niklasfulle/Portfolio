@@ -18,7 +18,7 @@ const Projects: FC<ProjectsProps> = ({ projects }) => {
     <section
       ref={ref}
       id="projects"
-      className="mb-28 h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28"
+      className="section-glow section-glow--projects mb-36 h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28"
     >
       <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>

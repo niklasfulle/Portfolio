@@ -40,14 +40,14 @@ const About: FC<AboutProps> = ({ abouteMe }) => {
     <section
       id="about"
       ref={ref}
-      className="h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28 pb-24"
+      className="section-glow section-glow--about mb-36 h-fit min-h-screen w-full max-w-5xl scroll-mt-28 pb-24"
     >
       <SectionHeading eyebrow={isGerman ? "Profil" : "Profile"}>
         {isGerman ? "Über mich" : "About me"}
       </SectionHeading>
 
       <motion.div
-        className="relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/45 p-6 shadow-[0_20px_70px_-35px_rgba(8,145,178,0.45)] backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/30 dark:shadow-[0_20px_70px_-35px_rgba(34,211,238,0.25)] sm:p-10"
+        className="relative overflow-hidden rounded-4xl border border-slate-200/80 bg-white/45 p-6 shadow-[0_20px_70px_-35px_rgba(8,145,178,0.45)] backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/30 dark:shadow-[0_20px_70px_-35px_rgba(34,211,238,0.25)] sm:p-10"
         initial={reducedMotion ? false : { opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}

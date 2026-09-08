@@ -4,11 +4,11 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import { useSearchParams } from "next/navigation";
 
 export type Language = "de" | "en";
 
@@ -19,31 +19,33 @@ type LanguageContextType = {
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
-function normalizeLanguage(value: string | null): Language {
-  return value === "en" ? "en" : "de";
-}
-
 export default function LanguageContextProvider({
   children,
 }: {
   readonly children: ReactNode;
 }) {
-  const searchParams = useSearchParams();
-  const routeLanguage = normalizeLanguage(searchParams.get("language"));
-  const [language, setLanguage] = useState<Language>(routeLanguage);
+  const [language, setLanguage] = useState<Language>("de");
 
-  const toggleLanguage = useCallback(() => {
-    const nextLanguage = language === "de" ? "en" : "de";
-    const nextUrl = new URL(globalThis.location.href);
+  useEffect(() => {
+    const currentUrl = new URL(globalThis.location.href);
 
-    setLanguage(nextLanguage);
-    nextUrl.searchParams.set("language", nextLanguage);
+    if (!currentUrl.searchParams.has("language")) {
+      return;
+    }
+
+    currentUrl.searchParams.delete("language");
     globalThis.history.replaceState(
       globalThis.history.state,
       "",
-      `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`
+      `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`
     );
-  }, [language]);
+  }, []);
+
+  const toggleLanguage = useCallback(() => {
+    setLanguage((currentLanguage) =>
+      currentLanguage === "de" ? "en" : "de"
+    );
+  }, []);
 
   const contextValue = useMemo(
     () => ({ language, toggleLanguage }),

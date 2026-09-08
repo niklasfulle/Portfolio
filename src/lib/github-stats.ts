@@ -445,7 +445,7 @@ async function getAuthenticatedRepositories(): Promise<GithubRepository[]> {
   let after: string | null = null;
 
   while (true) {
-    const response = await fetchGithubGraphql<GithubUserRepositoriesResponse>(
+    const response: GithubUserRepositoriesResponse = await fetchGithubGraphql<GithubUserRepositoriesResponse>(
       repositoriesQuery,
       { after, login: username }
     );

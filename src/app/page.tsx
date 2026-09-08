@@ -26,7 +26,7 @@ export default async function Home() {
       getContactEmail(),
       getCachedGithubStats(),
     ]);
-  const recipientEmail = contactEmail[0]?.email ?? "";
+  const recipientEmail = contactEmail[0]?.email ?? "name@beispiel.de";
 
   const skillsData: string[] = skills.map((skill: SkillType) => skill.name);
 

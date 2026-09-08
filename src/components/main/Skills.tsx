@@ -2,6 +2,7 @@
 import React, { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import { motion, useReducedMotion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { Cloud, Code2, ShieldCheck, TestTube2 } from "lucide-react";
 import type { ComponentType } from "react";
 import {
@@ -153,7 +154,7 @@ const skillCloudVariants = {
   },
 };
 
-const skillPillVariants = {
+const skillPillVariants: Variants = {
   hidden: { opacity: 0, y: 16, scale: 0.92 },
   visible: {
     opacity: 1,
@@ -210,7 +211,7 @@ const Skills: FC<SkillsProps> = ({ skills, stats }) => {
     <section
       id="skills"
       ref={ref}
-      className="h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28 text-center"
+      className="section-glow section-glow--skills mb-36 h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28 text-center"
     >
       <SectionHeading
         eyebrow={language === "de" ? "Technologie-Stack" : "Technology stack"}

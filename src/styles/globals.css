@@ -25,6 +25,73 @@ body {
   background-attachment: fixed;
 }
 
+.section-glow {
+  position: relative;
+  isolation: isolate;
+}
+
+.section-glow::before,
+.section-glow::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(4rem);
+  opacity: 0.28;
+}
+
+.section-glow::before {
+  top: 8%;
+  right: -8rem;
+  height: 18rem;
+  width: 18rem;
+  background: var(--section-glow-primary, rgba(34, 211, 238, 0.5));
+}
+
+.section-glow::after {
+  bottom: 8%;
+  left: -8rem;
+  height: 16rem;
+  width: 16rem;
+  background: var(--section-glow-secondary, rgba(129, 140, 248, 0.4));
+}
+
+.section-glow--intro {
+  --section-glow-primary: rgba(34, 211, 238, 0.55);
+  --section-glow-secondary: rgba(129, 140, 248, 0.45);
+}
+
+.section-glow--about {
+  --section-glow-primary: rgba(34, 211, 238, 0.38);
+  --section-glow-secondary: rgba(168, 85, 247, 0.42);
+}
+
+.section-glow--projects {
+  --section-glow-primary: rgba(59, 130, 246, 0.45);
+  --section-glow-secondary: rgba(236, 72, 153, 0.32);
+}
+
+.section-glow--skills {
+  --section-glow-primary: rgba(34, 211, 238, 0.45);
+  --section-glow-secondary: rgba(139, 92, 246, 0.38);
+}
+
+.section-glow--experience {
+  --section-glow-primary: rgba(245, 158, 11, 0.35);
+  --section-glow-secondary: rgba(168, 85, 247, 0.35);
+}
+
+.section-glow--contact {
+  --section-glow-primary: rgba(34, 211, 238, 0.45);
+  --section-glow-secondary: rgba(99, 102, 241, 0.38);
+}
+
+html.dark .section-glow::before,
+html.dark .section-glow::after {
+  opacity: 0.38;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }

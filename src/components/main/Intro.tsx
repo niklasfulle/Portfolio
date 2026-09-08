@@ -24,7 +24,7 @@ export default function Intro({ stats }: IntroProps) {
     <section
       ref={ref}
       id="home"
-      className="h-fit min-h-[calc(100svh-9rem)] w-full max-w-[64rem] scroll-mt-36 pt-4 text-center sm:pt-8"
+      className="section-glow section-glow--intro mb-36 h-fit min-h-[calc(100svh-9rem)] w-full max-w-[64rem] scroll-mt-32 pt-4 text-center sm:pt-8"
     >
       <motion.div
         className="relative isolate overflow-hidden rounded-[2rem] border border-white/60 bg-white/35 px-5 py-10 shadow-2xl shadow-slate-950/10 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/35 dark:shadow-black/30 sm:px-10 sm:py-14"
@@ -106,14 +106,14 @@ export default function Intro({ stats }: IntroProps) {
       </motion.h1>
 
       <motion.p
-        className="mx-auto mt-4 max-w-lg text-sm leading-6 text-slate-600 dark:text-slate-300 sm:text-base"
+        className="mx-auto mt-4 max-w-2xl whitespace-pre-line text-sm leading-6 text-slate-600 dark:text-slate-300 sm:text-base"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35, duration: 0.5, ease: "easeOut" }}
       >
         {language === "de"
-          ? "Bachelor-Abschluss in Informatik mit Schwerpunkt Softwareentwicklung an der Ostfalia Hochschule für angewandte Wissenschaften in Wolfenbüttel, Deutschland. Derzeit arbeite ich als Softwareentwickler."
-          : "Bachelor's degree in computer science, specialising in software engineering, from Ostfalia University of Applied Sciences in Wolfenbüttel, Germany. I am currently working as a software developer."}
+          ? "Bachelor-Abschluss in Informatik mit Schwerpunkt Softwareentwicklung an der Ostfalia Hochschule für angewandte Wissenschaften in Wolfenbüttel, Deutschland.\nDerzeit arbeite ich als Softwareentwickler."
+          : "Bachelor's degree in computer science, specialising in software engineering, from Ostfalia University of Applied Sciences in Wolfenbüttel, Germany.\nI am currently working as a software developer."}
       </motion.p>
 
       <motion.div

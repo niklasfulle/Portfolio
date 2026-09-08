@@ -34,11 +34,11 @@ export default async function RootLayout({
         inter.className
       )}
     >
-      <body className="relative isolate scroll-smooth bg-transparent pt-28 text-gray-950 dark:bg-transparent dark:text-gray-50 dark:text-opacity-90 sm:pt-36">
+      <body className="relative isolate flex min-h-screen flex-col scroll-smooth bg-transparent pt-28 text-gray-950 dark:bg-transparent dark:text-gray-50 dark:text-opacity-90 sm:pt-36">
         <Background />
-        <div className="relative z-10">
-          <Providers>
-            <Suspense>
+        <div className="relative z-10 flex min-h-screen flex-1 flex-col">
+          <Suspense>
+            <Providers>
               <NameAnimation />
               <Header />
               <Socials />
@@ -47,8 +47,8 @@ export default async function RootLayout({
               <Toggels />
               <MobileMenu />
               <Toaster position="bottom-right" />
-            </Suspense>
-          </Providers>
+            </Providers>
+          </Suspense>
         </div>
       </body>
     </html>

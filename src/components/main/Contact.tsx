@@ -66,7 +66,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
     <motion.section
       id="contact"
       ref={ref}
-      className="h-fit min-h-[79vh] w-[min(100%,38rem)] scroll-mt-28 text-center"
+      className="section-glow section-glow--contact h-fit min-h-[79vh] w-[min(100%,38rem)] scroll-mt-28 text-center"
       initial={{
         opacity: 0,
       }}
@@ -84,7 +84,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
         {language === "de" ? "Kontaktiere mich" : "Contact me"}
       </SectionHeading>
 
-      <p className="mx-auto -mt-6 max-w-xl text-slate-600 dark:text-slate-300">
+      <p className="mx-auto -mt-6 max-w-md text-slate-600 dark:text-slate-300">
         {language === "de"
           ? "Bitte kontaktiere mich direkt unter "
           : "Please contact me directly at "}
@@ -99,7 +99,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
           : " or through this form."}
       </p>
 
-      <div className="relative mt-10 overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/45 p-5 text-left shadow-[0_20px_70px_-35px_rgba(8,145,178,0.45)] backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/30 dark:shadow-[0_20px_70px_-35px_rgba(34,211,238,0.25)] sm:p-8">
+      <div className="relative mt-10 overflow-hidden rounded-4xl border border-slate-200/80 bg-white/45 p-5 text-left shadow-[0_20px_70px_-35px_rgba(8,145,178,0.45)] backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/30 dark:shadow-[0_20px_70px_-35px_rgba(34,211,238,0.25)] sm:p-8">
         <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-400/10" />
         <div className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-violet-300/20 blur-3xl dark:bg-violet-500/10" />
         <form
@@ -146,7 +146,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
           <Button
             isLoading={sendingEmail}
             disabled={sendingEmail}
-            className="mt-2 h-12 w-full rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 px-7 font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition-transform hover:scale-[1.01] hover:from-cyan-300 hover:to-blue-400 dark:from-cyan-300 dark:to-violet-500 dark:hover:from-cyan-200 dark:hover:to-violet-400 sm:w-fit"
+            className="mt-2 h-12 w-full rounded-xl bg-linear-to-r from-cyan-400 to-blue-500 px-7 font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition-transform hover:scale-[1.01] hover:from-cyan-300 hover:to-blue-400 dark:from-cyan-300 dark:to-violet-500 dark:hover:from-cyan-200 dark:hover:to-violet-400 sm:w-fit"
           >
             {language === "de" ? "Nachricht senden" : "Send message"}
           </Button>

@@ -493,7 +493,7 @@ export function LanguagesCard({ language, stats }: GithubStatsProps) {
 export default function GithubStats({ language, stats }: GithubStatsProps) {
   return (
     <motion.div
-      className="mx-auto mt-8 grid w-full max-w-[64rem] gap-5 px-1 pb-8 text-left"
+      className="mx-auto mt-8 grid w-full max-w-5xl gap-5 px-1 pb-8 text-left"
       data-testid="github-stats"
       initial="hidden"
       variants={{ visible: { transition: { staggerChildren: 0.12 } } }}

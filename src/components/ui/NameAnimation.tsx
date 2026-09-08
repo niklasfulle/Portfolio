@@ -2,18 +2,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useLanguage } from "@/context/language-context";
-
-function createLink(language: string) {
-  return "/?language=" + language;
-}
 
 export default function NameAnimation() {
-  const { language } = useLanguage();
-
   return (
     <>
-      <Link href={createLink(language)}>
+      <Link href="/#home">
         <motion.div
           className="fixed left-6 top-6 z-10 hidden h-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 shadow-md transition-all hover:cursor-pointer dark:border-[0.2rem] dark:border-white dark:bg-gray-900 lg:flex"
           initial={{ opacity: 0, scale: 1 }}

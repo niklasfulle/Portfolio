@@ -79,7 +79,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({ item, language }) => {
       transition={{ duration: 0.45 }}
       viewport={{ once: true, margin: "-60px" }}
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 opacity-80" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-cyan-400 via-blue-500 to-violet-500 opacity-80" />
 
       <div className="mb-5 flex items-start justify-between gap-4">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700 dark:bg-cyan-400/10 dark:text-cyan-300">
@@ -98,13 +98,13 @@ const ExperienceCard: FC<ExperienceCardProps> = ({ item, language }) => {
       <h4 className="text-lg font-semibold leading-snug text-slate-950 dark:text-white">
         {title}
       </h4>
-      <p className="mt-2 flex min-w-0 items-start gap-2 break-words text-sm font-medium text-slate-600 dark:text-slate-300">
+      <p className="mt-2 flex min-w-0 items-start gap-2 wrap-break-word text-sm font-medium text-slate-600 dark:text-slate-300">
         <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-cyan-600 dark:text-cyan-300" />
         <span>
           <LinkedLocation location={item.location} />
         </span>
       </p>
-      <p className="mt-4 min-w-0 break-words text-sm leading-6 text-slate-600 dark:text-slate-300">
+      <p className="mt-4 min-w-0 wrap-break-word text-sm leading-6 text-slate-600 dark:text-slate-300">
         {description}
       </p>
     </motion.article>
@@ -160,7 +160,7 @@ const Experience: FC<ExperienceProps> = ({ experience }) => {
     <section
       id="experience"
       ref={ref}
-      className="relative h-fit min-h-screen w-full max-w-[64rem] scroll-mt-28 pb-36"
+      className="section-glow section-glow--experience mb-36 relative h-fit min-h-screen w-full max-w-5xl scroll-mt-28 pb-36"
     >
       <SectionHeading eyebrow={language === "de" ? "Werdegang" : "Career"}>
         {language === "de" ? "Erfahrung & Ausbildung" : "Experience & education"}

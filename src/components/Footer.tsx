@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useLanguage } from "@/context/language-context";
+import packageJson from "../../package.json";
 
 const footerLinks = [
   { hash: "#home", de: "Startseite", en: "Home" },
@@ -70,7 +71,10 @@ export default function Footer() {
 
       <div className="relative mx-auto mt-10 flex w-full max-w-[80rem] flex-col gap-2 border-t border-slate-200/80 pt-5 text-xs text-slate-500 dark:border-white/10 dark:text-slate-500 sm:flex-row sm:items-center sm:justify-between">
         <small>© {year} Niklas Fulle</small>
-        <span>{isGerman ? "Mit React, Next.js und viel Sorgfalt gebaut." : "Built with React, Next.js and care."}</span>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span>Version {packageJson.version}</span>
+          <span>{isGerman ? "Mit React, Next.js und viel Sorgfalt gebaut." : "Built with React, Next.js and care."}</span>
+        </div>
       </div>
     </motion.footer>
   );
