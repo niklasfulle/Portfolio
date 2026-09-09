@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/context/theme-context";
 import { DE as GermanFlag, US as UnitedStatesFlag } from "country-flag-icons/react/3x2";
 import Link from "next/link";
 import { useLanguage } from "@/context/language-context";

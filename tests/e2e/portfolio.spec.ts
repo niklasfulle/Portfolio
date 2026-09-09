@@ -35,6 +35,49 @@ async function acceptCookieConsent(page: Page) {
 }
 
 test.describe("Portfolio shell", () => {
+  test("publishes machine-readable portfolio information", async ({ page }) => {
+    await openGermanPortfolio(page);
+
+    const jsonLd = await page
+      .locator('script[type="application/ld+json"]')
+      .textContent();
+    expect(jsonLd).not.toBeNull();
+
+    const structuredData = JSON.parse(jsonLd ?? "{}");
+    expect(structuredData["@context"]).toBe("https://schema.org");
+    expect(structuredData["@graph"])
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ "@type": "Person", name: "Niklas Fulle" }),
+          expect.objectContaining({
+            "@type": "SoftwareSourceCode",
+            name: "Portfolio",
+          }),
+        ])
+      );
+
+    const llmsResponse = await page.request.get("/llms.txt");
+    await expect(llmsResponse).toBeOK();
+    await expect(llmsResponse.headers()["content-type"]).toContain("text/plain");
+    await expect(llmsResponse.text()).resolves.toContain("# Niklas Fulle — Portfolio");
+  });
+
+  test("does not inject a theme script after hydration", async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error") {
+        consoleErrors.push(message.text());
+      }
+    });
+
+    await openGermanPortfolio(page);
+    await expect(page.getByRole("dialog")).toBeVisible();
+
+    expect(consoleErrors).not.toContain(
+      "Encountered a script tag while rendering React component. Scripts inside React components are never executed when rendering on the client."
+    );
+  });
+
   test("loads the home page with its primary content", async ({ page }) => {
     await openGermanPortfolio(page);
 
@@ -62,7 +105,6 @@ test.describe("Portfolio shell", () => {
     );
     await expect(page.getByTestId("github-languages-card")).toContainText("#1");
     await expect(page.getByTestId("github-languages-card")).toContainText("Top:");
-
     const topLanguages = page.getByTestId("github-top-languages");
     expect(await topLanguages.locator("li").count()).toBeLessThanOrEqual(8);
 
@@ -233,4 +275,5 @@ test.describe("Portfolio shell", () => {
       .poll(() => page.evaluate(() => localStorage.getItem("theme")))
       .toBe("dark");
   });
+
 });

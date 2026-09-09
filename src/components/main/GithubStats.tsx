@@ -1,8 +1,10 @@
 "use client";
 
-import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
+import { animate, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import {
+  CalendarDays,
   CircleAlert,
   Flame,
   GitCommitHorizontal,
@@ -191,6 +193,145 @@ function AnimatedRing({
   );
 }
 
+function buildContributionWeeks(
+  days: GithubStatsData["contributionDays"],
+  locale: string
+) {
+  if (days.length === 0) return [];
+
+  const contributionsByDate = new Map(
+    days.map((day) => [day.date, day.count])
+  );
+  const lastDate = new Date(`${days[days.length - 1].date}T00:00:00.000Z`);
+  const firstDate = new Date(lastDate);
+  firstDate.setUTCDate(firstDate.getUTCDate() - 364);
+  firstDate.setUTCDate(firstDate.getUTCDate() - firstDate.getUTCDay());
+
+  const weeks: Array<{
+    month: string;
+    cells: Array<{ date: string; count: number | null }>;
+  }> = [];
+  const cursor = new Date(firstDate);
+
+  while (cursor <= lastDate) {
+    const cells = Array.from({ length: 7 }, () => {
+      const date = cursor.toISOString().slice(0, 10);
+      const count = cursor <= lastDate ? contributionsByDate.get(date) ?? 0 : null;
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+      return { date, count };
+    });
+    const firstCellDate = new Date(`${cells[0].date}T00:00:00.000Z`);
+    const month = firstCellDate.getUTCDate() <= 7
+      ? new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(firstCellDate)
+      : "";
+    weeks.push({ cells, month });
+  }
+
+  return weeks;
+}
+
+function contributionLevel(count: number | null) {
+  if (count === null) return "bg-transparent";
+  if (count === 0) return "bg-slate-200/90 dark:bg-slate-800";
+  if (count <= 2) return "bg-cyan-200/90 dark:bg-cyan-950";
+  if (count <= 5) return "bg-cyan-300 dark:bg-cyan-800";
+  if (count <= 9) return "bg-cyan-500 dark:bg-cyan-500";
+  return "bg-violet-500 dark:bg-violet-400";
+}
+
+function ContributionCalendar({ language, stats }: GithubStatsProps) {
+  const reducedMotion = useReducedMotion();
+  const isGerman = language === "de";
+  const weeks = buildContributionWeeks(stats.contributionDays ?? [], isGerman ? "de-DE" : "en-US");
+  const weekdayLabels = isGerman ? ["", "Mo", "", "Mi", "", "Fr", ""] : ["", "Mon", "", "Wed", "", "Fri", ""];
+  const monthFormatter = new Intl.DateTimeFormat(isGerman ? "de-DE" : "en-US", {
+    month: "short",
+    timeZone: "UTC",
+  });
+  const dateFormatter = new Intl.DateTimeFormat(isGerman ? "de-DE" : "en-US", {
+    dateStyle: "medium",
+    timeZone: "UTC",
+  });
+
+  return (
+    <section className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 dark:border-slate-800/80 dark:bg-slate-900/50 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
+            <CalendarDays aria-hidden="true" className="h-4 w-4" />
+          </span>
+          <div>
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">
+              {isGerman ? "Beitragsaktivität" : "Contribution activity"}
+            </h4>
+            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+              {isGerman ? "Deine letzten 365 Tage auf GitHub" : "Your last 365 days on GitHub"}
+            </p>
+          </div>
+        </div>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 px-2.5 py-1 text-[0.68rem] font-medium text-slate-500 dark:border-slate-700/80 dark:text-slate-400">
+          <span>{isGerman ? "Weniger" : "Less"}</span>
+          <span aria-hidden="true" className="inline-flex gap-0.5">
+            {[0, 2, 5, 9, 10].map((count) => (
+              <span
+                className={`h-2 w-2 rounded-[0.15rem] ${contributionLevel(count)}`}
+                key={count}
+              />
+            ))}
+          </span>
+          <span>{isGerman ? "Mehr" : "More"}</span>
+        </span>
+      </div>
+
+      {weeks.length > 0 ? (
+        <div className="mt-5 overflow-x-auto pb-8" data-testid="github-contribution-calendar">
+          <div className="grid min-w-[43rem] grid-cols-[2rem_1fr] gap-x-2">
+            <div className="grid h-[6.35rem] grid-rows-7 text-[0.62rem] leading-3 text-slate-500 dark:text-slate-400">
+              {weekdayLabels.map((label, index) => <span key={`${label}-${index}`}>{label}</span>)}
+            </div>
+            <div className="min-w-0">
+              <div className="grid grid-flow-col auto-cols-[0.72rem] gap-1 text-[0.62rem] text-slate-500 dark:text-slate-400">
+                {weeks.map((week, index) => (
+                  <span key={`${week.cells[0].date}-month`} className="whitespace-nowrap">
+                    {week.month || (index === 0 ? monthFormatter.format(new Date(`${week.cells[0].date}T00:00:00.000Z`)) : "")}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-1 grid grid-flow-col grid-rows-7 auto-cols-[0.72rem] gap-1">
+                {weeks.flatMap((week) => week.cells).map((cell, index) => (
+                  <motion.span
+                    aria-label={cell.count === null
+                      ? `${cell.date}: ${isGerman ? "keine Daten" : "no data"}`
+                      : `${cell.date}: ${cell.count} ${isGerman ? "Beiträge" : "contributions"}`}
+                    className={`group/contribution relative h-3 w-3 rounded-[0.2rem] transition-[filter] duration-200 hover:z-20 hover:brightness-125 focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${contributionLevel(cell.count)}`}
+                    initial={reducedMotion ? false : { opacity: 0, scale: 0.5 }}
+                    key={cell.date}
+                    role="img"
+                    tabIndex={0}
+                    title={cell.count === null ? undefined : `${cell.date}: ${cell.count}`}
+                    animate={{ opacity: cell.count === null ? 0 : 1, scale: 1 }}
+                    transition={{ duration: 0.25, delay: reducedMotion ? 0 : Math.min(index * 0.006, 0.8) }}
+                  >
+                    {cell.count !== null ? (
+                      <span className="pointer-events-none absolute left-1/2 top-[calc(100%+0.55rem)] z-30 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-slate-200/80 bg-white px-2.5 py-1.5 text-[0.68rem] font-semibold text-slate-700 shadow-xl group-hover/contribution:block group-focus-visible/contribution:block dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+                        {cell.count} {isGerman ? "Beiträge" : "contributions"} · {dateFormatter.format(new Date(`${cell.date}T00:00:00.000Z`))}
+                      </span>
+                    ) : null}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <p className="mt-5 rounded-lg border border-dashed border-slate-300/80 px-4 py-5 text-center text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
+          {isGerman ? "Beitragsdaten werden beim nächsten GitHub-Update geladen." : "Contribution data will appear after the next GitHub update."}
+        </p>
+      )}
+    </section>
+  );
+}
+
 function GithubOverviewCard({ language, stats }: GithubStatsProps) {
   const reducedMotion = useReducedMotion();
   const isGerman = language === "de";
@@ -205,52 +346,89 @@ function GithubOverviewCard({ language, stats }: GithubStatsProps) {
       whileHover={reducedMotion ? undefined : { y: -6, scale: 1.01 }}
       whileInView="visible"
     >
-      <div className="flex items-start justify-between gap-5 border-b border-slate-200/80 pb-4 dark:border-slate-700/80">
-        <h3 className="text-lg font-semibold text-cyan-600 dark:text-cyan-300 sm:text-xl">
-          {isGerman ? "GitHub-Aktivität" : "GitHub Activity"}
-        </h3>
-        <div className="relative shrink-0 scale-90 text-center" title={isGerman ? "GitHub-Bewertung" : "GitHub grade"}>
-          <AnimatedRing value={stats.gradeScore} />
-          <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-slate-900 dark:text-white">
-            {stats.grade}
-          </span>
-        </div>
-      </div>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(14rem,0.75fr)]">
+        <section className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 dark:border-slate-800/80 dark:bg-slate-900/50 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-cyan-600/80 dark:text-cyan-300/80">
+                {isGerman ? "Entwicklungsprofil" : "Developer profile"}
+              </p>
+              <h3 className="mt-1 text-lg font-semibold text-slate-900 dark:text-white sm:text-xl">
+                {isGerman ? "GitHub-Aktivität" : "GitHub Activity"}
+              </h3>
+            </div>
+            <span className="rounded-full border border-cyan-500/20 bg-cyan-500/5 px-2.5 py-1 text-[0.68rem] font-medium text-cyan-700 dark:text-cyan-300">
+              {isGerman ? "Letzte 365 Tage" : "Last 365 days"}
+            </span>
+          </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(16rem,0.9fr)_minmax(0,1.35fr)] lg:gap-6">
-        <motion.ul
-          className="grid grid-cols-2 gap-3"
-          initial="hidden"
-          variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
-          viewport={{ once: true }}
-          whileInView="visible"
-        >
-          {metrics.map((metric, index) => (
-            <motion.li
-              className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-slate-700 dark:border-slate-800/80 dark:bg-slate-900/50 dark:text-slate-200"
-              custom={index}
-              key={metric.labelEn}
-              variants={metricVariants}
-            >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
-                {metric.icon}
-              </span>
-              <div className="mt-3 flex items-end justify-between gap-2">
-                <span className="text-[0.68rem] font-semibold leading-tight sm:text-xs">
-                  {isGerman ? metric.labelDe : metric.labelEn}
+          <motion.ul
+            className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4"
+            initial="hidden"
+            variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+            viewport={{ once: true }}
+            whileInView="visible"
+          >
+            {metrics.map((metric, index) => (
+              <motion.li
+                className="group relative min-w-0 rounded-xl border border-slate-200/80 bg-white/70 p-3 text-slate-700 shadow-sm transition-colors duration-300 hover:border-cyan-400/70 hover:bg-cyan-50/70 dark:border-slate-700/80 dark:bg-slate-950/35 dark:text-slate-200 dark:hover:border-cyan-400/50 dark:hover:bg-slate-900/70"
+                custom={index}
+                key={metric.labelEn}
+                variants={metricVariants}
+                whileHover={reducedMotion ? undefined : { y: -5, rotate: -1.5, scale: 1.03 }}
+                whileTap={reducedMotion ? undefined : { scale: 0.98 }}
+              >
+                <span className="pointer-events-none absolute inset-0 -z-10 rounded-xl bg-cyan-400/0 blur-md transition-colors duration-300 group-hover:bg-cyan-400/20 dark:group-hover:bg-cyan-400/15" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
+                  {metric.icon}
                 </span>
-                <strong className="text-right text-lg text-slate-950 dark:text-white sm:text-xl">
+                <strong className="mt-3 block text-2xl text-slate-950 dark:text-white">
                   <AnimatedNumber value={metric.value(stats)} />
                 </strong>
-              </div>
-            </motion.li>
-          ))}
-        </motion.ul>
+                <span className="mt-1 block text-[0.68rem] font-semibold leading-tight sm:text-xs">
+                  {isGerman ? metric.labelDe : metric.labelEn}
+                </span>
+              </motion.li>
+            ))}
+          </motion.ul>
+        </section>
 
         <section
-          className="grid grid-cols-3 items-center divide-x divide-slate-300/80 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-center dark:divide-slate-700/80 dark:border-slate-800/80 dark:bg-slate-900/50 sm:p-4"
-          data-testid="github-streak-card"
+          className="relative overflow-hidden rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 via-white/60 to-indigo-500/10 p-4 dark:from-cyan-500/10 dark:via-slate-950/60 dark:to-indigo-500/10 sm:p-5"
+          title={isGerman ? "GitHub-Bewertung" : "GitHub grade"}
         >
+          <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-400/10 blur-2xl" />
+          <div className="relative flex h-full items-center gap-4 sm:gap-5 lg:flex-col lg:items-start lg:justify-between">
+            <div className="relative shrink-0 text-center">
+              <AnimatedRing value={stats.gradeScore} />
+              <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-slate-900 dark:text-white">
+                {stats.grade}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-cyan-700/80 dark:text-cyan-300/80">
+                {isGerman ? "GitHub-Bewertung" : "GitHub grade"}
+              </p>
+              <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-white">
+                {isGerman ? "Aktivitätsprofil" : "Activity profile"}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-300">
+                {isGerman
+                  ? "Gewichtet nach Commits, Pull Requests, Issues und Sternen."
+                  : "Weighted by commits, pull requests, issues, and stars."}
+              </p>
+            </div>
+            <span className="hidden rounded-full border border-slate-300/80 bg-white/60 px-2.5 py-1 text-[0.68rem] font-semibold text-slate-600 dark:border-slate-700/80 dark:bg-slate-950/50 dark:text-slate-300 lg:inline-flex">
+              {stats.gradeScore}%
+            </span>
+          </div>
+        </section>
+      </div>
+
+      <section
+        className="mt-4 grid grid-cols-3 items-center divide-x divide-slate-300/80 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-center dark:divide-slate-700/80 dark:border-slate-800/80 dark:bg-slate-900/50 sm:p-4"
+        data-testid="github-streak-card"
+      >
           <div className="min-w-0 px-2 sm:px-4">
             <strong className="block text-2xl font-bold text-cyan-500 sm:text-3xl">
               <AnimatedNumber value={stats.totalContributions} />
@@ -310,8 +488,8 @@ function GithubOverviewCard({ language, stats }: GithubStatsProps) {
               {stats.longestStreakDates}
             </span>
           </div>
-        </section>
-      </div>
+      </section>
+      <ContributionCalendar language={language} stats={stats} />
     </motion.article>
   );
 }

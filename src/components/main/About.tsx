@@ -1,7 +1,8 @@
 "use client";
 
 import { FC } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Code2, GitBranch, Layers3 } from "lucide-react";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";

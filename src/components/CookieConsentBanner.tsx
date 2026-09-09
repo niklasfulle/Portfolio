@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Cookie } from "lucide-react";
 import { useCookieConsent } from "@/context/cookie-consent-context";
 import { useLanguage } from "@/context/language-context";
@@ -39,7 +40,7 @@ export default function CookieConsentBanner() {
           <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300" id="cookie-consent-description">
             {isGerman
               ? "Wir verwenden keine Analyse- oder Marketingdienste. Mit deiner Zustimmung speichern wir nur deine Hell-/Dunkelmodus-Präferenz. Deine Auswahl wird für 180 Tage gespeichert."
-              : "We do not use analytics or marketing services. With your consent, we only save your light or dark mode preference. Your choice is stored for 180 days."}
+              : "We do not use analytics or marketing services. With your consent, we only save your light or dark mode. Your choice is stored for 180 days."}
           </p>
           <Link className="mt-3 inline-block text-sm font-medium text-cyan-700 underline decoration-cyan-500/40 underline-offset-4 hover:text-cyan-500 dark:text-cyan-300 dark:hover:text-cyan-200" href="/cookies">
             {isGerman ? "Cookie-Richtlinie lesen" : "Read the cookie policy"}

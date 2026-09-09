@@ -1,29 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowLeft, Compass } from "lucide-react";
-import { useLanguage } from "@/context/language-context";
+import { useEffect, useState } from "react";
 
 export default function NotFound() {
-  const { language } = useLanguage();
-  const reducedMotion = useReducedMotion();
+  const [language, setLanguage] = useState<"de" | "en">("de");
   const isGerman = language === "de";
+
+  useEffect(() => {
+    const detectedLanguage = document.documentElement.lang === "en" ? "en" : "de";
+    const syncLanguage = window.setTimeout(() => setLanguage(detectedLanguage), 0);
+    return () => window.clearTimeout(syncLanguage);
+  }, []);
 
   return (
     <main className="relative flex min-h-[min(42rem,calc(100vh-9rem))] flex-1 items-center justify-center overflow-hidden px-5 py-16 sm:px-8">
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/15 blur-3xl dark:bg-violet-500/20"
-        animate={reducedMotion ? undefined : { scale: [1, 1.12, 1], opacity: [0.55, 0.8, 0.55] }}
-        transition={reducedMotion ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ scale: [1, 1.12, 1], opacity: [0.55, 0.8, 0.55] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <motion.section
         aria-labelledby="not-found-title"
         className="relative w-full max-w-2xl rounded-4xl border border-slate-200/70 bg-white/60 p-8 text-center shadow-2xl shadow-slate-950/10 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/55 dark:shadow-black/30 sm:p-14"
-        initial={reducedMotion ? false : { opacity: 0, y: 22, scale: 0.97 }}
-        animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+        initial={{ opacity: 0, y: 22, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.55, ease: "easeOut" }}
       >
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-400/10 text-cyan-600 shadow-lg shadow-cyan-500/15 dark:text-cyan-300">

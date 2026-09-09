@@ -1,9 +1,10 @@
 "use client";
 import React, { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-import { Cloud, Code2, ShieldCheck, TestTube2 } from "lucide-react";
+import { Bot, Cloud, Code2, ShieldCheck, TestTube2 } from "lucide-react";
 import type { ComponentType } from "react";
 import {
   SiBlazor,
@@ -11,6 +12,7 @@ import {
   SiApple,
   SiExpress,
   SiGithubactions,
+  SiGithubcopilot,
   SiGnubash,
   SiHibernate,
   SiIntellijidea,
@@ -82,6 +84,8 @@ const skillDetails: Record<
   Docker: { descriptionDe: "Containerisierung und reproduzierbare Umgebungen", descriptionEn: "Containerization and reproducible environments", icon: SiDocker },
   Git: { descriptionDe: "Versionsverwaltung für Quellcode", descriptionEn: "Version control for source code", icon: SiGit },
   GitHub: { descriptionDe: "Code-Hosting und Zusammenarbeit", descriptionEn: "Code hosting and collaboration", icon: SiGithub },
+  "GitHub Copilot": { descriptionDe: "KI-gestützter Programmierassistent", descriptionEn: "AI-powered coding assistant", icon: SiGithubcopilot },
+  Codex: { descriptionDe: "KI-gestützte Softwareentwicklung", descriptionEn: "AI-assisted software development", icon: Bot },
   "GitLab CI/CD": { descriptionDe: "Automatisierte Build- und Deployment-Pipelines", descriptionEn: "Automated build and deployment pipelines", icon: SiGitlab },
   PowerShell: { descriptionDe: "Automatisierung und Systemverwaltung", descriptionEn: "Automation and system administration", icon: Code2 },
   Python: { descriptionDe: "Skripte, Automatisierung und Backend-Entwicklung", descriptionEn: "Scripting, automation and backend development", icon: SiPython },
@@ -140,7 +144,7 @@ const skillGroups = [
   {
     de: "Plattformen & Tools",
     en: "Platforms & tools",
-    skills: [".NET", ".NET MAUI", "Blazor", "C++", "CMake", "MicroPython", "PowerShell", "Azure", "AWS", "Windows", "Apple", "Linux", "Ubuntu", "Raspberry Pi", "VS Code", "IntelliJ IDEA", "Postman", "Bash", "LaTeX", "Intune"],
+    skills: [".NET", ".NET MAUI", "Blazor", "C++", "CMake", "MicroPython", "PowerShell", "Azure", "AWS", "Windows", "Apple", "Linux", "Ubuntu", "Raspberry Pi", "VS Code", "IntelliJ IDEA", "Postman", "Bash", "LaTeX", "Intune", "GitHub Copilot", "Codex"],
   },
 ] as const;
 

@@ -22,7 +22,7 @@ jest.mock("@/lib/db/prisma", () => ({
 
 const mockedGetGithubStats = jest.mocked(getGithubStats);
 const snapshot = db.githubStatsSnapshot;
-const stats = { totalContributions: 42 } as GithubStatsData;
+const stats = { contributionDays: [], totalContributions: 42 } as GithubStatsData;
 
 describe("GitHub stats cache", () => {
   beforeEach(() => {
@@ -53,6 +53,16 @@ describe("GitHub stats cache", () => {
     mockedGetGithubStats.mockResolvedValue(stats);
 
     await expect(getCachedGithubStats()).resolves.toBe(stats);
+    expect(snapshot.upsert).toHaveBeenCalled();
+  });
+
+  it("refreshes legacy snapshots without contribution days", async () => {
+    const legacyStats = { totalContributions: 42 } as GithubStatsData;
+    snapshot.findUnique.mockResolvedValue({ data: legacyStats });
+    mockedGetGithubStats.mockResolvedValue(stats);
+
+    await expect(getCachedGithubStats()).resolves.toBe(stats);
+    expect(mockedGetGithubStats).toHaveBeenCalledTimes(1);
     expect(snapshot.upsert).toHaveBeenCalled();
   });
 

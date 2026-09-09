@@ -19,8 +19,14 @@ export type GithubStatsData = {
   contributionStart: string;
   currentStreakDates: string;
   longestStreakDates: string;
+  contributionDays: ContributionDay[];
   languages: GithubLanguageStat[];
 };
+
+type GithubGradeMetrics = Pick<
+  GithubStatsData,
+  "commits" | "issues" | "pullRequests" | "stars"
+>;
 
 type GithubRepository = {
   fork: boolean;
@@ -131,19 +137,66 @@ const languageColors: Record<string, string> = {
   PowerShell: "#012456",
 };
 
+/**
+ * Adapted from github-readme-stats' rank calculation.
+ *
+ * The portfolio deliberately uses only metrics it fetches itself. Reviews and
+ * followers are not requested, so their original weights are excluded and the
+ * remaining weights are normalized through their own total.
+ */
+export function calculateGithubGrade({
+  commits,
+  issues,
+  pullRequests,
+  stars,
+}: GithubGradeMetrics): Pick<GithubStatsData, "grade" | "gradeScore"> {
+  const exponentialCdf = (value: number) => 1 - 2 ** -value;
+  const logarithmicCdf = (value: number) => value / (1 + value);
+
+  const commitScore = exponentialCdf(commits / 250);
+  const pullRequestScore = exponentialCdf(pullRequests / 50);
+  const issueScore = exponentialCdf(issues / 25);
+  const starScore = logarithmicCdf(stars / 50);
+
+  const totalWeight = 2 + 3 + 1 + 4;
+  const rank =
+    1 -
+    (2 * commitScore +
+      3 * pullRequestScore +
+      issueScore +
+      4 * starScore) /
+      totalWeight;
+  const percentile = rank * 100;
+  const thresholds = [1, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100];
+  const grades = ["S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C"];
+  const gradeIndex = thresholds.findIndex((threshold) => percentile <= threshold);
+
+  return {
+    grade: grades[gradeIndex === -1 ? grades.length - 1 : gradeIndex],
+    gradeScore: Math.max(1, Math.round(percentile)),
+  };
+}
+
+const fallbackGrade = calculateGithubGrade({
+  commits: 81,
+  issues: 70,
+  pullRequests: 23,
+  stars: 37,
+});
+
 export const fallbackGithubStats: GithubStatsData = {
   stars: 37,
   commits: 81,
   pullRequests: 23,
   issues: 70,
-  grade: "B-",
-  gradeScore: 72,
+  ...fallbackGrade,
   totalContributions: 1139,
   currentStreak: 2,
   longestStreak: 69,
   contributionStart: "Mar 2, 2018 - Present",
   currentStreakDates: "Sep 5 - Sep 6",
   longestStreakDates: "Jul 15, 2023 - Sep 21, 2023",
+  contributionDays: [],
   languages: fallbackLanguages,
 };
 
@@ -324,7 +377,9 @@ async function getContributionStatsFromHtml() {
   const url = `https://github.com/users/${username}/contributions?from=${dateOnly(yearAgo)}&to=${dateOnly(today)}`;
   const days = parseContributionDays(await fetchGithubText(url));
 
-  return days.length > 0 ? calculateStreaks(days) : null;
+  return days.length > 0
+    ? { ...calculateStreaks(days), contributionDays: days }
+    : null;
 }
 
 const createdAtQuery = `
@@ -401,7 +456,9 @@ async function getAuthenticatedContributionStats() {
     first.date.localeCompare(second.date)
   );
 
-  return days.length > 0 ? calculateStreaks(days) : null;
+  return days.length > 0
+    ? { ...calculateStreaks(days), contributionDays: days }
+    : null;
 }
 
 async function getContributionStats() {
@@ -529,6 +586,7 @@ export async function getGithubStats(): Promise<GithubStatsData> {
       longestStreak: 0,
       currentStreakDates: "Recent activity",
       longestStreakDates: "No contribution calendar",
+      contributionDays: [],
     };
 
     return {
@@ -540,11 +598,21 @@ export async function getGithubStats(): Promise<GithubStatsData> {
       commits: commits.total_count,
       pullRequests: pullRequests.total_count,
       issues: issues.total_count,
+      ...calculateGithubGrade({
+        commits: commits.total_count,
+        issues: issues.total_count,
+        pullRequests: pullRequests.total_count,
+        stars: ownedRepositories.reduce(
+          (total, repository) => total + repository.stargazers_count,
+          0
+        ),
+      }),
       totalContributions: calculatedContributions.totalContributions,
       currentStreak: calculatedContributions.currentStreak,
       longestStreak: calculatedContributions.longestStreak,
       currentStreakDates: calculatedContributions.currentStreakDates,
       longestStreakDates: calculatedContributions.longestStreakDates,
+      contributionDays: calculatedContributions.contributionDays,
       languages: buildLanguageStats(languageTotals, languageRepositoryCounts),
     };
   } catch (error) {

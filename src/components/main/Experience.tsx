@@ -2,7 +2,8 @@
 
 import { CalendarDays, MapPin } from "lucide-react";
 import { FC } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { CgWorkAlt } from "react-icons/cg";
 import { LuGraduationCap } from "react-icons/lu";
 import { useSectionInView } from "@/lib/hooks";

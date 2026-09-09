@@ -1,8 +1,36 @@
 import {
+  calculateGithubGrade,
   calculateStreaks,
   fallbackGithubStats,
   getGithubStats,
 } from "@/lib/github-stats";
+
+describe("calculateGithubGrade", () => {
+  it("uses the adapted rank model for the metrics available in the portfolio", () => {
+    expect(
+      calculateGithubGrade({
+        commits: 81,
+        issues: 70,
+        pullRequests: 23,
+        stars: 37,
+      })
+    ).toEqual({ grade: "B", gradeScore: 62 });
+  });
+
+  it("assigns the boundary grades to empty and exceptional activity", () => {
+    expect(
+      calculateGithubGrade({ commits: 0, issues: 0, pullRequests: 0, stars: 0 })
+    ).toEqual({ grade: "C", gradeScore: 100 });
+    expect(
+      calculateGithubGrade({
+        commits: 10000,
+        issues: 1000,
+        pullRequests: 1000,
+        stars: 10000,
+      })
+    ).toEqual({ grade: "S", gradeScore: 1 });
+  });
+});
 
 function jsonResponse(body: unknown): Response {
   return {

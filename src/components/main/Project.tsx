@@ -1,7 +1,8 @@
 "use client";
 import React, { FC, useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight, BriefcaseBusiness } from "lucide-react";
 import { FaGithub } from "react-icons/fa";

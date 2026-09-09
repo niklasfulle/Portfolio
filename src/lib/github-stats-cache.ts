@@ -27,7 +27,17 @@ export async function getCachedGithubStats(): Promise<GithubStatsData> {
       where: { id: GITHUB_STATS_SNAPSHOT_ID },
     });
 
-    if (snapshot) return snapshot.data as GithubStatsData;
+    if (snapshot) {
+      const cachedStats = snapshot.data as Partial<GithubStatsData>;
+
+      // Older snapshots predate the contribution calendar. Refresh them once so
+      // the UI can rely on the current data contract without crashing.
+      if (!Array.isArray(cachedStats.contributionDays)) {
+        return refreshGithubStats();
+      }
+
+      return snapshot.data as GithubStatsData;
+    }
 
     return refreshGithubStats();
   } catch {

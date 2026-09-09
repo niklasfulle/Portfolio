@@ -2,10 +2,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 import { DE as GermanFlag, US as UnitedStatesFlag } from "country-flag-icons/react/3x2";
 import { useLanguage } from "@/context/language-context";
 import { useCookieConsent } from "@/context/cookie-consent-context";
+import { useTheme } from "@/context/theme-context";
 
 export default function Toggels() {
   const { setTheme } = useTheme();

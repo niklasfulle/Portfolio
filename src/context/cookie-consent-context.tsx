@@ -55,6 +55,13 @@ export default function CookieConsentProvider({
 
   const saveChoice = useCallback((nextChoice: Exclude<ConsentChoice, null>) => {
     document.cookie = `${CONSENT_COOKIE}=${nextChoice}; Path=/; Max-Age=${CONSENT_MAX_AGE_SECONDS}; SameSite=Lax`;
+
+    if (nextChoice === "rejected") {
+      localStorage.removeItem("theme");
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+    }
+
     setSavedChoice(nextChoice);
     setIsPreferencesOpen(false);
   }, []);
