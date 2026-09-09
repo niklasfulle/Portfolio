@@ -12,6 +12,7 @@ import Toggels from "@/ui/Toggels";
 import Header from "@/components/header";
 import Background from "@/components/Background";
 import MobileMenu from "@/components/ui/MobileMenu";
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,7 @@ export default async function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="de"
       suppressHydrationWarning
       className={cn(
         "light:bg-white w-[100%] scroll-smooth text-slate-900 antialiased dark:bg-gray-800",
@@ -46,6 +47,7 @@ export default async function RootLayout({
               <Footer />
               <Toggels />
               <MobileMenu />
+              <CookieConsentBanner />
               <Toaster position="bottom-right" />
             </Providers>
           </Suspense>

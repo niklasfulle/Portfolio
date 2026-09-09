@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 
 const contactMessageSchema = z
   .object({
-    senderEmail: z.string().trim().email().max(254),
+    senderEmail: z.email().trim().max(254),
     topic: z.string().trim().min(1).max(200),
     message: z.string().trim().min(1).max(5000),
   })

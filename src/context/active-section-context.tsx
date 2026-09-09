@@ -2,8 +2,13 @@
 
 import type { SectionName } from "@/lib/types";
 import { links } from "@/lib/data";
-import React, { useMemo, useState, createContext, useContext } from "react";
-import { useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 type ActiveSectionContextProviderProps = {
   readonly children: React.ReactNode;

@@ -7,7 +7,6 @@ jest.mock("@/lib/db/prisma", () => {
     skills: { findMany: jest.fn() },
     experience: { findMany: jest.fn() },
     contactEmail: { findMany: jest.fn() },
-    user: { findUnique: jest.fn() },
   };
   return { db: mockDb };
 });
@@ -20,7 +19,6 @@ import {
   getProjects,
   getSkills,
 } from "@/lib/db/functions";
-import { getUser, getUserWithouPassword } from "@/lib/db/user-functions";
 
 describe("database read functions", () => {
   beforeEach(() => {
@@ -83,30 +81,4 @@ describe("database read functions", () => {
     expect(mockDb.contactEmail.findMany).toHaveBeenCalledWith();
   });
 
-  it("loads a user by email", async () => {
-    const user = { id: "user-1", email: "test@example.com", password: "hash" };
-    mockDb.user.findUnique.mockResolvedValue(user);
-
-    await expect(getUser(user.email)).resolves.toBe(user);
-    expect(mockDb.user.findUnique).toHaveBeenCalledWith({
-      where: { email: user.email },
-    });
-  });
-
-  it("loads a user with only public profile fields", async () => {
-    const user = { id: "user-1", email: "test@example.com", name: "Test" };
-    mockDb.user.findUnique.mockResolvedValue(user);
-
-    await expect(getUserWithouPassword(user.email)).resolves.toBe(user);
-    expect(mockDb.user.findUnique).toHaveBeenCalledWith({
-      where: { email: user.email },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        image: true,
-        role: true,
-      },
-    });
-  });
 });

@@ -1,5 +1,4 @@
 import { getAbout, getContactEmail, getExperience, getLearn, getProjects, getSkills } from "@/lib/db/functions";
-import { getUser, getUserWithouPassword } from "@/lib/db/user-functions";
 import { getAsHTMLInputElement, shortToast } from "@/lib/helpers/shorter-function";
 import { db } from "@/lib/db/prisma";
 import { toast } from "@/components/ui/Toast";
@@ -11,7 +10,6 @@ jest.mock("@/lib/db/prisma", () => ({
     skills: { findMany: jest.fn() },
     experience: { findMany: jest.fn() },
     contactEmail: { findMany: jest.fn() },
-    user: { findUnique: jest.fn() },
   },
 }));
 
@@ -25,7 +23,6 @@ const mockedDb = db as unknown as {
   skills: { findMany: jest.Mock };
   experience: { findMany: jest.Mock };
   contactEmail: { findMany: jest.Mock };
-  user: { findUnique: jest.Mock };
 };
 
 describe("database query helpers", () => {
@@ -66,21 +63,6 @@ describe("database query helpers", () => {
     });
   });
 
-  it("loads users with and without password fields", async () => {
-    const user = { id: "1", email: "user@example.com", password: "hashed" };
-    mockedDb.user.findUnique.mockResolvedValue(user);
-
-    await expect(getUser(user.email)).resolves.toBe(user);
-    expect(mockedDb.user.findUnique).toHaveBeenLastCalledWith({ where: { email: user.email } });
-
-    const publicUser = { id: "1", email: user.email, name: "User", image: null, role: "USER" };
-    mockedDb.user.findUnique.mockResolvedValue(publicUser);
-    await expect(getUserWithouPassword(user.email)).resolves.toBe(publicUser);
-    expect(mockedDb.user.findUnique).toHaveBeenLastCalledWith({
-      where: { email: user.email },
-      select: { id: true, email: true, name: true, image: true, role: true },
-    });
-  });
 });
 
 describe("small helpers", () => {

@@ -38,7 +38,7 @@ test.describe("Contact form validation", () => {
     const topic = form.locator('input[name="topic"]');
     const message = form.locator('textarea[name="message"]');
 
-    await form.getByRole("button", { name: "Senden", exact: true }).click();
+    await form.getByRole("button", { name: "Nachricht senden", exact: true }).click();
 
     await expectValidity(senderEmail, false);
     await expectValidity(topic, false);
@@ -65,7 +65,7 @@ test.describe("Contact form validation", () => {
     await form
       .locator('textarea[name="message"]')
       .fill("This message must not be sent.");
-    await form.getByRole("button", { name: "Senden", exact: true }).click();
+    await form.getByRole("button", { name: "Nachricht senden", exact: true }).click();
 
     await expectValidity(senderEmail, false);
     await expectValidity(form.locator('input[name="topic"]'), true);

@@ -1,4 +1,3 @@
-import { DefaultSession } from "next-auth";
 import { links } from "./data";
 
 export type SectionName = (typeof links)[number]["name"];
@@ -34,7 +33,7 @@ export type SkillType = {
 
 export type ExperienceType = {
   id: string;
-  category?: "experience" | "education" | string;
+  category?: string;
   titleDe: string;
   titleEn: string;
   location: string;
@@ -60,11 +59,3 @@ export type ContactEmailType = {
   email: string;
 };
 
-export type SessionType = {
-  user: {
-    id: string,
-    role: string,
-    provider: string,
-    image: string,
-  } & DefaultSession
-}

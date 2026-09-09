@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useLanguage } from "@/context/language-context";
 import packageJson from "../../package.json";
+import { useCookieConsent } from "@/context/cookie-consent-context";
 
 const footerLinks = [
   { hash: "#home", de: "Startseite", en: "Home" },
@@ -16,8 +17,16 @@ const footerLinks = [
   { hash: "#contact", de: "Kontakt", en: "Contact" },
 ] as const;
 
+const legalLinks = [
+  { href: "/imprint", de: "Impressum", en: "Legal notice" },
+  { href: "/privacy", de: "Datenschutz", en: "Privacy" },
+  { href: "/cookies", de: "Cookies", en: "Cookies" },
+  { href: "/terms", de: "Nutzungsbedingungen", en: "Terms" },
+] as const;
+
 export default function Footer() {
   const { language } = useLanguage();
+  const { openPreferences } = useCookieConsent();
   const reducedMotion = useReducedMotion();
   const year = new Date().getFullYear();
   const isGerman = language === "de";
@@ -37,7 +46,7 @@ export default function Footer() {
         <div>
           <a className="inline-flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 dark:text-white" href="#home">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-sm text-white shadow-lg shadow-cyan-500/20 dark:bg-white dark:text-slate-950">N</span>
-            Niklas Fulle
+            <span>Niklas Fulle</span>
           </a>
           <p className="mt-4 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
             {isGerman
@@ -65,6 +74,16 @@ export default function Footer() {
             <motion.a aria-label="LinkedIn" className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200/80 bg-white/60 text-slate-700 transition-colors hover:border-cyan-400 hover:text-cyan-600 dark:border-white/10 dark:bg-slate-900/50 dark:text-slate-300 dark:hover:border-cyan-400 dark:hover:text-cyan-300" href="https://www.linkedin.com/in/niklas-fulle-61b422232/" rel="noreferrer" target="_blank" whileHover={reducedMotion ? undefined : { y: -3 }}>
               <FaLinkedin className="h-5 w-5" />
             </motion.a>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+            {legalLinks.map((link) => (
+              <a className="underline decoration-slate-400/50 underline-offset-4 transition-colors hover:text-cyan-600 dark:decoration-slate-500/50 dark:hover:text-cyan-300" href={link.href} key={link.href}>
+                {isGerman ? link.de : link.en}
+              </a>
+            ))}
+            <button className="underline decoration-slate-400/50 underline-offset-4 transition-colors hover:text-cyan-600 dark:decoration-slate-500/50 dark:hover:text-cyan-300" onClick={openPreferences} type="button">
+              {isGerman ? "Cookie-Einstellungen" : "Cookie settings"}
+            </button>
           </div>
         </nav>
       </div>

@@ -6,8 +6,6 @@ services:
     environment:
       NODE_ENV: development
       POSTGRESQL_URL: "postgresql://portfolio:${POSTGRES_PASSWORD}@db:5432/portfolio?schema=public"
-      NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: "${NEXTAUTH_SECRET:-}"
       NODEMAILER_EMAIL: "${NODEMAILER_EMAIL:-}"
       NODEMAILER_PW: "${NODEMAILER_PW:-}"
       CONTACT_EMAIL: "${CONTACT_EMAIL:-}"
@@ -17,9 +15,6 @@ services:
       - sh
       - -c
       - >-
-        if [ -z "$$NEXTAUTH_SECRET" ]; then
-        export NEXTAUTH_SECRET="$$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")";
-        fi;
         yarn prisma generate && yarn prisma db push && yarn dev
     ports:
       - "127.0.0.1:3000:3000"

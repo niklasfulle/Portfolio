@@ -41,6 +41,10 @@ export default function LanguageContextProvider({
     );
   }, []);
 
+  useEffect(() => {
+    globalThis.document.documentElement.lang = language;
+  }, [language]);
+
   const toggleLanguage = useCallback(() => {
     setLanguage((currentLanguage) =>
       currentLanguage === "de" ? "en" : "de"

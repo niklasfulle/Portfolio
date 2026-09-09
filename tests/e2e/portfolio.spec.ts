@@ -10,7 +10,7 @@ const navigationItems = [
 ] as const;
 
 async function openGermanPortfolio(page: Page) {
-  await page.goto("/?language=de", { waitUntil: "domcontentloaded" });
+  await page.goto("/#home", { waitUntil: "domcontentloaded" });
   await expect(page.locator("#home")).toBeVisible();
 }
 
@@ -22,6 +22,16 @@ async function hasThemeClass(
     (element, themeClass) => element.classList.contains(themeClass),
     className
   );
+}
+
+async function acceptCookieConsent(page: Page) {
+  const consentDialog = page.getByRole("dialog", {
+    name: "Deine Darstellung, deine Entscheidung",
+  });
+
+  await expect(consentDialog).toBeVisible();
+  await consentDialog.getByRole("button", { name: "Akzeptieren" }).click();
+  await expect(consentDialog).toBeHidden();
 }
 
 test.describe("Portfolio shell", () => {
@@ -86,7 +96,7 @@ test.describe("Portfolio shell", () => {
   }) => {
     await openGermanPortfolio(page);
 
-    const navigation = page.locator("nav");
+    const navigation = page.locator("header nav");
 
     for (const item of navigationItems) {
       const link = navigation.getByRole("link", {
@@ -97,7 +107,7 @@ test.describe("Portfolio shell", () => {
       await expect(link).toBeVisible();
       await expect(link).toHaveAttribute(
         "href",
-        new RegExp(`language=de#${item.id}$`)
+        new RegExp(`/#${item.id}$`)
       );
 
       await link.click();
@@ -109,11 +119,11 @@ test.describe("Portfolio shell", () => {
   });
 
   test("marks the section from the URL hash as active", async ({ page }) => {
-    await page.goto("/?language=de#experience", {
+    await page.goto("/#experience", {
       waitUntil: "domcontentloaded",
     });
 
-    const navigation = page.locator("nav");
+    const navigation = page.locator("header nav");
     await expect(
       navigation.getByRole("link", { name: "Erfahrung", exact: true })
     ).toHaveAttribute("aria-current", "location");
@@ -124,6 +134,7 @@ test.describe("Portfolio shell", () => {
 
   test("switches between German and English", async ({ page }) => {
     await openGermanPortfolio(page);
+    await acceptCookieConsent(page);
     let loadEvents = 0;
     page.on("load", () => {
       loadEvents += 1;
@@ -134,13 +145,14 @@ test.describe("Portfolio shell", () => {
     ).toBeVisible();
 
     const languageToggle = page.getByRole("button", {
-      name: "Toggle Language",
+      name: /Sprache wechseln|Change language/,
     });
     await expect(languageToggle).toBeVisible();
 
     await languageToggle.click();
 
-    await expect(page).toHaveURL(/language=en/);
+    await expect(page).toHaveURL(/127\.0\.0\.1:3000\/(#home)?$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(
       page.getByRole("heading", { name: "Hello, I'm Niklas.", level: 1 })
     ).toBeVisible();
@@ -151,7 +163,8 @@ test.describe("Portfolio shell", () => {
 
     await languageToggle.click();
 
-    await expect(page).toHaveURL(/language=de/);
+    await expect(page).toHaveURL(/127\.0\.0\.1:3000\/(#home)?$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "de");
     await expect(
       page.getByRole("heading", { name: "Hallo, ich bin Niklas.", level: 1 })
     ).toBeVisible();
@@ -161,8 +174,11 @@ test.describe("Portfolio shell", () => {
     page,
   }) => {
     await openGermanPortfolio(page);
+    await acceptCookieConsent(page);
 
-    const themeToggle = page.getByRole("button", { name: "Toggle Theme" });
+    const themeToggle = page.getByRole("button", {
+      name: /Darstellung wechseln|Change theme/,
+    });
     await expect(themeToggle).toBeVisible();
 
     await expect
@@ -186,5 +202,35 @@ test.describe("Portfolio shell", () => {
     await expect
       .poll(() => hasThemeClass(page, "dark"))
       .toBe(false);
+  });
+
+  test("stores a theme preference only after consent", async ({ page }) => {
+    await openGermanPortfolio(page);
+
+    const consentDialog = page.getByRole("dialog", {
+      name: "Deine Darstellung, deine Entscheidung",
+    });
+    await expect(consentDialog).toBeVisible();
+    await consentDialog.getByRole("button", { name: "Ablehnen" }).click();
+
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem("theme")))
+      .toBeNull();
+
+    const cookieSettingsButton = page.getByRole("button", {
+      name: "Cookie-Einstellungen öffnen",
+    });
+    await cookieSettingsButton.click();
+    await expect(consentDialog).toBeVisible();
+
+    await consentDialog.getByRole("button", { name: "Akzeptieren" }).click();
+    const themeToggle = page.getByRole("button", {
+      name: "Darstellung wechseln",
+    });
+    await themeToggle.click();
+
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem("theme")))
+      .toBe("dark");
   });
 });

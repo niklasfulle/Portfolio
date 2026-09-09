@@ -1,5 +1,6 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import type { SyntheticEvent } from "react";
 import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
@@ -18,7 +19,11 @@ const Contact = ({ contactEmail }: ContactProps) => {
   const [sendingEmail, setSendingEmail] = useState(false);
   const { ref } = useSectionInView("Contact");
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+    void submitForm(event);
+  };
+
+  const submitForm = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSendingEmail(true);
 
@@ -114,6 +119,8 @@ const Contact = ({ contactEmail }: ContactProps) => {
             className="h-12 rounded-xl border-slate-300/80 bg-white/75 px-4 text-slate-900 shadow-sm transition-all placeholder:text-slate-400 focus:border-cyan-400 focus:ring-cyan-400/30 dark:border-white/15 dark:bg-slate-900/65 dark:text-white dark:focus:border-cyan-300 dark:focus:ring-cyan-300/25"
             name="senderEmail"
             type="email"
+            autoComplete="email"
+            spellCheck={false}
             required
             maxLength={254}
             placeholder={language === "de" ? "name@beispiel.de" : "name@example.com"}
@@ -127,6 +134,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
             className="h-12 rounded-xl border-slate-300/80 bg-white/75 px-4 text-slate-900 shadow-sm transition-all placeholder:text-slate-400 focus:border-cyan-400 focus:ring-cyan-400/30 dark:border-white/15 dark:bg-slate-900/65 dark:text-white dark:focus:border-cyan-300 dark:focus:ring-cyan-300/25"
             name="topic"
             type="text"
+            autoComplete="off"
             required
             maxLength={200}
             placeholder={language === "de" ? "Worum geht es?" : "What is it about?"}
@@ -139,6 +147,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
             id="message"
             className="min-h-44 rounded-xl border-slate-300/80 bg-white/75 p-4 text-slate-900 shadow-sm transition-all placeholder:text-slate-400 focus:border-cyan-400 focus:ring-cyan-400/30 dark:border-white/15 dark:bg-slate-900/65 dark:text-white dark:focus:border-cyan-300 dark:focus:ring-cyan-300/25"
             name="message"
+            autoComplete="off"
             placeholder={language === "de" ? "Deine Nachricht ..." : "Your message ..."}
             required
             maxLength={5000}

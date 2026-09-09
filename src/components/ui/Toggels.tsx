@@ -5,12 +5,19 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { DE as GermanFlag, US as UnitedStatesFlag } from "country-flag-icons/react/3x2";
 import { useLanguage } from "@/context/language-context";
+import { useCookieConsent } from "@/context/cookie-consent-context";
 
 export default function Toggels() {
   const { setTheme } = useTheme();
   const { language, toggleLanguage } = useLanguage();
+  const { functionalStorageAllowed, openPreferences } = useCookieConsent();
 
   const toggleTheme = () => {
+    if (!functionalStorageAllowed) {
+      openPreferences();
+      return;
+    }
+
     const isDark = globalThis.document.documentElement.classList.contains("dark");
 
     setTheme(isDark ? "light" : "dark");
@@ -18,8 +25,8 @@ export default function Toggels() {
 
   return (
     <div className="fixed bottom-6 right-6 flex flex-col items-center justify-center gap-y-4">
-      <motion.button
-        aria-label="Toggle Language"
+        <motion.button
+          aria-label={language === "de" ? "Sprache wechseln" : "Change language"}
         className="hidden h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-900 md:flex"
         onClick={toggleLanguage}
         initial={{ opacity: 0 }}
@@ -42,9 +49,24 @@ export default function Toggels() {
         )}
       </motion.button>
       <motion.button
-        aria-label="Toggle Theme"
+        aria-label={
+          functionalStorageAllowed
+            ? language === "de"
+              ? "Darstellung wechseln"
+              : "Change theme"
+            : language === "de"
+              ? "Cookie-Einstellungen öffnen"
+              : "Open cookie preferences"
+        }
         className="hidden h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-900 md:flex"
         onClick={toggleTheme}
+        title={
+          functionalStorageAllowed
+            ? undefined
+            : language === "de"
+              ? "Cookie-Einstellungen öffnen"
+              : "Open cookie preferences"
+        }
         initial={{ opacity: 0 }}
         animate={{
           opacity: 1,

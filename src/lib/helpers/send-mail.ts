@@ -27,7 +27,7 @@ function escapeHtml(value: string) {
     '"': "&quot;",
   };
 
-  return value.replace(/[&<>'"]/g, (character) => entities[character]);
+  return value.replaceAll(/[&<>'"]/g, (character) => entities[character]);
 }
 
 export async function sendContactMail(
@@ -52,7 +52,7 @@ export async function sendContactMail(
     html: `<section>
       <h1>You received the following message from the contact form</h1>
       <h3>${escapeHtml(topic)}</h3>
-      <p>${escapeHtml(message).replace(/\r?\n/g, "<br />")}</p>
+      <p>${escapeHtml(message).replaceAll(/\r?\n/g, "<br />")}</p>
       <p>The sender's email is: ${escapeHtml(senderEmail)}</p>
     </section>`,
   });

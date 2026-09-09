@@ -9,13 +9,13 @@ Die nachfolgend dokumentierten Anwendungsbefunde wurden im selben Arbeitsstand b
 ## Behebungsstatus
 
 - F1, F3 und F4: behoben durch serverseitig festgelegten Empfänger, strikte Zod-Validierung, Größenlimit, Rate-Limit, HTML-Escaping und korrekt abgewarteten SMTP-Versand.
-- F2: behoben durch validierte NextAuth-JWT-Prüfung mit expliziter Admin-Rolle und Matcher für `/admin/:path*`. Ein erfundener Session-Cookie wird nun abgewiesen.
-- F5: behoben für den Dev-Stack. Die App bindet ausschließlich an `127.0.0.1`; PostgreSQL besitzt keine Host-Portfreigabe mehr. Ein fehlendes lokales Auth-Secret wird beim Containerstart zufällig erzeugt.
+- F2: Der nicht verwendete Authentifizierungs- und Editor-Code wurde am 09.09.2026 vollständig entfernt.
+- F5: behoben für den Dev-Stack. Die App bindet ausschließlich an `127.0.0.1`; PostgreSQL besitzt keine Host-Portfreigabe mehr.
 - F6: behoben. Nach Bereinigung der Laufzeit-/Entwicklungsabhängigkeiten und gezielten sicheren Auflösungen meldet `yarn audit` 0 bekannte Schwachstellen in allen Schweregraden.
 - F7: behoben. Datenbanktexte werden als React-Text und nicht mehr über `dangerouslySetInnerHTML` ausgegeben.
 - F8/F9: behoben durch CSP und ergänzende Browser-Sicherheitsheader sowie erweiterte Git-/Docker-Ignorierregeln.
 
-Verifikation: 56 Tests in 11 Suites bestanden; Branch-Coverage 84,16 %, Statements 97,20 %. Prisma Client wurde erfolgreich generiert. Der laufende Stack liefert die Header aus, blockiert einen gefälschten Admin-Cookie mit HTTP 307 und lehnt einen vom Client eingeschleusten Mail-Empfänger mit HTTP 400 ab. Der Produktionsbuild kompiliert die Anwendung, scheitert derzeit jedoch noch an bereits vorhandenen TypeScript-Fehlern in älteren Testdateien und `src/lib/github-stats.ts`.
+Verifikation: 53 Tests in 11 Suites bestanden. Prisma Client wurde erfolgreich generiert. Der laufende Stack liefert die Header aus und lehnt einen vom Client eingeschleusten Mail-Empfänger mit HTTP 400 ab. Der Produktionsbuild kompiliert die Anwendung mit `NODE_ENV=production` erfolgreich.
 
 Geprüft: erreichbare App-Router-Endpunkte, Proxy, Mail-Transport, Datenbank-Helfer, HTML-Ausgabe, Upload-Komponente, GitHub-Abfragen und Cache/Worker, Docker-/Next-Konfiguration, ausgewählte Tests sowie deklarierte Laufzeit-Abhängigkeiten. Keine Anwendungsdateien oder Datenbankinhalte verändert. Keine echten E-Mails verschickt. HTTP-Prüfungen waren lesend; Mail-Prüfungen liefen mit vollständig simuliertem SMTP und Testumgebung.
 
@@ -36,22 +36,11 @@ Nachweis: Original-Route und Original-Mail-Helfer isoliert ausgeführt, Nodemail
 
 Empfehlung: Empfänger ausschließlich serverseitig aus Konfiguration/DB bestimmen; E-Mail, Betreff, Nachricht und Request-Größe serverseitig begrenzen; Rate-Limit für den öffentlichen Endpunkt und bedarfsgerechten Bot-Schutz ergänzen. Ein Login ist für ein öffentliches Kontaktformular nicht erforderlich.
 
-### F2 – Hoch bei aktiviertem Editor: Cookie-Präsenz ersetzt Authentifizierung
+### F2 – Hoch bei aktiviertem Editor: Authentifizierungsfläche entfernt
 
-Quelle: src/proxy.ts:7–8, 28–30, 36–37.
-OWASP: A01, A07.
+Der damalige, unvollständige Authentifizierungs- und Editor-Ansatz wurde am 09.09.2026 samt Abhängigkeit, Proxy, Prisma-Modellen, Tabellen und Konfiguration entfernt. Es gibt keine Konten, Sitzungen, geschützten Admin-Routen oder Authentifizierungs-Cookies mehr.
 
-authorized() gibt immer true zurück. Danach entscheidet allein die Existenz von next-auth.session-token über isAuth. Weder gültige Sitzung noch Admin-Rolle werden an dieser Stelle verlangt. Der Matcher erfasst außerdem nur /admin, nicht /admin/:path*.
-
-Nachweis am laufenden Stack:
-- GET /admin ohne Cookie: 307 nach /.
-- GET /admin mit frei erfundenem Cookie: 404 ohne Weiterleitung.
-- GET /admin/settings: 404 ohne Weiterleitung.
-- GET /api/auth/session: 404.
-
-Die 404 ist eine wichtige Einschränkung: Es wurden keine Admin-Daten erreicht. Im vorhandenen App-Router gibt es derzeit keine Admin-Seiten und keinen NextAuth-Handler. Der Befund betrifft den fehlerhaften Schutzmechanismus, der vor Implementierung eines Editors ersetzt werden muss.
-
-Empfehlung: gültige serverseitige Sitzung und explizite Admin-Rolle prüfen, Unterpfade erfassen und Berechtigungen zusätzlich an jeder lesenden/schreibenden Admin-Serverfunktion erzwingen.
+Empfehlung: Falls künftig ein Editor benötigt wird, die Authentifizierung als eigenständiges, vollständig serverseitig autorisiertes Modul mit Rollenmodell, Tests und aktualisierter Datenschutzdokumentation neu planen.
 
 ### F3 – Mittel: Ungefiltertes HTML in Kontakt-E-Mails
 
@@ -84,7 +73,7 @@ Docker bestätigt Bindungen auf 0.0.0.0 und [::] für 3000 und 5432. Die App lä
 
 Empfehlung für diesen Dev-Stack: 127.0.0.1:3000:3000 und, falls Host-Zugriff gebraucht wird, 127.0.0.1:5432:5432. Die DB benötigt für app/worker keinen veröffentlichten Host-Port. Für Produktion ein separates Build-/Start-Setup.
 
-Zusätzliche Härtung: Der Dockerfile legt keinen nichtprivilegierten USER fest, der Quellcode ist schreibbar eingebunden, und Compose nutzt einen fest vorgegebenen Development-Auth-Secret. Diese Dev-Einstellungen nicht als Produktionskonfiguration übernehmen. Das lokale Test-DB-Passwort selbst wurde nicht als Produktionsleck bewertet.
+Zusätzliche Härtung: Der Dockerfile legt keinen nichtprivilegierten USER fest und der Quellcode ist schreibbar eingebunden. Diese Dev-Einstellungen nicht als Produktionskonfiguration übernehmen. Das lokale Test-DB-Passwort selbst wurde nicht als Produktionsleck bewertet.
 
 ### F6 – Mittel: Bekannte verwundbare transitive Abhängigkeiten
 
@@ -92,13 +81,9 @@ Nachweis: docker compose exec -T app yarn audit --groups dependencies --json.
 Ergebnis: 40 Audit-Pfadmeldungen: 26 hoch, 12 mittel, 2 niedrig, 0 kritisch; 24 unterschiedliche Advisory-IDs. Mehrfachmeldungen je Abhängigkeitspfad sind keine 40 unabhängig erreichbaren Website-Lücken.
 
 npm ls bestätigt unter anderem:
-- next-auth > openid-client > jose@4.15.4.
 - react-email > socket.io > socket.io-parser@4.2.4.
 - react-email > socket.io > socket.io-adapter > ws@8.11.0.
 - prisma > mysql2@3.15.3.
-
-jose@4.15.4 hat eine dokumentierte JWE-Dekompressionsschwachstelle; die 4.x-Korrektur beginnt bei 4.15.5. Die tatsächliche Ausnutzbarkeit setzt Verarbeitung entsprechender untrusted JWEs in Node.js voraus. Der derzeit fehlende Auth-Handler begrenzt die Aussage zur Erreichbarkeit.
-Quelle: https://github.com/panva/jose/security/advisories/GHSA-hhhv-q57g-882q
 
 Viele hohe Treffer liegen in ESLint-/Glob-Werkzeugen und der React-Email-Vorschau. Diese Pakete stehen hier in dependencies, werden dadurch im „Laufzeit“-Audit mit erfasst, sind aber nicht automatisch öffentlich erreichbare Serverfunktionen. mysql2 ist transitiv über Prisma installiert; die Anwendung verwendet PostgreSQL.
 

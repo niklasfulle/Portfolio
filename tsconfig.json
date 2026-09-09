@@ -43,12 +43,6 @@
       "@/navigation/*": [
         "./src/components/navigation/*"
       ],
-      "@/auth/*": [
-        "./src/components/auth/*"
-      ],
-      "@/admin/*": [
-        "./src/components/admin/*"
-      ],
       "@/main/*": [
         "./src/components/main/*"
       ]

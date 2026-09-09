@@ -39,7 +39,7 @@ const FormUpload: FC<FormUploadProps> = ({
           />
           <div className="flex aspect-video w-full cursor-pointer items-center justify-center rounded border-2 border-dashed border-black dark:border-white">
             {selectedImage ? (
-              <img src={selectedImage} alt="" className="aspect-video w-72" />
+              <img src={selectedImage} alt={title} className="aspect-video w-72" />
             ) : (
               <span>Select Image</span>
             )}

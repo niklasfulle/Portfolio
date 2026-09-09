@@ -8,7 +8,7 @@
 
 ## Description
 
-This is a portfolio website for myself. It is built with Next.js and Tailwind CSS. As Datanbase I use Prisma with a Postgres database. It can show my projects, my skills and my contact information. It is also possible to send me a message via the contact form. The data can be edited via the admin panel. The admin panel is protected by NextAuth.js.
+This is a portfolio website for myself. It is built with Next.js and Tailwind CSS. As database I use Prisma with a Postgres database. It can show my projects, my skills and my contact information. It is also possible to send me a message via the contact form.
 
 ## Dependencies
 
@@ -18,7 +18,6 @@ This is a portfolio website for myself. It is built with Next.js and Tailwind CS
 | @emotion/react              | ^11.11.1 | https://www.npmjs.com/package/@emotion/react              |
 | @emotion/styled             | ^11.11.0 | https://www.npmjs.com/package/@emotion/styled             |
 | @mui/material               | ^5.14.8  | https://www.npmjs.com/package/@mui/material               |
-| @next-auth/prisma-adapter   | ^1.0.7   | https://www.npmjs.com/package/@next-auth/prisma-adapter   |
 | @prisma/client              | ^5.2.0   | https://www.npmjs.com/package/@prisma/client              |
 | @react-email/components     | ^0.0.7   | https://www.npmjs.com/package/@react-email/components     |
 | @react-email/tailwind       | ^0.0.8   | https://www.npmjs.com/package/@react-email/tailwind       |
@@ -40,7 +39,6 @@ This is a portfolio website for myself. It is built with Next.js and Tailwind CS
 | framer-motion               | ^10.16.4 | https://www.npmjs.com/package/framer-motion               |
 | lucide-react                | ^0.274.0 | https://www.npmjs.com/package/lucide-react                |
 | next                        | 13.5     | https://www.npmjs.com/package/next                        |
-| next-auth                   | ^4.23.1  | https://www.npmjs.com/package/next-auth                   |
 | next-themes                 | ^0.2.1   | https://www.npmjs.com/package/next-themes                 |
 | postcss                     | 8.4.29   | https://www.npmjs.com/package/postcss                     |
 | prettier                    | ^3.0.3   | https://www.npmjs.com/package/prettier                    |

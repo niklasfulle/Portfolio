@@ -234,7 +234,7 @@ const Skills: FC<SkillsProps> = ({ skills, stats }) => {
         <div className="relative z-10 grid gap-8 md:grid-cols-2">
           {skillGroups.map((group) => {
             const groupSkills = skills.filter((skill) =>
-              group.skills.some((groupSkill) => groupSkill === skill)
+              (group.skills as readonly string[]).includes(skill)
             );
 
             if (groupSkills.length === 0) return null;
