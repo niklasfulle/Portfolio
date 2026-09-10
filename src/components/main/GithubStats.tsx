@@ -286,11 +286,15 @@ function ContributionCalendar({ language, stats }: GithubStatsProps) {
       {weeks.length > 0 ? (
         <div className="mt-5 overflow-x-auto pb-8" data-testid="github-contribution-calendar">
           <div className="grid min-w-[43rem] grid-cols-[2rem_1fr] gap-x-2">
-            <div className="grid h-[6.35rem] grid-rows-7 text-[0.62rem] leading-3 text-slate-500 dark:text-slate-400">
-              {weekdayLabels.map((label, index) => <span key={`${label}-${index}`}>{label}</span>)}
+            <div className="grid auto-rows-[0.75rem] gap-1 self-start pt-4 text-[0.62rem] leading-3 text-slate-500 dark:text-slate-400">
+              {weekdayLabels.map((label, index) => (
+                <span className="h-3 leading-3" key={`${label}-${index}`}>
+                  {label}
+                </span>
+              ))}
             </div>
             <div className="min-w-0">
-              <div className="grid grid-flow-col auto-cols-[0.72rem] gap-1 text-[0.62rem] text-slate-500 dark:text-slate-400">
+              <div className="grid grid-flow-col auto-cols-[0.72rem] gap-1 text-[0.62rem] leading-3 text-slate-500 dark:text-slate-400">
                 {weeks.map((week, index) => (
                   <span key={`${week.cells[0].date}-month`} className="whitespace-nowrap">
                     {week.month || (index === 0 ? monthFormatter.format(new Date(`${week.cells[0].date}T00:00:00.000Z`)) : "")}
