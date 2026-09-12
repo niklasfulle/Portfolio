@@ -34,7 +34,7 @@ export default async function Home() {
     <main className="flex flex-col items-center scroll-smooth px-4">
       <Intro stats={githubStats} />
       <About abouteMe={abouteMe} />
-      <Projects projects={projects} />
+      <Projects projects={projects} githubStats={githubStats} />
       <Skills skills={skillsData} stats={githubStats} />
       <Experience experience={experience} />
       <Contact contactEmail={recipientEmail} />

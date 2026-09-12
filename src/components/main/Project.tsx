@@ -1,10 +1,10 @@
 "use client";
-import React, { FC, useRef } from "react";
+import { FC, useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowUpRight, BriefcaseBusiness } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, GitCommitHorizontal } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
 type ProjectProps = {
@@ -14,6 +14,7 @@ type ProjectProps = {
   readonly image: string | null;
   readonly url: string | null;
   readonly tags: string;
+  readonly commitCount?: number;
   readonly language: string;
 }
 
@@ -40,6 +41,10 @@ function getImageCaption(image: string | null, language: string) {
       : "Image: original screenshot of the portfolio intro";
   }
 
+  if (image === "/project-chessboard.png") {
+    return "3D-Online-Schach";
+  }
+
   if (image?.startsWith("/project-")) {
     return language === "de"
       ? "Bild: KI-generierte Illustration"
@@ -56,6 +61,7 @@ const Project: FC<ProjectProps> = ({
   image,
   url,
   tags,
+  commitCount,
   language,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -142,8 +148,17 @@ const Project: FC<ProjectProps> = ({
             ))}
           </ul>
 
-          <div className="mt-auto flex items-end justify-between gap-4 pt-7">
-          {url ? (
+          <div className="mt-auto pt-7">
+            {url && commitCount !== undefined ? (
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-3 py-1.5 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300">
+                <GitCommitHorizontal aria-hidden="true" className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-300" />
+                <span>
+                  {commitCount.toLocaleString(language === "de" ? "de-DE" : "en-US")} {language === "de" ? "Commits" : "commits"}
+                </span>
+              </div>
+            ) : null}
+            <div className="flex items-end justify-between gap-4">
+              {url ? (
             <Link
               href={url}
               target="_blank"
@@ -158,10 +173,11 @@ const Project: FC<ProjectProps> = ({
             <span className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-300/80 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300">
               {language === "de" ? "Nicht öffentlich" : "Not public"}
             </span>
-          )}
-            <span className="text-right text-[0.65rem] font-medium uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
-              {projectVisibilityLabel}
-            </span>
+            )}
+              <span className="text-right text-[0.65rem] font-medium uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
+                {projectVisibilityLabel}
+              </span>
+            </div>
           </div>
         </div>
       </article>

@@ -10,7 +10,6 @@ if (!connectionString) {
 const adapter = new PrismaPg({ connectionString });
 
 declare global {
-  // eslint-disable-next-line no-var, no-unused-vars
   var cachedPrisma: PrismaClient
 }
 

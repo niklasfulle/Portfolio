@@ -38,7 +38,13 @@ const publicProjects = [
     name: "LifeSim",
     description:
       "A desktop life and survival simulation with procedural worlds and persistent save states.",
-    codeRepository: "https://github.com/niklasfulle/Livesim",
+    codeRepository: "https://github.com/niklasfulle/LifeSim",
+  },
+  {
+    name: "3D-Online-Schach",
+    description:
+      "A browser-based 3D chess platform with a lobby, games, and live game status.",
+    codeRepository: "https://github.com/niklasfulle/3D-Online-Schach",
   },
 ] as const;
 

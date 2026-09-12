@@ -14,7 +14,8 @@ Niklas Fulle builds software with a focus on reliable, well-tested applications,
 - [Chat App](https://github.com/niklasfulle/chat-app): Bachelor-thesis chat application with Terraform and Ansible-based provisioning.
 - [Self-Driving Car](https://github.com/niklasfulle/Self-Driving-Car): JavaScript experiment with neural networks and machine-learning concepts.
 - [Randnotizen](https://github.com/niklasfulle/Randnotizen): Offline-capable Windows desktop note application with topics, checklists, and keyboard navigation.
-- [LifeSim](https://github.com/niklasfulle/Livesim): Desktop life and survival simulation with procedural worlds and persistent save states.
+- [LifeSim](https://github.com/niklasfulle/LifeSim): Desktop life and survival simulation with procedural worlds and persistent save states.
+- [3D-Online-Schach](https://github.com/niklasfulle/3D-Online-Schach): Browser-based 3D chess platform with lobby, games, and live game status.
 
 ## Skills
 

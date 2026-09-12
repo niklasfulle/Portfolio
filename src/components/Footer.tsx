@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useReducedMotion } from "framer-motion";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";

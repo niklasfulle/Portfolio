@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { DE as GermanFlag, US as UnitedStatesFlag } from "country-flag-icons/react/3x2";

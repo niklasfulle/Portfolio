@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import ActiveSectionContextProvider from "@/context/active-section-context";
 import CookieConsentProvider from "@/context/cookie-consent-context";
 import LanguageContextProvider from "@/context/language-context";

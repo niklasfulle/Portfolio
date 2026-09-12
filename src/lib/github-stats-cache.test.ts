@@ -22,7 +22,12 @@ jest.mock("@/lib/db/prisma", () => ({
 
 const mockedGetGithubStats = jest.mocked(getGithubStats);
 const snapshot = db.githubStatsSnapshot;
-const stats = { contributionDays: [], totalContributions: 42 } as GithubStatsData;
+const stats = {
+  contributionDays: [],
+  repositoryStats: [],
+  totalContributions: 42,
+  isFallback: false,
+} as GithubStatsData;
 
 describe("GitHub stats cache", () => {
   beforeEach(() => {
@@ -39,6 +44,16 @@ describe("GitHub stats cache", () => {
       update: { data: stats },
       where: { id: "github" },
     });
+  });
+
+  it("does not store fallback statistics", async () => {
+    mockedGetGithubStats.mockResolvedValue({ ...stats, isFallback: true });
+
+    await expect(refreshGithubStats()).rejects.toThrow(
+      "GitHub statistics refresh returned fallback data"
+    );
+
+    expect(snapshot.upsert).not.toHaveBeenCalled();
   });
 
   it("returns the stored snapshot without calling GitHub", async () => {

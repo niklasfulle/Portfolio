@@ -26,6 +26,10 @@ async function refresh() {
 
   try {
     const stats = await getGithubStats();
+    if (stats.isFallback) {
+      throw new Error("GitHub statistics request returned fallback data");
+    }
+
     await db.githubStatsSnapshot.upsert({
       where: { id: snapshotId },
       create: { data: stats, id: snapshotId },

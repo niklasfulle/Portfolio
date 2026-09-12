@@ -133,6 +133,27 @@ test.describe("Portfolio shell", () => {
     expect(iconBox!.y).toBeLessThan(ringBox!.y);
   });
 
+  test("keeps the bottom-row contribution tooltip inside the card", async ({ page }) => {
+    await openGermanPortfolio(page);
+
+    const calendar = page.getByTestId("github-contribution-calendar");
+    const lastCell = calendar.locator('[role="img"]').last();
+    const tooltip = lastCell.locator("span");
+
+    await lastCell.hover();
+    await expect(tooltip).toBeVisible();
+
+    const calendarBox = await calendar.boundingBox();
+    const tooltipBox = await tooltip.boundingBox();
+
+    expect(calendarBox).not.toBeNull();
+    expect(tooltipBox).not.toBeNull();
+    expect(tooltipBox!.y).toBeGreaterThanOrEqual(calendarBox!.y);
+    expect(tooltipBox!.y + tooltipBox!.height).toBeLessThanOrEqual(
+      calendarBox!.y + calendarBox!.height
+    );
+  });
+
   test("navigates to every visible section through the anchor navigation", async ({
     page,
   }) => {

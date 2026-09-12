@@ -6,7 +6,13 @@ export type GithubLanguageStat = {
   repositoryCount?: number;
 };
 
+export type GithubRepositoryStat = {
+  nameWithOwner: string;
+  commits: number;
+};
+
 export type GithubStatsData = {
+  isFallback: boolean;
   stars: number;
   commits: number;
   pullRequests: number;
@@ -21,6 +27,7 @@ export type GithubStatsData = {
   longestStreakDates: string;
   contributionDays: ContributionDay[];
   languages: GithubLanguageStat[];
+  repositoryStats: GithubRepositoryStat[];
 };
 
 type GithubGradeMetrics = Pick<
@@ -31,6 +38,8 @@ type GithubGradeMetrics = Pick<
 type GithubRepository = {
   fork: boolean;
   stargazers_count: number;
+  nameWithOwner?: string;
+  commitCount?: number;
   languages_url?: string;
   languageBytes?: Record<string, number>;
 };
@@ -83,7 +92,15 @@ type GithubUserRepositoriesResponse = {
     repositories: {
       nodes: Array<{
         isFork: boolean;
+        nameWithOwner: string;
         stargazerCount: number;
+        defaultBranchRef: {
+          target: {
+            history?: {
+              totalCount: number;
+            };
+          } | null;
+        } | null;
         languages: {
           edges: Array<{
             size: number;
@@ -185,6 +202,7 @@ const fallbackGrade = calculateGithubGrade({
 });
 
 export const fallbackGithubStats: GithubStatsData = {
+  isFallback: true,
   stars: 37,
   commits: 81,
   pullRequests: 23,
@@ -198,6 +216,7 @@ export const fallbackGithubStats: GithubStatsData = {
   longestStreakDates: "Jul 15, 2023 - Sep 21, 2023",
   contributionDays: [],
   languages: fallbackLanguages,
+  repositoryStats: [],
 };
 
 function githubHeaders() {
@@ -478,7 +497,17 @@ const repositoriesQuery = `
       ) {
         nodes {
           isFork
+          nameWithOwner
           stargazerCount
+          defaultBranchRef {
+            target {
+              ... on Commit {
+                history {
+                  totalCount
+                }
+              }
+            }
+          }
           languages(first: 100, orderBy: { field: SIZE, direction: DESC }) {
             edges {
               size
@@ -512,6 +541,8 @@ async function getAuthenticatedRepositories(): Promise<GithubRepository[]> {
     repositories.push(
       ...response.user.repositories.nodes.map((repository) => ({
         fork: repository.isFork,
+        nameWithOwner: repository.nameWithOwner,
+        commitCount: repository.defaultBranchRef?.target?.history?.totalCount ?? 0,
         languageBytes: Object.fromEntries(
           repository.languages.edges.map((language) => [
             language.node.name,
@@ -534,7 +565,7 @@ async function getAuthenticatedRepositories(): Promise<GithubRepository[]> {
 async function getRepositories() {
   if (process.env.GITHUB_TOKEN) return getAuthenticatedRepositories();
 
-  return fetchGithubJson<GithubRepository[]>(
+      return fetchGithubJson<GithubRepository[]>(
     `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`
   );
 }
@@ -591,6 +622,7 @@ export async function getGithubStats(): Promise<GithubStatsData> {
 
     return {
       ...fallbackGithubStats,
+      isFallback: false,
       stars: ownedRepositories.reduce(
         (total, repository) => total + repository.stargazers_count,
         0
@@ -614,6 +646,11 @@ export async function getGithubStats(): Promise<GithubStatsData> {
       longestStreakDates: calculatedContributions.longestStreakDates,
       contributionDays: calculatedContributions.contributionDays,
       languages: buildLanguageStats(languageTotals, languageRepositoryCounts),
+      repositoryStats: ownedRepositories.flatMap((repository) =>
+        repository.nameWithOwner && repository.commitCount !== undefined
+          ? [{ nameWithOwner: repository.nameWithOwner, commits: repository.commitCount }]
+          : []
+      ),
     };
   } catch (error) {
     console.error(

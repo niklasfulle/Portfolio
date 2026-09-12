@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import { useReducedMotion } from "framer-motion";
 import { motion } from "framer-motion";

@@ -7,6 +7,10 @@ const GITHUB_STATS_SNAPSHOT_ID = "github";
 export async function refreshGithubStats(): Promise<GithubStatsData> {
   const stats = await getGithubStats();
 
+  if (stats.isFallback) {
+    throw new Error("GitHub statistics refresh returned fallback data");
+  }
+
   await db.githubStatsSnapshot.upsert({
     where: { id: GITHUB_STATS_SNAPSHOT_ID },
     create: {
@@ -32,7 +36,10 @@ export async function getCachedGithubStats(): Promise<GithubStatsData> {
 
       // Older snapshots predate the contribution calendar. Refresh them once so
       // the UI can rely on the current data contract without crashing.
-      if (!Array.isArray(cachedStats.contributionDays)) {
+      if (
+        !Array.isArray(cachedStats.contributionDays) ||
+        !Array.isArray(cachedStats.repositoryStats)
+      ) {
         return refreshGithubStats();
       }
 

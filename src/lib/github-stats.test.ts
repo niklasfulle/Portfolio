@@ -256,7 +256,9 @@ describe("GitHub statistics", () => {
                     nodes: [
                       {
                         isFork: false,
+                        nameWithOwner: "niklasfulle/second",
                         stargazerCount: 4,
+                        defaultBranchRef: { target: { history: { totalCount: 8 } } },
                         languages: {
                           edges: [{ node: { name: "TypeScript" }, size: 25 }],
                         },
@@ -276,7 +278,9 @@ describe("GitHub statistics", () => {
                   nodes: [
                     {
                       isFork: false,
+                      nameWithOwner: "niklasfulle/first",
                       stargazerCount: 11,
+                      defaultBranchRef: { target: { history: { totalCount: 21 } } },
                       languages: {
                         edges: [
                           { node: { name: "TypeScript" }, size: 75 },
@@ -331,6 +335,10 @@ describe("GitHub statistics", () => {
       languages: [
         { name: "TypeScript", percentage: 80, bytes: 100, repositoryCount: 2 },
         { name: "Python", percentage: 20, bytes: 25, repositoryCount: 1 },
+      ],
+      repositoryStats: [
+        { nameWithOwner: "niklasfulle/first", commits: 21 },
+        { nameWithOwner: "niklasfulle/second", commits: 8 },
       ],
     });
 

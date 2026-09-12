@@ -1,5 +1,5 @@
 import { Input } from "@/ui/Input";
-import React, { FC } from "react";
+import { FC } from "react";
 
 interface FormInputProps {
   id: string;

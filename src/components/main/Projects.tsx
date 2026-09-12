@@ -1,15 +1,17 @@
 "use client";
-import React, { FC } from "react";
+import { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { ProjectType } from "@/lib/types";
 import { useLanguage } from "@/context/language-context";
 import Project from "./Project";
+import type { GithubStatsData } from "@/lib/github-stats";
 
 type ProjectsProps = {
   readonly projects: ProjectType[];
+  readonly githubStats: GithubStatsData;
 };
-const Projects: FC<ProjectsProps> = ({ projects }) => {
+const Projects: FC<ProjectsProps> = ({ projects, githubStats }) => {
   const { language } = useLanguage();
 
   const { ref } = useSectionInView("Projects", 0.1);
@@ -36,7 +38,18 @@ const Projects: FC<ProjectsProps> = ({ projects }) => {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {projects.map((project: ProjectType) => (
-          <Project key={project.id} {...project} language={language} />
+          <Project
+            key={project.id}
+            {...project}
+            commitCount={
+              project.url
+                ? githubStats.repositoryStats.find((repository) =>
+                    project.url?.toLowerCase().endsWith(repository.nameWithOwner.toLowerCase())
+                  )?.commits
+                : undefined
+            }
+            language={language}
+          />
         ))}
       </div>
     </section>

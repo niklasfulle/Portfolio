@@ -302,27 +302,32 @@ function ContributionCalendar({ language, stats }: GithubStatsProps) {
                 ))}
               </div>
               <div className="mt-1 grid grid-flow-col grid-rows-7 auto-cols-[0.72rem] gap-1">
-                {weeks.flatMap((week) => week.cells).map((cell, index) => (
-                  <motion.span
-                    aria-label={cell.count === null
-                      ? `${cell.date}: ${isGerman ? "keine Daten" : "no data"}`
-                      : `${cell.date}: ${cell.count} ${isGerman ? "Beiträge" : "contributions"}`}
-                    className={`group/contribution relative h-3 w-3 rounded-[0.2rem] transition-[filter] duration-200 hover:z-20 hover:brightness-125 focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${contributionLevel(cell.count)}`}
-                    initial={reducedMotion ? false : { opacity: 0, scale: 0.5 }}
-                    key={cell.date}
-                    role="img"
-                    tabIndex={0}
-                    title={cell.count === null ? undefined : `${cell.date}: ${cell.count}`}
-                    animate={{ opacity: cell.count === null ? 0 : 1, scale: 1 }}
-                    transition={{ duration: 0.25, delay: reducedMotion ? 0 : Math.min(index * 0.006, 0.8) }}
-                  >
-                    {cell.count !== null ? (
-                      <span className="pointer-events-none absolute left-1/2 top-[calc(100%+0.55rem)] z-30 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-slate-200/80 bg-white px-2.5 py-1.5 text-[0.68rem] font-semibold text-slate-700 shadow-xl group-hover/contribution:block group-focus-visible/contribution:block dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
-                        {cell.count} {isGerman ? "Beiträge" : "contributions"} · {dateFormatter.format(new Date(`${cell.date}T00:00:00.000Z`))}
-                      </span>
-                    ) : null}
-                  </motion.span>
-                ))}
+                {weeks.flatMap((week) => week.cells).map((cell, index) => {
+                  const tooltipPosition = index % 7 >= 5
+                    ? "bottom-[calc(100%+0.55rem)]"
+                    : "top-[calc(100%+0.55rem)]";
+
+                  return (
+                    <motion.span
+                      aria-label={cell.count === null
+                        ? `${cell.date}: ${isGerman ? "keine Daten" : "no data"}`
+                        : `${cell.date}: ${cell.count} ${isGerman ? "Beiträge" : "contributions"}`}
+                      className={`group/contribution relative h-3 w-3 rounded-[0.2rem] transition-[filter] duration-200 hover:z-20 hover:brightness-125 focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${contributionLevel(cell.count)}`}
+                      initial={reducedMotion ? false : { opacity: 0, scale: 0.5 }}
+                      key={cell.date}
+                      role="img"
+                      tabIndex={0}
+                      animate={{ opacity: cell.count === null ? 0 : 1, scale: 1 }}
+                      transition={{ duration: 0.25, delay: reducedMotion ? 0 : Math.min(index * 0.006, 0.8) }}
+                    >
+                      {cell.count !== null ? (
+                        <span className={`pointer-events-none absolute left-1/2 z-30 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-slate-200/80 bg-white px-2.5 py-1.5 text-[0.68rem] font-semibold text-slate-700 shadow-xl group-hover/contribution:block group-focus-visible/contribution:block dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 ${tooltipPosition}`}>
+                          {cell.count} {isGerman ? "Beiträge" : "contributions"} · {dateFormatter.format(new Date(`${cell.date}T00:00:00.000Z`))}
+                        </span>
+                      ) : null}
+                    </motion.span>
+                  );
+                })}
               </div>
             </div>
           </div>

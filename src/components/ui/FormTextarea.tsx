@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Textarea } from "@/ui/Textarea";
 import { cn } from "@/lib/utils";
 
