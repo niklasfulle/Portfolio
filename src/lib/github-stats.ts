@@ -42,6 +42,7 @@ type GithubRepository = {
   commitCount?: number;
   languages_url?: string;
   languageBytes?: Record<string, number>;
+  languageColors?: Record<string, string>;
 };
 
 type GithubSearchResult = {
@@ -106,6 +107,7 @@ type GithubUserRepositoriesResponse = {
             size: number;
             node: {
               name: string;
+              color?: string | null;
             };
           }>;
         };
@@ -371,7 +373,8 @@ function parseContributionDays(html: string): ContributionDay[] {
 
 function buildLanguageStats(
   languageTotals: Map<string, number>,
-  languageRepositoryCounts: Map<string, number>
+  languageRepositoryCounts: Map<string, number>,
+  languageColorsByName: Map<string, string>
 ) {
   const total = [...languageTotals.values()].reduce((sum, value) => sum + value, 0);
 
@@ -379,11 +382,10 @@ function buildLanguageStats(
 
   return [...languageTotals.entries()]
     .sort(([, first], [, second]) => second - first)
-    .slice(0, 18)
     .map(([name, bytes]) => ({
       name,
       percentage: Number(((bytes / total) * 100).toFixed(2)),
-      color: languageColors[name] ?? "#64748b",
+      color: languageColorsByName.get(name) ?? languageColors[name] ?? "#64748b",
       bytes,
       repositoryCount: languageRepositoryCounts.get(name) ?? 0,
     }));
@@ -513,6 +515,7 @@ const repositoriesQuery = `
               size
               node {
                 name
+                color
               }
             }
           }
@@ -548,6 +551,13 @@ async function getAuthenticatedRepositories(): Promise<GithubRepository[]> {
             language.node.name,
             language.size,
           ])
+        ),
+        languageColors: Object.fromEntries(
+          repository.languages.edges.flatMap((language) =>
+            language.node.color
+              ? [[language.node.name, language.node.color]]
+              : []
+          )
         ),
         stargazers_count: repository.stargazerCount,
       }))
@@ -600,14 +610,20 @@ export async function getGithubStats(): Promise<GithubStatsData> {
         );
     const languageTotals = new Map<string, number>();
     const languageRepositoryCounts = new Map<string, number>();
+    const languageColorsByName = new Map<string, string>();
 
-    for (const languageResponse of languageResponses) {
+    for (const [repositoryIndex, languageResponse] of languageResponses.entries()) {
       for (const [name, bytes] of Object.entries(languageResponse)) {
         languageTotals.set(name, (languageTotals.get(name) ?? 0) + bytes);
         languageRepositoryCounts.set(
           name,
           (languageRepositoryCounts.get(name) ?? 0) + 1
         );
+      }
+
+      const repositoryColors = ownedRepositories[repositoryIndex]?.languageColors;
+      for (const [name, color] of Object.entries(repositoryColors ?? {})) {
+        if (!languageColorsByName.has(name)) languageColorsByName.set(name, color);
       }
     }
 
@@ -645,7 +661,11 @@ export async function getGithubStats(): Promise<GithubStatsData> {
       currentStreakDates: calculatedContributions.currentStreakDates,
       longestStreakDates: calculatedContributions.longestStreakDates,
       contributionDays: calculatedContributions.contributionDays,
-      languages: buildLanguageStats(languageTotals, languageRepositoryCounts),
+      languages: buildLanguageStats(
+        languageTotals,
+        languageRepositoryCounts,
+        languageColorsByName
+      ),
       repositoryStats: ownedRepositories.flatMap((repository) =>
         repository.nameWithOwner && repository.commitCount !== undefined
           ? [{ nameWithOwner: repository.nameWithOwner, commits: repository.commitCount }]

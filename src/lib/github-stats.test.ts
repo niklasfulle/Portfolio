@@ -260,7 +260,7 @@ describe("GitHub statistics", () => {
                         stargazerCount: 4,
                         defaultBranchRef: { target: { history: { totalCount: 8 } } },
                         languages: {
-                          edges: [{ node: { name: "TypeScript" }, size: 25 }],
+                          edges: [{ node: { name: "TypeScript", color: "#3178c6" }, size: 25 }],
                         },
                       },
                     ],
@@ -283,8 +283,8 @@ describe("GitHub statistics", () => {
                       defaultBranchRef: { target: { history: { totalCount: 21 } } },
                       languages: {
                         edges: [
-                          { node: { name: "TypeScript" }, size: 75 },
-                          { node: { name: "Python" }, size: 25 },
+                          { node: { name: "TypeScript", color: "#3178c6" }, size: 75 },
+                          { node: { name: "Python", color: "#3572a5" }, size: 25 },
                         ],
                       },
                     },
@@ -333,8 +333,8 @@ describe("GitHub statistics", () => {
       longestStreak: 4,
       longestStreakDates: "Sep 1 - Sep 4",
       languages: [
-        { name: "TypeScript", percentage: 80, bytes: 100, repositoryCount: 2 },
-        { name: "Python", percentage: 20, bytes: 25, repositoryCount: 1 },
+        { name: "TypeScript", percentage: 80, bytes: 100, color: "#3178c6", repositoryCount: 2 },
+        { name: "Python", percentage: 20, bytes: 25, color: "#3572a5", repositoryCount: 1 },
       ],
       repositoryStats: [
         { nameWithOwner: "niklasfulle/first", commits: 21 },

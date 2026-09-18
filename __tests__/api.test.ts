@@ -9,8 +9,8 @@ jest.mock("@/lib/helpers/send-mail", () => {
 
 import {
   POST,
-  resetContactRateLimitForTests,
 } from "@/app/api/email/send/route";
+import { resetContactRateLimitForTests } from "@/lib/contact-rate-limit";
 
 const validBody = {
   senderEmail: "sender@example.com",

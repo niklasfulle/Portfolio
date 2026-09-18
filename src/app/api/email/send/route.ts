@@ -1,10 +1,9 @@
+import { checkContactRateLimit } from "@/lib/contact-rate-limit";
 import { sendContactMail } from "@/lib/helpers/send-mail";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const MAX_BODY_BYTES = 16 * 1024;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const RATE_LIMIT_REQUESTS = 5;
 
 export const runtime = "nodejs";
 
@@ -15,35 +14,6 @@ const contactMessageSchema = z
     message: z.string().trim().min(1).max(5000),
   })
   .strict();
-
-type RateLimitEntry = { count: number; resetAt: number };
-const requestsByClient = new Map<string, RateLimitEntry>();
-
-function getClientAddress(req: Request) {
-  const forwardedFor = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return req.headers.get("x-real-ip") ?? forwardedFor ?? "unknown";
-}
-
-function checkRateLimit(req: Request) {
-  const now = Date.now();
-  const clientAddress = getClientAddress(req);
-  const current = requestsByClient.get(clientAddress);
-
-  if (!current || current.resetAt <= now) {
-    requestsByClient.set(clientAddress, {
-      count: 1,
-      resetAt: now + RATE_LIMIT_WINDOW_MS,
-    });
-    return null;
-  }
-
-  if (current.count >= RATE_LIMIT_REQUESTS) {
-    return Math.max(1, Math.ceil((current.resetAt - now) / 1000));
-  }
-
-  current.count += 1;
-  return null;
-}
 
 async function readJsonBody(req: Request) {
   const contentLength = Number(req.headers.get("content-length"));
@@ -76,14 +46,8 @@ async function readJsonBody(req: Request) {
   return JSON.parse(rawBody) as unknown;
 }
 
-export function resetContactRateLimitForTests() {
-  if (process.env.NODE_ENV === "test") {
-    requestsByClient.clear();
-  }
-}
-
 export async function POST(req: Request) {
-  const retryAfter = checkRateLimit(req);
+  const retryAfter = checkContactRateLimit(req);
   if (retryAfter !== null) {
     return NextResponse.json(
       { message: "Too many requests. Please try again later.", success: false },
