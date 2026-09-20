@@ -18,6 +18,7 @@ const footerLinks = [
 ] as const;
 
 const legalLinks = [
+  { href: "/changelog", de: "Changelog", en: "Changelog" },
   { href: "/imprint", de: "Impressum", en: "Legal notice" },
   { href: "/privacy", de: "Datenschutz", en: "Privacy" },
   { href: "/cookies", de: "Cookies", en: "Cookies" },

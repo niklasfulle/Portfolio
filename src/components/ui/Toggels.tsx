@@ -57,7 +57,7 @@ export default function Toggels() {
               ? "Cookie-Einstellungen öffnen"
               : "Open cookie preferences"
         }
-        className="hidden h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-900 md:flex"
+        className="group hidden h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-900 md:flex"
         onClick={toggleTheme}
         title={
           functionalStorageAllowed
@@ -79,8 +79,8 @@ export default function Toggels() {
           scale: 1.05,
         }}
       >
-        <Sun className="absolute rotate-0 scale-0 transition-all hover:text-slate-900 dark:scale-90 dark:text-white" />
-        <Moon className="rotate-80 absolute scale-90 transition-all hover:text-slate-900 dark:scale-0 dark:text-white" />
+        <Sun className="absolute h-5 w-5 rotate-0 scale-0 text-amber-500 transition-all dark:scale-90 dark:text-amber-300 dark:group-hover:text-amber-200" />
+        <Moon className="absolute h-5 w-5 scale-90 text-slate-700 transition-all dark:scale-0 dark:text-white" />
       </motion.button>
     </div>
   );
