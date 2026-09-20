@@ -39,3 +39,6 @@ next-env.d.ts
 
 */migrations
 public/images/*
+
+# local security review artifacts
+SECURITY-REVIEW-2026-09-07.md
