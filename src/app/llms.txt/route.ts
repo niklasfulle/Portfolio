@@ -9,6 +9,7 @@ Niklas Fulle builds software with a focus on reliable, well-tested applications,
 ## Public projects
 
 - [Portfolio](https://github.com/niklasfulle/Portfolio): Next.js portfolio with GitHub statistics, Docker-based development, Playwright tests, and SonarQube analysis.
+- [lxcup](https://github.com/niklasfulle/lxcup): Rust-based web update manager for Proxmox LXC containers with safe scanning, planning, and execution workflows.
 - [Netflix Clone](https://github.com/niklasfulle/Netflix-Clone): Streaming-style web interface built with TypeScript and Next.js.
 - [WorldData API](https://github.com/niklasfulle/WorldData-API): Backend API for worldwide datasets and data-driven applications.
 - [Chat App](https://github.com/niklasfulle/chat-app): Bachelor-thesis chat application with Terraform and Ansible-based provisioning.

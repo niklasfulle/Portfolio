@@ -12,6 +12,12 @@ const publicProjects = [
     codeRepository: "https://github.com/niklasfulle/Netflix-Clone",
   },
   {
+    name: "lxcup",
+    description:
+      "A Rust-based web update manager for Proxmox LXC containers with safe scanning, planning, and execution workflows.",
+    codeRepository: "https://github.com/niklasfulle/lxcup",
+  },
+  {
     name: "WorldData API",
     description: "An API project for worldwide datasets and data-driven applications.",
     codeRepository: "https://github.com/niklasfulle/WorldData-API",

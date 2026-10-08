@@ -1,0 +1,52 @@
+{
+  "name": "portfolio-admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 3001",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 3001",
+    "lint": "eslint --config eslint.config.mjs app components lib tests next.config.ts playwright.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "auth:migrate": "npx auth@latest migrate --config ./lib/auth-cli.ts --yes",
+    "db:migrate": "node ./scripts/migrate-admin-db.mjs"
+  },
+  "dependencies": {
+    "better-auth": "^1.7.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "country-flag-icons": "^1.6.20",
+    "framer-motion": "^13.2.0",
+    "lucide-react": "^1.42.0",
+    "next": "^16.3.8",
+    "pg": "^8.16.3",
+    "portfolio": "file:..",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.7.0",
+    "react-intersection-observer": "^11.0.1",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/typography": "^0.5.20",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "eslint": "^9.39.2",
+    "tailwindcss": "^4.3.3",
+    "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.20.6",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "postcss-selector-parser": "^7.1.6"
+  }
+}

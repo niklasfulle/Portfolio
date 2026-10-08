@@ -63,3 +63,10 @@ model GithubStatsSnapshot {
   data      Json
   fetchedAt DateTime @default(now()) @updatedAt
 }
+
+model PortfolioContentVersion {
+  id             String   @id @default("main")
+  version        Int      @default(0)
+  lastPublishKey String?  @db.VarChar(64)
+  updatedAt      DateTime @updatedAt
+}

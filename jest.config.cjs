@@ -16,6 +16,7 @@ const customJestConfig = {
   ],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
+    "<rootDir>/admin/",
     "<rootDir>/.next/",
     "<rootDir>/tests/e2e/",
   ],

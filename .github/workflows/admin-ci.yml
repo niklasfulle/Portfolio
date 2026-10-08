@@ -1,0 +1,94 @@
+name: Admin CMS CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  portfolio:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: portfolio
+          POSTGRES_PASSWORD: portfolio-test-password
+          POSTGRES_DB: portfolio_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U portfolio -d portfolio_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      POSTGRESQL_URL: postgresql://portfolio:portfolio-test-password@127.0.0.1:5432/portfolio_test?schema=public
+      PORTFOLIO_INTEGRATION_DATABASE_URL: postgresql://portfolio:portfolio-test-password@127.0.0.1:5432/portfolio_test?schema=public
+      ADMIN_CONTENT_API_TOKEN: ci-only-portfolio-api-token-at-least-thirty-two-characters
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - run: corepack enable
+      - run: corepack prepare yarn@1.22.22 --activate
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn audit --groups dependencies --level moderate
+      - run: yarn prisma generate
+      - run: yarn prisma db push
+      - run: yarn test --runInBand
+      - run: yarn lint
+      - run: yarn build
+
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin-test-password
+          POSTGRES_DB: portfolio_admin_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U admin -d portfolio_admin_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      ADMIN_DATABASE_URL: postgres://admin:admin-test-password@127.0.0.1:5432/portfolio_admin_test
+      ADMIN_INTEGRATION_DATABASE_URL: postgres://admin:admin-test-password@127.0.0.1:5432/portfolio_admin_test
+      BETTER_AUTH_SECRET: ci-only-secret-value-at-least-thirty-two-characters-long
+      BETTER_AUTH_URL: http://127.0.0.1:3001
+      ADMIN_APP_ORIGIN: http://127.0.0.1:3001
+      ADMIN_EMAIL: admin@example.test
+      ADMIN_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-value-at-least-thirty-two-characters
+      ADMIN_CONTENT_API_TOKEN: ci-only-content-api-token-value-at-least-thirty-two-characters
+      PORTFOLIO_CONTENT_API_URL: http://127.0.0.1:3000/api/admin/content
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+      - run: npm ci --prefix admin
+      - run: npm run auth:migrate --prefix admin
+      - run: npm run db:migrate --prefix admin
+      - run: npm test --prefix admin
+      - run: npm run lint --prefix admin
+      - run: npm run typecheck --prefix admin
+      - run: npm audit --prefix admin --audit-level=moderate
+      - run: npm exec --prefix admin -- playwright install --with-deps chromium
+      - run: npm run test:e2e --prefix admin
+      - run: npm run build --prefix admin

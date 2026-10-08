@@ -12,14 +12,19 @@ import { useLanguage } from "@/context/language-context";
 
 interface ContactProps {
   contactEmail: string;
+  previewMode?: boolean;
 }
 
-const Contact = ({ contactEmail }: ContactProps) => {
+const Contact = ({ contactEmail, previewMode = false }: ContactProps) => {
   const { language } = useLanguage();
   const [sendingEmail, setSendingEmail] = useState(false);
   const { ref } = useSectionInView("Contact");
 
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+    if (previewMode) {
+      event.preventDefault();
+      return;
+    }
     void submitForm(event);
   };
 
@@ -105,6 +110,13 @@ const Contact = ({ contactEmail }: ContactProps) => {
       </p>
 
       <div className="relative mt-10 overflow-hidden rounded-4xl border border-slate-200/80 bg-white/45 p-5 text-left shadow-[0_20px_70px_-35px_rgba(8,145,178,0.45)] backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/30 dark:shadow-[0_20px_70px_-35px_rgba(34,211,238,0.25)] sm:p-8">
+        {previewMode && (
+          <p className="mb-4 text-sm text-slate-600 dark:text-slate-300" role="status">
+            {language === "de"
+              ? "Der E-Mail-Versand ist in der Vorschau deaktiviert."
+              : "Email sending is disabled in preview."}
+          </p>
+        )}
         <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-400/10" />
         <div className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-violet-300/20 blur-3xl dark:bg-violet-500/10" />
         <form
@@ -154,7 +166,7 @@ const Contact = ({ contactEmail }: ContactProps) => {
           />
           <Button
             isLoading={sendingEmail}
-            disabled={sendingEmail}
+            disabled={sendingEmail || previewMode}
             className="mt-2 h-12 w-full rounded-xl bg-linear-to-r from-cyan-400 to-blue-500 px-7 font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition-transform hover:scale-[1.01] hover:from-cyan-300 hover:to-blue-400 dark:from-cyan-300 dark:to-violet-500 dark:hover:from-cyan-200 dark:hover:to-violet-400 sm:w-fit"
           >
             {language === "de" ? "Nachricht senden" : "Send message"}

@@ -46,6 +46,8 @@ import {
   SiPrisma,
   SiPython,
   SiReact,
+  SiRust,
+  SiSharp,
   SiSonarqubeserver,
   SiSqlite,
   SiTailwindcss,
@@ -95,8 +97,10 @@ const skillDetails: Record<
   ".NET": { descriptionDe: "Microsoft-Plattform für Softwareentwicklung", descriptionEn: "Microsoft platform for software development", icon: SiDotnet },
   ".NET MAUI": { descriptionDe: "Native Apps mit .NET", descriptionEn: "Native apps with .NET", icon: SiDotnet },
   Blazor: { descriptionDe: "Web-UIs mit .NET und C#", descriptionEn: "Web UIs with .NET and C#", icon: SiBlazor },
+  "C#": { descriptionDe: "Objektorientierte Entwicklung mit .NET", descriptionEn: "Object-oriented development with .NET", icon: SiSharp },
   "C++": { descriptionDe: "Performante hardwarenahe Software", descriptionEn: "High-performance low-level software", icon: SiCplusplus },
   CMake: { descriptionDe: "Build-System für C/C++", descriptionEn: "Build system for C/C++", icon: SiCmake },
+  Rust: { descriptionDe: "Sichere und performante Systemsoftware", descriptionEn: "Safe and performant systems software", icon: SiRust },
   MicroPython: { descriptionDe: "Python für Mikrocontroller", descriptionEn: "Python for microcontrollers", icon: SiMicropython },
   Azure: { descriptionDe: "Cloud- und Infrastrukturplattform", descriptionEn: "Cloud and infrastructure platform", icon: Cloud },
   Intune: { descriptionDe: "Geräte- und Endpoint-Verwaltung", descriptionEn: "Device and endpoint management", icon: ShieldCheck },
@@ -134,7 +138,7 @@ const skillGroups = [
   {
     de: "Backend & Datenbanken",
     en: "Backend & databases",
-    skills: ["Node.js", "npm", "Yarn", "Express.js", "Python", "Java", "Spring", "Hibernate", "Prisma", "PostgreSQL", "SQLite", "MongoDB", "MySQL", "Redis"],
+    skills: ["Node.js", "npm", "Yarn", "Express.js", "Python", "Rust", "Java", "Spring", "Hibernate", "Prisma", "PostgreSQL", "SQLite", "MongoDB", "MySQL", "Redis"],
   },
   {
     de: "DevOps & Qualität",
@@ -144,7 +148,7 @@ const skillGroups = [
   {
     de: "Plattformen & Tools",
     en: "Platforms & tools",
-    skills: [".NET", ".NET MAUI", "Blazor", "C++", "CMake", "MicroPython", "PowerShell", "Azure", "AWS", "Windows", "Apple", "Linux", "Ubuntu", "Raspberry Pi", "VS Code", "IntelliJ IDEA", "Postman", "Bash", "LaTeX", "Intune", "GitHub Copilot", "Codex"],
+    skills: ["C#", ".NET", ".NET MAUI", "Blazor", "C++", "CMake", "MicroPython", "PowerShell", "Azure", "AWS", "Windows", "Apple", "Linux", "Ubuntu", "Raspberry Pi", "VS Code", "IntelliJ IDEA", "Postman", "Bash", "LaTeX", "Intune", "GitHub Copilot", "Codex"],
   },
 ] as const;
 

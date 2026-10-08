@@ -11,6 +11,7 @@ services:
       CONTACT_EMAIL: "${CONTACT_EMAIL:-}"
       GITHUB_USERNAME: "${GITHUB_USERNAME:-niklasfulle}"
       GITHUB_TOKEN: "${GITHUB_TOKEN:?GITHUB_TOKEN must be set in .env}"
+      ADMIN_CONTENT_API_TOKEN: "${ADMIN_CONTENT_API_TOKEN:-}"
     command:
       - sh
       - -c

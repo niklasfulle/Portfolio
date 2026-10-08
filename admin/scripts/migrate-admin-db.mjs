@@ -1,0 +1,25 @@
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { Pool } from "pg";
+
+const connectionString = process.env.ADMIN_DATABASE_URL;
+if (!connectionString) {
+  throw new Error("Set ADMIN_DATABASE_URL before applying the admin database migration.");
+}
+
+const migrationPaths = [
+  fileURLToPath(new URL("../sql/001_content_drafts.sql", import.meta.url)),
+  fileURLToPath(new URL("../sql/002_admin_audit_draft_discard.sql", import.meta.url)),
+  fileURLToPath(new URL("../sql/003_admin_publish_timestamp.sql", import.meta.url)),
+];
+const pool = new Pool({ connectionString, max: 1 });
+
+try {
+  for (const migrationPath of migrationPaths) {
+    const migration = await readFile(migrationPath, "utf8");
+    await pool.query(migration);
+  }
+  process.stdout.write("Admin content tables are ready.\n");
+} finally {
+  await pool.end();
+}

@@ -25,7 +25,7 @@ const legalLinks = [
   { href: "/terms", de: "Nutzungsbedingungen", en: "Terms" },
 ] as const;
 
-export default function Footer() {
+export default function Footer({ publicBaseUrl }: { publicBaseUrl?: string }) {
   const { language } = useLanguage();
   const { openPreferences } = useCookieConsent();
   const reducedMotion = useReducedMotion();
@@ -78,7 +78,7 @@ export default function Footer() {
           </div>
           <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs">
             {legalLinks.map((link) => (
-              <a className="underline decoration-slate-400/50 underline-offset-4 transition-colors hover:text-cyan-600 dark:decoration-slate-500/50 dark:hover:text-cyan-300" href={link.href} key={link.href}>
+              <a className="underline decoration-slate-400/50 underline-offset-4 transition-colors hover:text-cyan-600 dark:decoration-slate-500/50 dark:hover:text-cyan-300" href={publicBaseUrl ? new URL(link.href, publicBaseUrl).toString() : link.href} key={link.href} rel={publicBaseUrl ? "noopener noreferrer" : undefined} target={publicBaseUrl ? "_blank" : undefined}>
                 {isGerman ? link.de : link.en}
               </a>
             ))}

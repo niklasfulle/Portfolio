@@ -7,6 +7,7 @@ export default defineConfig([
     ".next/**",
     "coverage/**",
     "node_modules/**",
+    "admin/**",
     "output/**",
     "out/**",
     "build/**",
