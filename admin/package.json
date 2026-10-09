@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1 --port 3001",
+    "dev:docker": "next dev --hostname 0.0.0.0 --port 3001",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1 --port 3001",
     "lint": "eslint --config eslint.config.mjs app components lib tests next.config.ts playwright.config.ts",
@@ -11,7 +12,8 @@
     "test": "tsx --test tests/*.test.ts",
     "test:e2e": "playwright test",
     "auth:migrate": "npx auth@latest migrate --config ./lib/auth-cli.ts --yes",
-    "db:migrate": "node ./scripts/migrate-admin-db.mjs"
+    "db:migrate": "node ./scripts/migrate-admin-db.mjs",
+    "db:seed:startup": "node ../scripts/import-portfolio-seed.mjs"
   },
   "dependencies": {
     "better-auth": "^1.7.7",
@@ -28,6 +30,7 @@
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.7.0",
     "react-intersection-observer": "^11.0.1",
+    "qrcode.react": "4.2.0",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.5.4"
   },

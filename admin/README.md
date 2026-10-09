@@ -38,6 +38,25 @@ Each saved draft revision uses a deterministic idempotency key when published.
 If the Portfolio API commits but its response is lost, retrying the same draft
 confirms that commit rather than applying the content a second time.
 
+## Docker Compose
+
+The root Compose stack includes the public site, its GitHub stats worker, and
+one PostgreSQL 18 service containing separate `portfolio` and
+`portfolio_admin` databases, plus this admin app. Configure the
+Admin CMS variables in the repository-root `.env` file (see `.env.example`),
+then start the stack from the repository root:
+
+```powershell
+docker compose up --build -d
+```
+
+The public site is available at `http://127.0.0.1:3000`; the admin console is
+at `http://127.0.0.1:3001`. Both ports are bound to loopback. Visit `/setup`
+once to create the configured administrator and enroll TOTP. Remove
+`ADMIN_BOOTSTRAP_TOKEN` from `.env` after setup. This Compose configuration is
+for local development; use the separate production deployment guidance below
+before exposing either app publicly.
+
 ## Configuration
 
 `PORTFOLIO_CONTENT_API_URL` must identify the Portfolio server-side content API,

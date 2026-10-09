@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 
 let version = 0;
 let lastPublishKey = null;
+let failNextRead = false;
 const content = {
   aboutMe: [],
   projects: [{
@@ -49,11 +50,22 @@ function send(response, status, body) {
 
 const server = createServer(async (request, response) => {
   if (request.url === "/health") return send(response, 200, { ok: true });
+  if (request.url === "/_test/fail-next-read" && request.method === "POST") {
+    failNextRead = true;
+    return send(response, 200, { armed: true });
+  }
   if (request.url !== "/api/admin/content") return send(response, 404, { message: "Not found" });
   if (request.headers.authorization !== `Bearer ${process.env.ADMIN_CONTENT_API_TOKEN}`) {
     return send(response, 401, { message: "Unauthorized" });
   }
-  if (request.method === "GET") return send(response, 200, { version, content, githubStats });
+  if (request.method === "GET") {
+    if (failNextRead) {
+      failNextRead = false;
+      request.socket.destroy();
+      return;
+    }
+    return send(response, 200, { version, content, githubStats });
+  }
   if (request.method !== "PUT") return send(response, 405, { message: "Method not allowed" });
 
   let body = "";
@@ -72,4 +84,4 @@ const server = createServer(async (request, response) => {
   return send(response, 200, { version });
 });
 
-server.listen(4010, "127.0.0.1");
+server.listen(Number(process.env.PORTFOLIO_MOCK_API_PORT ?? "4010"), "127.0.0.1");

@@ -11,7 +11,8 @@ services:
       CONTACT_EMAIL: "${CONTACT_EMAIL:-}"
       GITHUB_USERNAME: "${GITHUB_USERNAME:-niklasfulle}"
       GITHUB_TOKEN: "${GITHUB_TOKEN:?GITHUB_TOKEN must be set in .env}"
-      ADMIN_CONTENT_API_TOKEN: "${ADMIN_CONTENT_API_TOKEN:-}"
+      ADMIN_CONTENT_API_TOKEN: "${ADMIN_CONTENT_API_TOKEN:?ADMIN_CONTENT_API_TOKEN must be set in .env}"
+      PORTFOLIO_SEED_API_URL: http://app:3000/api/admin/seed
     command:
       - sh
       - -c
@@ -36,7 +37,7 @@ services:
       POSTGRESQL_URL: "postgresql://portfolio:${POSTGRES_PASSWORD}@db:5432/portfolio?schema=public"
       GITHUB_USERNAME: "${GITHUB_USERNAME:-niklasfulle}"
       GITHUB_TOKEN: "${GITHUB_TOKEN:?GITHUB_TOKEN must be set in .env}"
-    command: ["sh", "-c", "yarn prisma generate && yarn prisma db push && yarn worker:github-stats"]
+    command: ["sh", "-c", "yarn prisma generate && yarn worker:github-stats"]
     volumes:
       - .:/app
       - portfolio_node_modules:/app/node_modules
@@ -45,14 +46,56 @@ services:
       db:
         condition: service_healthy
 
+  admin:
+    build:
+      context: .
+      dockerfile: admin/Dockerfile
+    environment:
+      NODE_ENV: development
+      ADMIN_DATABASE_URL: "postgresql://portfolio_admin:${ADMIN_POSTGRES_PASSWORD:?ADMIN_POSTGRES_PASSWORD must be set in .env}@db:5432/portfolio_admin"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET must be set in .env}"
+      BETTER_AUTH_URL: "${BETTER_AUTH_URL:-http://127.0.0.1:3001}"
+      ADMIN_APP_ORIGIN: "${ADMIN_APP_ORIGIN:-http://127.0.0.1:3001}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:?ADMIN_EMAIL must be set in .env}"
+      ADMIN_BOOTSTRAP_TOKEN: "${ADMIN_BOOTSTRAP_TOKEN:-}"
+      PORTFOLIO_CONTENT_API_URL: http://app:3000/api/admin/content
+      PORTFOLIO_SEED_API_URL: http://app:3000/api/admin/seed
+      ADMIN_CONTENT_API_TOKEN: "${ADMIN_CONTENT_API_TOKEN:?ADMIN_CONTENT_API_TOKEN must be set in .env}"
+      NEXT_PUBLIC_SITE_URL: "${NEXT_PUBLIC_SITE_URL:-http://127.0.0.1:3000}"
+    command:
+      - sh
+      - -c
+      - >-
+        npm ci --prefix admin &&
+        npm run auth:migrate --prefix admin &&
+        npm run db:migrate --prefix admin &&
+        npm run db:seed:startup --prefix admin &&
+        npm run dev:docker --prefix admin
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - .:/workspace
+      - portfolio_admin_node_modules:/workspace/admin/node_modules
+      - portfolio_admin_next:/workspace/admin/.next
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_started
+
   db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     environment:
       POSTGRES_DB: portfolio
       POSTGRES_USER: portfolio
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_ADMIN_DB: portfolio_admin
+      POSTGRES_ADMIN_USER: portfolio_admin
+      POSTGRES_ADMIN_PASSWORD: "${ADMIN_POSTGRES_PASSWORD:?ADMIN_POSTGRES_PASSWORD must be set in .env}"
     volumes:
-      - portfolio_postgres:/var/lib/postgresql/data
+      - portfolio_postgres18:/var/lib/postgresql
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
       interval: 5s
@@ -62,4 +105,8 @@ services:
 volumes:
   portfolio_node_modules:
   portfolio_next:
-  portfolio_postgres:
+  portfolio_postgres18:
+    external: true
+    name: portfolio_portfolio_postgres18
+  portfolio_admin_node_modules:
+  portfolio_admin_next:

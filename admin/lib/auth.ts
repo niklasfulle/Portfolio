@@ -23,6 +23,11 @@ function createAuthInstance() {
   if (isProduction && (!baseURL.startsWith("https://") || !trustedOrigin.startsWith("https://"))) {
     throw new Error("BETTER_AUTH_URL and ADMIN_APP_ORIGIN must use HTTPS in production.");
   }
+  const trustedOrigins = new Set([baseURL, trustedOrigin]);
+  if (!isProduction) {
+    trustedOrigins.add("http://localhost:3001");
+    trustedOrigins.add("http://127.0.0.1:3001");
+  }
   const database = getAdminDatabase();
 
   return betterAuth({
@@ -30,7 +35,7 @@ function createAuthInstance() {
     baseURL,
     secret: authSecret,
     database,
-    trustedOrigins: [trustedOrigin],
+    trustedOrigins: [...trustedOrigins],
     emailAndPassword: {
       enabled: true,
       // Registration is restricted to the one-time bootstrap hook below.
@@ -66,6 +71,13 @@ function createAuthInstance() {
           );
           return;
         }
+        if (context.path === "/two-factor/verify-totp" || context.path === "/two-factor/verify-backup-code") {
+          await database.query(
+            "INSERT INTO admin_audit_log (actor, action) VALUES ($1, $2)",
+            [context.context.session?.user.id ?? "unknown", "auth.mfa_attempt"],
+          );
+          return;
+        }
         if (context.path !== "/sign-up/email") return;
 
         const configuredToken = process.env.ADMIN_BOOTSTRAP_TOKEN ?? "";
@@ -89,6 +101,7 @@ function createAuthInstance() {
       }),
       after: createAuthMiddleware(async (context) => {
         const actionByPath: Record<string, string> = {
+          "/sign-in/email": "auth.login_succeeded",
           "/two-factor/verify-totp": "auth.mfa_succeeded",
           "/two-factor/verify-backup-code": "auth.mfa_succeeded",
           "/two-factor/enable": "auth.mfa_enabled",

@@ -36,6 +36,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .scannerwork/
+.local/portfolio-seed.json
 
 */migrations
 public/images/*

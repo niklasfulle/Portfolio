@@ -11,6 +11,7 @@ const migrationPaths = [
   fileURLToPath(new URL("../sql/001_content_drafts.sql", import.meta.url)),
   fileURLToPath(new URL("../sql/002_admin_audit_draft_discard.sql", import.meta.url)),
   fileURLToPath(new URL("../sql/003_admin_publish_timestamp.sql", import.meta.url)),
+  fileURLToPath(new URL("../sql/004_admin_mfa_attempt_audit.sql", import.meta.url)),
 ];
 const pool = new Pool({ connectionString, max: 1 });
 

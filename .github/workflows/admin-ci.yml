@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_USER: portfolio
           POSTGRES_PASSWORD: portfolio-test-password
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: admin-test-password
@@ -72,7 +72,7 @@ jobs:
       ADMIN_EMAIL: admin@example.test
       ADMIN_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-value-at-least-thirty-two-characters
       ADMIN_CONTENT_API_TOKEN: ci-only-content-api-token-value-at-least-thirty-two-characters
-      PORTFOLIO_CONTENT_API_URL: http://127.0.0.1:3000/api/admin/content
+      PORTFOLIO_CONTENT_API_URL: http://127.0.0.1:4010/api/admin/content
       NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
 
     steps:
@@ -82,6 +82,9 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: admin/package-lock.json
+      - run: corepack enable
+      - run: corepack prepare yarn@1.22.22 --activate
+      - run: yarn install --frozen-lockfile --non-interactive
       - run: npm ci --prefix admin
       - run: npm run auth:migrate --prefix admin
       - run: npm run db:migrate --prefix admin

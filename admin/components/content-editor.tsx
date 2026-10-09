@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 type ContentRecord = Record<string, unknown>;
+type ValidationIssue = { field: string; message: string };
 type Content = {
   aboutMe: ContentRecord[];
   projects: ContentRecord[];
@@ -22,12 +23,12 @@ type EditorState = {
   hasDraft: boolean;
 };
 
-const sections: Array<{ key: ContentKey; label: string }> = [
-  { key: "aboutMe", label: "Über mich" },
-  { key: "projects", label: "Projekte" },
-  { key: "skills", label: "Fähigkeiten" },
-  { key: "experience", label: "Erfahrung & Ausbildung" },
-  { key: "contactEmail", label: "Kontakt" },
+const sections: Array<{ key: ContentKey; label: string; hint: string }> = [
+  { key: "aboutMe", label: "Über mich", hint: "Profil & Kurztext" },
+  { key: "projects", label: "Projekte", hint: "Arbeiten & Repositories" },
+  { key: "skills", label: "Fähigkeiten", hint: "Stack & Tools" },
+  { key: "experience", label: "Erfahrung & Ausbildung", hint: "Werdegang" },
+  { key: "contactEmail", label: "Kontakt", hint: "Kontaktadresse" },
 ];
 
 const fieldLabels: Record<string, string> = {
@@ -63,6 +64,7 @@ export function ContentEditor() {
   const [activeSection, setActiveSection] = useState<ContentKey>("projects");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
@@ -87,8 +89,19 @@ export function ContentEditor() {
     state?.hasDraft && state.draftVersion > state.publishedDraftVersion,
   );
 
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeLeaving);
+    return () => window.removeEventListener("beforeunload", warnBeforeLeaving);
+  }, [hasUnsavedChanges]);
+
   function updateField(recordId: string, field: string, value: unknown) {
     setHasUnsavedChanges(true);
+    setValidationIssues([]);
     setState((current) => {
       if (!current) return current;
       const entries = current.content[activeSection].map((entry) => {
@@ -102,6 +115,7 @@ export function ContentEditor() {
 
   function addItem() {
     setHasUnsavedChanges(true);
+    setValidationIssues([]);
     setState((current) => {
       if (!current) return current;
       const entries = current.content[activeSection];
@@ -112,6 +126,7 @@ export function ContentEditor() {
 
   function hideItem(recordId: string) {
     setHasUnsavedChanges(true);
+    setValidationIssues([]);
     setState((current) => {
       if (!current) return current;
       const entries = current.content[activeSection].map((entry) =>
@@ -124,6 +139,7 @@ export function ContentEditor() {
   function removeItem(recordId: string) {
     if (!window.confirm("Diesen Eintrag aus dem Entwurf entfernen?")) return;
     setHasUnsavedChanges(true);
+    setValidationIssues([]);
     setState((current) => {
       if (!current) return current;
       const entries = current.content[activeSection].filter((entry) => entry.id !== recordId);
@@ -135,6 +151,7 @@ export function ContentEditor() {
     if (!state) return;
     setBusy(true);
     setMessage("");
+    setValidationIssues([]);
     try {
       const response = await fetch("/api/content", {
         method: "PUT",
@@ -146,7 +163,16 @@ export function ContentEditor() {
         }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.message ?? "Entwurf konnte nicht gespeichert werden.");
+      if (!response.ok) {
+        if (Array.isArray(result.issues)) {
+          setValidationIssues(result.issues.filter((issue: unknown): issue is ValidationIssue =>
+            Boolean(issue && typeof issue === "object" &&
+              "field" in issue && typeof issue.field === "string" &&
+              "message" in issue && typeof issue.message === "string"),
+          ));
+        }
+        throw new Error(result.message ?? "Entwurf konnte nicht gespeichert werden.");
+      }
       setState({ ...state, draftVersion: result.version, hasDraft: true });
       setHasUnsavedChanges(false);
       setMessage("Entwurf gespeichert.");
@@ -198,38 +224,48 @@ export function ContentEditor() {
   if (!state) return <p className="editor-status" role="status">{message || "Inhalte werden geladen …"}</p>;
 
   return (
-    <section className="content-manager" aria-label="Portfolio-Inhalte verwalten">
+    <section id="editor" className="content-manager" aria-label="Portfolio-Inhalte verwalten">
       <div className="editor-heading">
         <div>
-          <p className="eyebrow">INHALTE</p>
-          <h2>Portfolio verwalten</h2>
-          <p className="auth-description">Entwürfe bleiben privat, bis du sie veröffentlichst.</p>
+          <p className="eyebrow">DEIN INHALT</p>
+          <h2>Alles an einem Ort.</h2>
+          <p className="auth-description">Änderungen bleiben privat, bis du sie veröffentlichst.</p>
         </div>
         <div className="editor-actions">
-          <a className="secondary-button" href="/preview" target="_blank" rel="noopener noreferrer">Vorschau öffnen</a>
+          <a className="secondary-button" href="/preview" target="_blank" rel="noopener noreferrer">Vorschau öffnen <span aria-hidden="true">↗</span></a>
           <button className="secondary-button danger-button" type="button" disabled={busy || !hasUnpublishedDraft} onClick={discardDraft}>Entwurf verwerfen</button>
-          <button className="secondary-button" type="button" disabled={busy} onClick={saveDraft}>{busy ? "Bitte warten …" : "Entwurf speichern"}</button>
-          <button className="primary-button" type="button" disabled={busy || !hasUnpublishedDraft || hasUnsavedChanges} onClick={publish}>Veröffentlichen</button>
+          <button className="secondary-button" type="button" disabled={busy || !hasUnsavedChanges} onClick={saveDraft}>{busy ? "Bitte warten …" : "Entwurf speichern"}</button>
+          <button className="primary-button" type="button" disabled={busy || !hasUnpublishedDraft || hasUnsavedChanges} onClick={publish}>{busy ? "Bitte warten …" : "Veröffentlichen"}</button>
         </div>
       </div>
 
       <div className="version-line">
-        <span>Veröffentlichte Version: {state.currentPublishedVersion}</span>
-        <span>{!state.hasDraft ? "Noch kein Entwurf gespeichert" : hasUnpublishedDraft ? `Unveröffentlichter Entwurf v${state.draftVersion}` : `Entwurf v${state.draftVersion} veröffentlicht`}</span>
-        <span>{state.publishedAt ? `Zuletzt veröffentlicht: ${new Date(state.publishedAt).toLocaleString("de-DE")}` : "Noch nicht veröffentlicht"}</span>
-        <span role="status">{hasUnsavedChanges ? "Ungespeicherte Änderungen" : "Alle Änderungen gespeichert"}</span>
+        <div className="version-card"><span className="version-card-mark" aria-hidden="true">●</span><span><small>LIVE-VERSION</small><strong>v{state.currentPublishedVersion}</strong></span></div>
+        <div className={`version-card ${hasUnpublishedDraft ? "is-draft" : ""}`}><span className="version-card-mark" aria-hidden="true">●</span><span><small>ENTWURF</small><strong>{!state.hasDraft ? "Noch nicht gespeichert" : hasUnpublishedDraft ? `v${state.draftVersion} · unveröffentlicht` : `v${state.draftVersion} · live`}</strong></span></div>
+        <div className="version-card"><span className="version-card-mark" aria-hidden="true">◷</span><span><small>ZULETZT VERÖFFENTLICHT</small><strong>{state.publishedAt ? new Intl.DateTimeFormat("de-DE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(state.publishedAt)) : "Noch keine Veröffentlichung"}</strong></span></div>
+        <div className={`version-card save-state ${hasUnsavedChanges ? "is-unsaved" : ""}`} role="status" aria-live="polite"><span className="version-card-mark" aria-hidden="true">●</span><span><small>BEARBEITUNGSSTATUS</small><strong>{hasUnsavedChanges ? "Ungespeicherte Änderungen" : "Alles gespeichert"}</strong></span></div>
       </div>
 
       <nav className="editor-tabs" aria-label="Inhaltsbereiche">
-        {sections.map((section) => (
+        {sections.map((section, index) => (
           <button key={section.key} type="button" disabled={busy} aria-pressed={activeSection === section.key} onClick={() => setActiveSection(section.key)}>
-            {section.label}
+            <span className="section-tab-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            <span className="section-tab-copy"><strong>{section.label}</strong><small>{section.hint}</small></span>
+            <span className="section-tab-count">{state.content[section.key].length}</span>
           </button>
         ))}
       </nav>
 
+      <div className="section-list-heading">
+        <div>
+          <h3>{sections.find((section) => section.key === activeSection)?.label}</h3>
+          <p>{selectedItems.length} {selectedItems.length === 1 ? "Eintrag" : "Einträge"} · Änderungen werden erst nach dem Veröffentlichen öffentlich.</p>
+        </div>
+        <button className="add-item-button" type="button" disabled={busy} onClick={addItem}>+ Eintrag hinzufügen</button>
+      </div>
+
       <div className="editor-list">
-        {selectedItems.length === 0 && <p className="editor-status">In diesem Bereich sind noch keine Einträge vorhanden.</p>}
+        {selectedItems.length === 0 && <p className="editor-empty">Hier ist noch nichts drin. Über „Eintrag hinzufügen“ kannst du den ersten Inhalt anlegen.</p>}
         {selectedItems.map((entry) => (
           <fieldset className="editor-item" key={String(entry.id)}>
             <legend>{String(entry.title ?? entry.name ?? entry.titleDe ?? entry.email ?? "Eintrag")}</legend>
@@ -245,10 +281,13 @@ export function ContentEditor() {
                     <span>{fieldLabels[field] ?? field}</span>
                     {field === "tags" && <small>Mindestens sechs Stichpunkte, kommagetrennt (z. B. TypeScript, Next.js, Webentwicklung, …).</small>}
                     {multiline ? (
-                      <textarea rows={4} disabled={busy} value={String(value ?? "")} onChange={(event) => updateField(String(entry.id), field, event.target.value)} />
+                      <textarea name={`${activeSection}.${String(entry.id)}.${field}`} rows={4} disabled={busy} value={String(value ?? "")} onChange={(event) => updateField(String(entry.id), field, event.target.value)} />
                     ) : (
                       <input
-                        type={field === "series" ? "number" : "text"}
+                        name={`${activeSection}.${String(entry.id)}.${field}`}
+                        type={field === "series" ? "number" : field === "email" ? "email" : field === "url" || field === "image" ? "url" : "text"}
+                        autoComplete="off"
+                        spellCheck={field === "email" || field === "url" || field === "image" ? false : undefined}
                         disabled={busy}
                         min={field === "series" ? 0 : undefined}
                         value={String(value ?? "")}
@@ -267,8 +306,18 @@ export function ContentEditor() {
         ))}
       </div>
 
-      <button className="secondary-button add-item-button" type="button" disabled={busy} onClick={addItem}>Eintrag hinzufügen</button>
-      {message && <p className="editor-status" role="status">{message}</p>}
+      {message && (
+        <div className={`editor-status ${validationIssues.length ? "has-error" : ""}`} role={validationIssues.length ? "alert" : "status"} aria-live={validationIssues.length ? "assertive" : "polite"}>
+          <p>{message}</p>
+          {validationIssues.length > 0 && (
+            <ul>
+              {validationIssues.map((issue, index) => (
+                <li key={`${issue.field}-${index}`}><strong>{fieldLabels[issue.field] ?? issue.field}:</strong> {issue.message}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </section>
   );
 }

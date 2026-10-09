@@ -21,14 +21,14 @@ export default async function AdminPreviewPage() {
 
   const database = getAdminDatabase();
   const [published, draftResult] = await Promise.all([
-    requestPortfolioContent("GET"),
+    requestPortfolioContent("GET").catch(() => null),
     database.query<{ payload: unknown }>(
       "SELECT payload FROM content_draft WHERE id = $1 LIMIT 1",
       ["portfolio"],
     ),
   ]);
 
-  if (!published.response.ok) {
+  if (!published?.response.ok) {
     return (
       <main className="auth-shell">
         <section className="auth-card" aria-labelledby="preview-error-title">

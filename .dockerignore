@@ -1,6 +1,8 @@
 .git
 .next
 node_modules
+**/.next
+**/node_modules
 *.log
 .env
 .env.*
@@ -8,3 +10,4 @@ node_modules
 backup.sql
 .scannerwork
 coverage
+.local

@@ -28,6 +28,19 @@ function currentTotp(secret: string) {
   return String(code).padStart(6, "0");
 }
 
+function assertIsolatedAdminDatabase() {
+  const databaseUrl = process.env.ADMIN_DATABASE_URL;
+  if (!databaseUrl) throw new Error("E2E tests require an isolated ADMIN_DATABASE_URL ending in _test.");
+
+  const database = new URL(databaseUrl);
+  const databaseName = decodeURIComponent(database.pathname.slice(1));
+  if (!["localhost", "127.0.0.1", "::1"].includes(database.hostname) || !databaseName.endsWith("_test")) {
+    throw new Error("E2E tests are allowed only against a local database whose name ends in _test.");
+  }
+}
+
+assertIsolatedAdminDatabase();
+
 const liveContent = {
   aboutMe: [],
   projects: [{
@@ -47,7 +60,8 @@ const liveContent = {
 };
 
 test("MFA-gated editor previews private drafts and publishes or discards them", async ({ browser }) => {
-  const origin = "http://127.0.0.1:3001";
+  const origin = `http://127.0.0.1:${process.env.ADMIN_E2E_PORT ?? "3001"}`;
+  const contentApiUrl = `http://127.0.0.1:${process.env.PORTFOLIO_MOCK_API_PORT ?? "4010"}/api/admin/content`;
   let api = await request.newContext({ baseURL: origin });
   const anonymousPreview = await api.get("/preview", { maxRedirects: 0 });
   expect(anonymousPreview.status()).toBe(307);
@@ -72,24 +86,24 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   expect(bootstrap.ok()).toBeTruthy();
   expect((await api.get("/api/content")).status()).toBe(401);
 
-  const enrollment = await api.post("/api/auth/two-factor/enable", {
-    headers: { origin },
-    data: { password: "Integration-Test-Password-2026!", method: "totp" },
-  });
-  expect(enrollment.ok(), await enrollment.text()).toBeTruthy();
-  const enrollmentData = await enrollment.json();
-  assert.ok(Array.isArray(enrollmentData.backupCodes));
-  assert.equal(enrollmentData.backupCodes.length, 10);
-  const recoveryCode = enrollmentData.backupCodes[0] as string;
-  const totpSecret = new URL(enrollmentData.totpURI).searchParams.get("secret");
+  const setupContext = await browser.newContext({ storageState: await api.storageState() });
+  const setupPage = await setupContext.newPage();
+  await setupPage.goto(`${origin}/two-factor/setup`);
+  await setupPage.getByLabel("Passwort").fill("Integration-Test-Password-2026!");
+  await setupPage.getByRole("button", { name: "MFA-Schlüssel erstellen" }).click();
+  await expect(setupPage.getByRole("img", { name: "QR-Code für die Authenticator-App" })).toBeVisible();
+  await setupPage.getByText("Manuelle Einrichtung anzeigen").click();
+  const enrollmentUri = await setupPage.locator("code.secret-value").textContent();
+  assert.ok(enrollmentUri);
+  const backupCodes = await setupPage.locator(".recovery-list code").allTextContents();
+  assert.equal(backupCodes.length, 10);
+  const recoveryCode = backupCodes[0];
+  const totpSecret = new URL(enrollmentUri).searchParams.get("secret");
   assert.ok(totpSecret);
-  const enrollmentVerification = await api.post("/api/auth/two-factor/verify-totp", {
-    headers: { origin },
-    data: { code: currentTotp(totpSecret) },
-  });
-  expect(enrollmentVerification.ok()).toBeTruthy();
-  const signOut = await api.post("/api/auth/sign-out", { headers: { origin }, data: {} });
-  expect(signOut.ok(), await signOut.text()).toBeTruthy();
+  await setupPage.getByLabel("Code aus der App").fill(currentTotp(totpSecret));
+  await setupPage.getByRole("button", { name: "MFA bestätigen" }).click();
+  await expect(setupPage.getByRole("heading", { name: "Inhalte verwalten" })).toBeVisible();
+  await setupContext.close();
   await api.dispose();
   api = await request.newContext({ baseURL: origin });
   expect((await api.get("/api/content")).status()).toBe(401);
@@ -112,12 +126,26 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   expect(secondFactor.ok()).toBeTruthy();
   expect((await api.get("/api/content")).ok()).toBeTruthy();
 
+  const invalidDraft = {
+    ...liveContent,
+    projects: [{ ...liveContent.projects[0], tags: "TypeScript, Next.js" }],
+  };
+  const rejectedDraft = await api.put("/api/content", {
+    headers: { origin },
+    data: { expectedVersion: 0, sourceVersion: 0, content: invalidDraft },
+  });
+  expect(rejectedDraft.status()).toBe(400);
+  expect(await rejectedDraft.json()).toMatchObject({
+    message: "Bitte korrigiere die markierten Eingaben.",
+    issues: [{ field: "tags", message: "Mindestens sechs Stichpunkte eintragen." }],
+  });
+
   const save = await api.put("/api/content", {
     headers: { origin: origin },
     data: { expectedVersion: 0, sourceVersion: 0, content: liveContent },
   });
   expect(save.ok()).toBeTruthy();
-  const stillPublished = await api.get("http://127.0.0.1:4010/api/admin/content", {
+  const stillPublished = await api.get(contentApiUrl, {
     headers: { authorization: `Bearer ${process.env.ADMIN_CONTENT_API_TOKEN}` },
   });
   expect((await stillPublished.json()).content.projects[0].title).toBe("Published project title");
@@ -130,7 +158,7 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   const published = await publish.json();
   expect(published.publishedVersion).toBe(1);
   expect(published.publishedAt).toBeTruthy();
-  const nowPublished = await api.get("http://127.0.0.1:4010/api/admin/content", {
+  const nowPublished = await api.get(contentApiUrl, {
     headers: { authorization: `Bearer ${process.env.ADMIN_CONTENT_API_TOKEN}` },
   });
   expect((await nowPublished.json()).content.projects[0].title).toBe("Draft project title");
@@ -150,7 +178,7 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   });
   expect(saveNext.ok(), await saveNext.text()).toBeTruthy();
   expect(await (await api.get("/preview")).text()).toContain("Discarded project title");
-  const remainsPublished = await api.get("http://127.0.0.1:4010/api/admin/content", {
+  const remainsPublished = await api.get(contentApiUrl, {
     headers: { authorization: `Bearer ${process.env.ADMIN_CONTENT_API_TOKEN}` },
   });
   expect((await remainsPublished.json()).content.projects[0].title).toBe("Draft project title");
@@ -160,7 +188,9 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   const browserContext = await browser.newContext({ storageState: await api.storageState() });
   const adminPage = await browserContext.newPage();
   await adminPage.goto("/admin");
-  await expect(adminPage.getByText("MFA wurde bestätigt.")).toBeVisible();
+  await expect(adminPage.getByRole("heading", { name: "Inhalte verwalten" })).toBeVisible();
+  await expect(adminPage.locator(".dashboard-shell .content-manager")).toBeVisible();
+  await expect(adminPage.locator(".dashboard-shell > .auth-card")).toHaveCount(0);
   await browserContext.close();
 
   await api.post("/api/auth/sign-out", { headers: { origin }, data: {} });
@@ -183,12 +213,30 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   expect(reusedCode.ok()).toBeFalsy();
   expect((await api.get("/api/content")).ok()).toBeTruthy();
 
+  const armConnectionFailure = await api.post(
+    `http://127.0.0.1:${process.env.PORTFOLIO_MOCK_API_PORT ?? "4010"}/_test/fail-next-read`,
+  );
+  expect(armConnectionFailure.ok()).toBeTruthy();
+  const unavailableContent = await api.get("/api/content");
+  expect(unavailableContent.status()).toBe(502);
+  expect(await unavailableContent.json()).toEqual({ message: "Portfolio content could not be loaded." });
+
+  const armPreviewFailure = await api.post(
+    `http://127.0.0.1:${process.env.PORTFOLIO_MOCK_API_PORT ?? "4010"}/_test/fail-next-read`,
+  );
+  expect(armPreviewFailure.ok()).toBeTruthy();
+  const unavailablePreview = await api.get("/preview");
+  expect(unavailablePreview.ok()).toBeTruthy();
+  expect(await unavailablePreview.text()).toContain("Vorschau nicht verfügbar");
+
   const auditDb = new Pool({ connectionString: process.env.ADMIN_DATABASE_URL });
   try {
     const audit = await auditDb.query<{ action: string }>(
-      "SELECT action FROM admin_audit_log WHERE action IN ('auth.login_attempt', 'auth.mfa_succeeded')",
+      "SELECT action FROM admin_audit_log WHERE action IN ('auth.login_attempt', 'auth.login_succeeded', 'auth.mfa_attempt', 'auth.mfa_succeeded')",
     );
     expect(audit.rows.filter((row) => row.action === "auth.login_attempt").length).toBeGreaterThanOrEqual(3);
+    expect(audit.rows.filter((row) => row.action === "auth.login_succeeded").length).toBeGreaterThanOrEqual(2);
+    expect(audit.rows.filter((row) => row.action === "auth.mfa_attempt").length).toBeGreaterThanOrEqual(3);
     expect(audit.rows.some((row) => row.action === "auth.mfa_succeeded")).toBe(true);
     const storedRecoveryCodes = await auditDb.query<{ backup_codes: string }>(
       'SELECT tf."backupCodes" AS backup_codes FROM "twoFactor" tf JOIN "user" u ON u.id = tf."userId" WHERE u.email = $1',

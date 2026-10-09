@@ -2,7 +2,44 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
 import { authClient } from "@admin/lib/auth-client";
+
+function TotpEnrollmentCode({ uri }: { uri: string }) {
+  return (
+    <div
+      className="totp-enrollment-code"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 12,
+        marginBlock: 24,
+      }}
+    >
+      <div
+        style={{
+          display: "inline-flex",
+          padding: 16,
+          borderRadius: 12,
+          backgroundColor: "#fff",
+        }}
+      >
+        <QRCodeSVG
+          value={uri}
+          size={224}
+          level="M"
+          marginSize={4}
+          title="QR-Code für die Authenticator-App"
+        />
+      </div>
+      <details style={{ width: "100%" }}>
+        <summary style={{ cursor: "pointer", textAlign: "center" }}>Manuelle Einrichtung anzeigen</summary>
+        <code className="secret-value">{uri}</code>
+      </details>
+    </div>
+  );
+}
 
 export function SetupTwoFactor() {
   const router = useRouter();
@@ -55,8 +92,8 @@ export function SetupTwoFactor() {
           </form>
         ) : backupCodes.length ? (
           <>
-            <p className="auth-description">Füge diesen Setup-Link in deiner Authenticator-App hinzu. Bewahre die Recovery-Codes sicher auf; jeder ist nur einmal nutzbar.</p>
-            <code className="secret-value">{totpUri}</code>
+            <p className="auth-description">Scanne den QR-Code mit Google Authenticator, Microsoft Authenticator oder einer anderen TOTP-App. Bewahre die Recovery-Codes sicher auf; jeder ist nur einmal nutzbar.</p>
+            <TotpEnrollmentCode uri={totpUri} />
             <ul className="recovery-list">{backupCodes.map((backupCode) => <li key={backupCode}><code>{backupCode}</code></li>)}</ul>
             <form className="auth-form" onSubmit={verifyEnrollment}>
               <label htmlFor="enrollment-code">Code aus der App</label>
@@ -67,8 +104,8 @@ export function SetupTwoFactor() {
           </>
         ) : (
           <form className="auth-form" onSubmit={verifyEnrollment}>
-            <p className="auth-description">Scanne den Link mit deiner Authenticator-App und bestätige anschließend einen Code.</p>
-            <code className="secret-value">{totpUri}</code>
+            <p className="auth-description">Scanne diesen QR-Code mit deiner Authenticator-App und bestätige anschließend einen Code.</p>
+            <TotpEnrollmentCode uri={totpUri} />
             <label htmlFor="enrollment-code">Code aus der App</label>
             <input id="enrollment-code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} />
             {error && <p className="form-error" role="alert">{error}</p>}

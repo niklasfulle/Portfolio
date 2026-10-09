@@ -35,6 +35,7 @@ if (!isDevelopment) {
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  allowedDevOrigins: ["localhost", "127.0.0.1"],
   outputFileTracingRoot: repositoryRoot,
   turbopack: { root: repositoryRoot },
   images: {

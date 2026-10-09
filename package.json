@@ -17,7 +17,9 @@
     "test:all": "yarn test:coverage --runInBand && yarn test:e2e",
     "sonar:scan": "node scripts/sonar-scan.mjs",
     "worker:github-stats": "node scripts/github-stats-worker.mjs",
-    "worker:github-stats:once": "node scripts/github-stats-worker.mjs --once"
+    "worker:github-stats:once": "node scripts/github-stats-worker.mjs --once",
+    "db:seed:export": "node scripts/export-portfolio-seed.mjs",
+    "db:seed": "node scripts/import-portfolio-seed.mjs"
   },
   "resolutions": {
     "@emotion/react/@emotion/babel-plugin/babel-plugin-macros/cosmiconfig/yaml": "1.10.3",

@@ -70,3 +70,9 @@ model PortfolioContentVersion {
   lastPublishKey String?  @db.VarChar(64)
   updatedAt      DateTime @updatedAt
 }
+
+model PortfolioSeedState {
+  id        String   @id
+  seedHash  String   @db.VarChar(64)
+  appliedAt DateTime @default(now())
+}

@@ -47,9 +47,23 @@ export async function GET() {
     return NextResponse.json({ message: "Authentication with MFA is required." }, { status: 401 });
   }
   const database = getAdminDatabase();
-  const { response, result } = await requestPortfolioContent("GET");
+  let response: Response;
+  let result: { content: unknown; version: number };
+  try {
+    const contentResponse = await requestPortfolioContent("GET");
+    response = contentResponse.response;
+    result = contentResponse.result as { content: unknown; version: number };
+  } catch {
+    return NextResponse.json(
+      { message: "Portfolio content could not be loaded." },
+      { status: 502, headers: { "Cache-Control": "no-store" } },
+    );
+  }
   if (!response.ok) {
-    return NextResponse.json({ message: "Portfolio content could not be loaded." }, { status: 502 });
+    return NextResponse.json(
+      { message: "Portfolio content could not be loaded." },
+      { status: 502, headers: { "Cache-Control": "no-store" } },
+    );
   }
 
   const draftResult = await database.query(
@@ -117,7 +131,24 @@ export async function PUT(request: Request) {
   } catch (error) {
     if (transactionOpen) await client?.query("ROLLBACK").catch(() => undefined);
     if (error instanceof RangeError) return NextResponse.json({ message: "Draft is too large." }, { status: 413 });
-    if (error instanceof SyntaxError || error instanceof z.ZodError) {
+    if (error instanceof z.ZodError) {
+      const issues = error.issues.slice(0, 20).map((issue) => {
+        const field = issue.path.at(-1);
+        let message = "Bitte Eingabe prüfen.";
+        if (field === "tags") message = "Mindestens sechs Stichpunkte eintragen.";
+        else if (field === "url" || field === "image") message = "Nur HTTPS-URLs oder lokale Pfade mit einem einzelnen / sind erlaubt.";
+        else if (field === "email" && issue.code === "invalid_format") message = "Bitte eine gültige E-Mail-Adresse eingeben.";
+        else if (issue.code === "too_small") message = "Dieses Feld darf nicht leer sein.";
+        else if (issue.code === "too_big") message = "Der Wert überschreitet die zulässige Länge.";
+        else if (issue.code === "invalid_type") message = "Bitte einen gültigen Wert eingeben.";
+        return { field: typeof field === "string" ? field : "content", message };
+      });
+      return NextResponse.json(
+        { message: "Bitte korrigiere die markierten Eingaben.", issues },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+    if (error instanceof SyntaxError) {
       return NextResponse.json({ message: "Invalid draft payload." }, { status: 400 });
     }
     console.error("Admin draft save failed:", error instanceof Error ? error.message : "Unknown error");
