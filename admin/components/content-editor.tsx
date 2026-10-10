@@ -48,8 +48,7 @@ const fieldsBySection: Record<ContentKey, string[]> = {
   contactEmail: ["email"],
 };
 
-function createRecord(section: ContentKey, series: number): ContentRecord {
-  const id = crypto.randomUUID();
+function createRecord(section: ContentKey, series: number, id: string): ContentRecord {
   const defaults: Record<ContentKey, ContentRecord> = {
     aboutMe: { id, textDe: "", textEn: "", visible: true, series },
     projects: { id, title: "", descriptionDe: "", descriptionEn: "", image: null, url: null, tags: "", visible: true, series },
@@ -63,6 +62,7 @@ function createRecord(section: ContentKey, series: number): ContentRecord {
 export function ContentEditor() {
   const [state, setState] = useState<EditorState | null>(null);
   const [activeSection, setActiveSection] = useState<ContentKey>("projects");
+  const [expandedRecordId, setExpandedRecordId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
@@ -115,12 +115,14 @@ export function ContentEditor() {
   }
 
   function addItem() {
+    const id = crypto.randomUUID();
+    setExpandedRecordId(id);
     setHasUnsavedChanges(true);
     setValidationIssues([]);
     setState((current) => {
       if (!current) return current;
       const entries = current.content[activeSection];
-      const next = createRecord(activeSection, entries.length ? Math.max(...entries.map((entry) => Number(entry.series) || 0)) + 10 : 10);
+      const next = createRecord(activeSection, entries.length ? Math.max(...entries.map((entry) => Number(entry.series) || 0)) + 10 : 10, id);
       return { ...current, content: { ...current.content, [activeSection]: [...entries, next] } };
     });
   }
@@ -248,8 +250,8 @@ export function ContentEditor() {
     <section id="editor" className="content-manager" aria-label="Portfolio-Inhalte verwalten">
       <div className="editor-heading">
         <div>
-          <p className="eyebrow">DEIN INHALT</p>
-          <h2>Alles an einem Ort.</h2>
+          <p className="eyebrow">PORTFOLIO-INHALTE</p>
+          <h2>Inhalte bearbeiten</h2>
           <p className="auth-description">Änderungen bleiben privat, bis du sie veröffentlichst.</p>
         </div>
         <div className="editor-actions">
@@ -275,38 +277,77 @@ export function ContentEditor() {
         </div>
       </div>
 
-      <div className="version-line">
-        <div className="version-card"><span className="version-card-mark" aria-hidden="true">●</span><span><small>LIVE-VERSION</small><strong>v{state.currentPublishedVersion}</strong></span></div>
-        <div className={`version-card ${hasUnpublishedDraft ? "is-draft" : ""}`}><span className="version-card-mark" aria-hidden="true">●</span><span><small>ENTWURF</small><strong>{!state.hasDraft ? "Noch nicht gespeichert" : hasUnpublishedDraft ? `v${state.draftVersion} · unveröffentlicht` : `v${state.draftVersion} · live`}</strong></span></div>
-        <div className="version-card"><span className="version-card-mark" aria-hidden="true">◷</span><span><small>ZULETZT VERÖFFENTLICHT</small><strong>{state.publishedAt ? new Intl.DateTimeFormat("de-DE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(state.publishedAt)) : "Noch keine Veröffentlichung"}</strong></span></div>
-        <div className={`version-card save-state ${hasUnsavedChanges ? "is-unsaved" : ""}`} role="status" aria-live="polite"><span className="version-card-mark" aria-hidden="true">●</span><span><small>BEARBEITUNGSSTATUS</small><strong>{hasUnsavedChanges ? "Ungespeicherte Änderungen" : "Alles gespeichert"}</strong></span></div>
-      </div>
-
-      <nav className="editor-tabs" aria-label="Inhaltsbereiche">
-        {sections.map((section, index) => (
-          <button key={section.key} type="button" disabled={busy} aria-pressed={activeSection === section.key} onClick={() => setActiveSection(section.key)}>
-            <span className="section-tab-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-            <span className="section-tab-copy"><strong>{section.label}</strong><small>{section.hint}</small></span>
-            <span className="section-tab-count">{state.content[section.key].length}</span>
-          </button>
-        ))}
-      </nav>
-
-      <div className="section-list-heading">
-        <div>
-          <h3>{sections.find((section) => section.key === activeSection)?.label}</h3>
-          <p>{selectedItems.length} {selectedItems.length === 1 ? "Eintrag" : "Einträge"} · Änderungen werden erst nach dem Veröffentlichen öffentlich.</p>
+      <div className="publish-overview" aria-label="Veröffentlichungsstatus">
+        <div className={`publish-state ${hasUnsavedChanges ? "is-unsaved" : hasUnpublishedDraft ? "is-draft" : "is-live"}`} role="status" aria-live="polite">
+          <span className="publish-state-dot" aria-hidden="true" />
+          <span>{hasUnsavedChanges ? "Änderungen noch nicht gespeichert" : hasUnpublishedDraft ? "Entwurf bereit zur Veröffentlichung" : "Website ist auf dem aktuellen Stand"}</span>
         </div>
-        <button className="add-item-button" type="button" disabled={busy} onClick={addItem}>+ Eintrag hinzufügen</button>
+        <div className="publish-meta">
+          <span>Live <strong>v{state.currentPublishedVersion}</strong></span>
+          <span>Entwurf <strong>{state.hasDraft ? `v${state.draftVersion}` : "—"}</strong></span>
+          <span>Zuletzt veröffentlicht <strong>{state.publishedAt ? new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" }).format(new Date(state.publishedAt)) : "Noch nie"}</strong></span>
+        </div>
       </div>
 
-      <div className="editor-list">
+      <div className="editor-workspace">
+        <nav className="editor-section-nav" aria-label="Inhaltsbereiche">
+          <p className="editor-section-nav-heading">BEREICHE</p>
+          {sections.map((section) => (
+            <button
+              key={section.key}
+              className="editor-section-link"
+              type="button"
+              disabled={busy}
+              aria-pressed={activeSection === section.key}
+              onClick={() => {
+                setActiveSection(section.key);
+                setExpandedRecordId(null);
+                setValidationIssues([]);
+              }}
+            >
+              <span className="editor-section-copy"><strong>{section.label}</strong><small>{section.hint}</small></span>
+              <span className="editor-section-count">{state.content[section.key].length}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="editor-main-panel">
+          <div className="section-list-heading">
+            <div>
+              <p className="eyebrow">{selectedItems.length} {selectedItems.length === 1 ? "EINTRAG" : "EINTRÄGE"}</p>
+              <h3>{sections.find((section) => section.key === activeSection)?.label}</h3>
+              <p>Wähle einen Eintrag zum Bearbeiten. Änderungen werden erst nach dem Veröffentlichen öffentlich.</p>
+            </div>
+            <button className="add-item-button" type="button" disabled={busy} onClick={addItem}>+ Eintrag hinzufügen</button>
+          </div>
+
+          <div className="editor-list">
         {selectedItems.length === 0 && <p className="editor-empty">Hier ist noch nichts drin. Über „Eintrag hinzufügen“ kannst du den ersten Inhalt anlegen.</p>}
         {selectedItems.map((entry, index) => {
           const itemLabel = String(entry.title ?? entry.name ?? entry.titleDe ?? entry.email ?? "").trim() || "Eintrag";
           return (
-          <fieldset className="editor-item" key={String(entry.id)}>
-            <legend>{itemLabel}</legend>
+          <details
+            className="editor-item"
+            key={String(entry.id)}
+            open={expandedRecordId === String(entry.id)}
+            onToggle={(event) => {
+              if (event.currentTarget.open) setExpandedRecordId(String(entry.id));
+              else if (expandedRecordId === String(entry.id)) setExpandedRecordId(null);
+            }}
+          >
+            <summary className="editor-item-summary">
+              <span className="editor-item-summary-copy">
+                <strong>{itemLabel}</strong>
+                <small>{activeSection === "contactEmail" ? "Kontaktadresse" : `Position ${index + 1}`}</small>
+              </span>
+              {activeSection !== "contactEmail" && (
+                <span className={`editor-item-visibility ${entry.visible === false ? "is-hidden" : "is-visible"}`}>
+                  {entry.visible === false ? "Ausgeblendet" : "Sichtbar"}
+                </span>
+              )}
+              <span className="editor-item-chevron" aria-hidden="true">⌄</span>
+            </summary>
+            <div className="editor-item-content">
             {activeSection !== "contactEmail" && (
               <div className="editor-item-order">
                 <span>Position {index + 1} von {selectedItems.length}</span>
@@ -377,9 +418,12 @@ export function ContentEditor() {
               <button className="text-button danger-button" type="button" disabled={busy} onClick={() => hideItem(String(entry.id))}>Ausblenden</button>
             )}
             <button className="text-button danger-button" type="button" disabled={busy} onClick={() => removeItem(String(entry.id))}>Eintrag entfernen</button>
-          </fieldset>
+            </div>
+          </details>
           );
         })}
+          </div>
+        </div>
       </div>
 
       {message && (

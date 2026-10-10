@@ -80,6 +80,19 @@ beforeEach(() => {
 });
 
 describe("public portfolio content API", () => {
+  it("reports the API unavailable when the service token is not configured", async () => {
+    delete process.env.ADMIN_CONTENT_API_TOKEN;
+
+    const getResponse = await GET(request("/api/admin/content"));
+    const putResponse = await PUT(request("/api/admin/content", { method: "PUT" }));
+
+    expect(getResponse.status).toBe(503);
+    expect(putResponse.status).toBe(503);
+    expect(db.aboutMe.findMany).not.toHaveBeenCalled();
+    expect(db.$transaction).not.toHaveBeenCalled();
+    process.env.ADMIN_CONTENT_API_TOKEN = TOKEN;
+  });
+
   it("rejects missing and incorrect bearer tokens without querying content", async () => {
     const missing = await GET(request("/api/admin/content"));
     const incorrect = await GET(request("/api/admin/content", {

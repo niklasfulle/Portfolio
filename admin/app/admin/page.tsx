@@ -42,13 +42,6 @@ export default async function AdminPage() {
       </header>
 
       <div className="dashboard-layout">
-        <aside className="dashboard-sidebar" aria-label="Admin-Navigation">
-          <p className="sidebar-caption">WORKSPACE</p>
-          <a className="sidebar-link is-current" href="#editor" aria-current="page">
-            <span className="sidebar-link-mark" aria-hidden="true" /> Inhalte verwalten
-          </a>
-        </aside>
-
         <div className="dashboard-main">
           <section className="dashboard-intro" aria-labelledby="admin-title">
             <div>

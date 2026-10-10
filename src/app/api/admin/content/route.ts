@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { ZodError } from "zod";
 import { db } from "@/lib/db/prisma";
 import { getCachedGithubStats } from "@/lib/github-stats-cache";
-import { contentSchema, updateContentSchema } from "@/lib/admin-content-schema";
+import { updateContentSchema } from "@/lib/admin-content-schema";
 import { verifyAdminServiceRequest } from "@/lib/admin-service-auth";
 
 export const runtime = "nodejs";

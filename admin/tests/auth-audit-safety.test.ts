@@ -12,6 +12,8 @@ function isQueryCall(node: ts.Node): node is ts.CallExpression {
 test("auth audit and log sinks exclude passwords, tokens, MFA codes, and request payloads", async () => {
   const authSource = await readFile("lib/auth.ts", "utf8");
   const auditSchema = await readFile("sql/001_content_drafts.sql", "utf8");
+  const draftDiscardMigration = await readFile("sql/002_admin_audit_draft_discard.sql", "utf8");
+  const mfaAttemptMigration = await readFile("sql/004_admin_mfa_attempt_audit.sql", "utf8");
   const sourceFile = ts.createSourceFile("auth.ts", authSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const auditCalls: ts.CallExpression[] = [];
   const directConsoleCalls: ts.CallExpression[] = [];
@@ -85,4 +87,15 @@ test("auth audit and log sinks exclude passwords, tokens, MFA codes, and request
     .map((line) => line.trim().match(/^([a-z_]+)\s+/i)?.[1])
     .filter((column): column is string => Boolean(column));
   assert.deepEqual(columns, ["id", "actor", "action", "created_at"]);
+
+  const allowedActions = (migration: string) => {
+    const constraint = migration.match(/CHECK\s*\(action\s+IN\s*\(([\s\S]*?)\)\)/i)?.[1];
+    assert.ok(constraint, "migration should define an audit action allowlist");
+    return [...constraint.matchAll(/'([^']+)'/g)].map((match) => match[1]).sort();
+  };
+  assert.deepEqual(
+    allowedActions(draftDiscardMigration),
+    allowedActions(mfaAttemptMigration),
+    "rerunning the earlier action constraint must not reject rows allowed by the later migration",
+  );
 });

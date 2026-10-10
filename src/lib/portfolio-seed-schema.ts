@@ -44,7 +44,7 @@ const contactEmailRow = z.object({
   id,
   email: z.email(),
 }).strict();
-const dateString = z.string().datetime({ offset: true });
+const dateString = z.iso.datetime({ offset: true });
 const githubStatsRow = z.object({
   id,
   data: z.record(z.string(), z.unknown()),

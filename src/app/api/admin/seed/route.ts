@@ -24,9 +24,9 @@ function authorized(request: Request) {
 async function readBody(request: Request) {
   const declaredSize = Number(request.headers.get("content-length"));
   if (Number.isFinite(declaredSize) && declaredSize > MAX_BODY_BYTES) {
-    throw new RangeError();
+    throw new RangeError("Seed request body exceeds the maximum size");
   }
-  if (!request.body) throw new SyntaxError();
+  if (!request.body) throw new SyntaxError("Seed request body is missing");
 
   const reader = request.body.getReader();
   const decoder = new TextDecoder();
@@ -38,7 +38,7 @@ async function readBody(request: Request) {
     bytes += value.byteLength;
     if (bytes > MAX_BODY_BYTES) {
       await reader.cancel();
-      throw new RangeError();
+      throw new RangeError("Seed request body exceeds the maximum size");
     }
     text += decoder.decode(value, { stream: true });
   }
