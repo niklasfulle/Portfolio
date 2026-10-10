@@ -1,10 +1,10 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { ZodError } from "zod";
 import { db } from "@/lib/db/prisma";
 import { getCachedGithubStats } from "@/lib/github-stats-cache";
 import { contentSchema, updateContentSchema } from "@/lib/admin-content-schema";
+import { verifyAdminServiceRequest } from "@/lib/admin-service-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,13 +14,7 @@ class StaleContentVersionError extends Error {}
 
 function authorized(request: Request) {
   const expectedToken = process.env.ADMIN_CONTENT_API_TOKEN ?? "";
-  const authorization = request.headers.get("authorization") ?? "";
-  const suppliedToken = authorization.startsWith("Bearer ")
-    ? authorization.slice("Bearer ".length)
-    : "";
-  const expected = Buffer.from(expectedToken);
-  const supplied = Buffer.from(suppliedToken);
-  return expected.length >= 32 && expected.length === supplied.length && timingSafeEqual(expected, supplied);
+  return verifyAdminServiceRequest(expectedToken, request);
 }
 
 function unauthorized() {

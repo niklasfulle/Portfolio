@@ -513,7 +513,6 @@ h1 {
 }
 
 .admin-brand-copy,
-.account-copy,
 .dashboard-account-chip > span:last-child {
   display: grid;
   min-width: 0;
@@ -521,7 +520,6 @@ h1 {
 }
 
 .admin-brand-copy strong,
-.account-copy strong,
 .dashboard-account-chip strong {
   overflow: hidden;
   color: #edf5ff;
@@ -531,7 +529,6 @@ h1 {
 }
 
 .admin-brand-copy small,
-.account-copy small,
 .dashboard-account-chip small {
   overflow: hidden;
   color: #8798b1;
@@ -639,16 +636,6 @@ h1 {
   border-radius: 50%;
   background: #67e8f9;
   box-shadow: 0 0 12px rgb(103 232 249 / 70%);
-}
-
-.sidebar-account {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 0.65rem;
-  margin-top: 1.75rem;
-  padding: 1rem 0.4rem 0;
-  border-top: 1px solid rgb(148 163 184 / 14%);
 }
 
 .account-avatar {
@@ -765,6 +752,56 @@ h1 {
 
 .editor-actions .danger-button {
   color: #fda4af;
+}
+
+.editor-secondary-actions {
+  position: relative;
+}
+
+.editor-secondary-actions summary {
+  min-height: 2.55rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 0.72rem;
+  color: #aebbd0;
+  background: rgb(13 22 40 / 76%);
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.4;
+  cursor: pointer;
+  list-style: none;
+}
+
+.editor-secondary-actions summary::-webkit-details-marker {
+  display: none;
+}
+
+.editor-secondary-actions summary::after {
+  margin-left: 0.55rem;
+  content: "⌄";
+}
+
+.editor-secondary-actions summary:hover {
+  border-color: rgb(103 232 249 / 35%);
+  color: #f2fbff;
+}
+
+.editor-secondary-actions-popover {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  min-width: max-content;
+  padding: 0.4rem;
+  border: 1px solid rgb(148 163 184 / 20%);
+  border-radius: 0.8rem;
+  background: #0c1424;
+  box-shadow: 0 16px 34px rgb(0 0 0 / 35%);
+}
+
+.editor-secondary-actions-popover .secondary-button {
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .editor-actions :disabled,
@@ -978,6 +1015,45 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+.editor-item-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.2rem 0 0.85rem;
+  color: #8293ac;
+  font-size: 0.68rem;
+}
+
+.editor-item-order > div {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.editor-order-button {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 0.6rem;
+  color: #c6d2e4;
+  background: rgb(13 22 40 / 76%);
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.editor-order-button:hover:not(:disabled) {
+  border-color: rgb(103 232 249 / 42%);
+  color: #dffbff;
+  background: rgb(8 58 75 / 48%);
+}
+
+.editor-order-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
 .editor-fields {
   gap: 0.8rem;
 }
@@ -993,6 +1069,12 @@ h1 {
   font-size: 0.65rem;
   font-weight: 400;
   line-height: 1.4;
+}
+
+.editor-field .editor-field-error {
+  color: #fda4af;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 .editor-field input,
@@ -1012,9 +1094,16 @@ h1 {
 .editor-tabs button:focus-visible,
 .sidebar-link:focus-visible,
 .topbar-link:focus-visible,
-.add-item-button:focus-visible {
+.add-item-button:focus-visible,
+.editor-order-button:focus-visible,
+.editor-secondary-actions summary:focus-visible {
   outline: 2px solid #67e8f9;
   outline-offset: 3px;
+}
+
+.editor-field input[aria-invalid="true"],
+.editor-field textarea[aria-invalid="true"] {
+  border-color: rgb(251 113 133 / 75%);
 }
 
 .visibility-field {
@@ -1105,8 +1194,7 @@ h1 {
     padding: 0;
   }
 
-  .sidebar-caption,
-  .sidebar-account {
+  .sidebar-caption {
     display: none;
   }
 

@@ -2,6 +2,7 @@
 .next
 node_modules
 **/.next
+**/.next-e2e
 **/node_modules
 *.log
 .env

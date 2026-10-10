@@ -17,11 +17,18 @@ export async function POST(request: Request) {
   }
   if (await isAdminMutationLimited(session.user.id)) return rateLimitedResponse();
   try {
+    const current = await requestPortfolioContent("GET", session.user.id);
+    if (!current.response.ok || !current.result || typeof current.result !== "object"
+      || !("version" in current.result) || !("content" in current.result)) {
+      return NextResponse.json({ message: "Published content could not be loaded." }, { status: 502 });
+    }
+    const published = current.result as { version: number; content: unknown };
     const outcome = await publishDraft(
       getAdminDatabase(),
       session.user.id,
+      published,
       async (expectedVersion, content, idempotencyKey) => {
-        const { response, result } = await requestPortfolioContent("PUT", {
+        const { response, result } = await requestPortfolioContent("PUT", session.user.id, {
           expectedVersion,
           idempotencyKey,
           content,

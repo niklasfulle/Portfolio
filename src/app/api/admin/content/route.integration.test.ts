@@ -3,6 +3,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "@jest/globals";
 import { db } from "@/lib/db/prisma";
 import { createContentPublishIdempotencyKey } from "@/lib/content-publish-idempotency";
+import { createAdminServiceAssertion } from "@/lib/admin-service-auth";
 import { GET, PUT } from "./route";
 
 const integrationUrl = process.env.PORTFOLIO_INTEGRATION_DATABASE_URL;
@@ -45,6 +46,11 @@ function createRequest(body: unknown) {
     headers: {
       authorization: `Bearer ${token}`,
       "content-type": "application/json",
+      ...createAdminServiceAssertion(token, {
+        actor: "portfolio-api-integration-test",
+        method: "PUT",
+        pathname: "/api/admin/content",
+      }),
     },
     body: JSON.stringify(body),
   });

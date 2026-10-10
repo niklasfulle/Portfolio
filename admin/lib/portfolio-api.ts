@@ -1,4 +1,5 @@
 import "server-only";
+import { createAdminServiceAssertion } from "@/lib/admin-service-auth";
 
 const API_URL = process.env.PORTFOLIO_CONTENT_API_URL;
 const API_TOKEN = process.env.ADMIN_CONTENT_API_TOKEN;
@@ -14,13 +15,15 @@ function getApiConfiguration() {
   return { url: API_URL, token: API_TOKEN };
 }
 
-export async function requestPortfolioContent(method: "GET" | "PUT", body?: unknown) {
+export async function requestPortfolioContent(method: "GET" | "PUT", actor: string, body?: unknown) {
   const { url, token } = getApiConfiguration();
+  const pathname = new URL(url).pathname;
   const response = await fetch(url, {
     method,
     cache: "no-store",
     headers: {
       Authorization: `Bearer ${token}`,
+      ...createAdminServiceAssertion(token, { actor, method, pathname }),
       ...(body ? { "Content-Type": "application/json" } : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),

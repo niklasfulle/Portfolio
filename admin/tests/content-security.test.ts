@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
 import { contentSchema } from "@/lib/admin-content-schema";
-import { hasMfaEnabledSession } from "@admin/lib/session-policy";
+import { hasMfaEnabledSession, isAdminRole } from "@admin/lib/session-policy";
 import { isTrustedMutationOrigin } from "@admin/lib/csrf";
 import { ADMIN_MUTATION_LIMIT, isAdminMutationRateLimited } from "@admin/lib/mutation-rate-limit";
 
@@ -64,6 +64,12 @@ test("admin session is accepted only after MFA enrollment", () => {
   assert.equal(hasMfaEnabledSession({ user: { twoFactorEnabled: true } }), true);
   assert.equal(hasMfaEnabledSession({ user: { twoFactorEnabled: false } }), false);
   assert.equal(hasMfaEnabledSession(null), false);
+});
+
+test("only a persisted admin role grants admin authorization", () => {
+  assert.equal(isAdminRole("admin"), true);
+  assert.equal(isAdminRole("user"), false);
+  assert.equal(isAdminRole(undefined), false);
 });
 
 test("admin mutations are accepted through the configured limit and throttled after it", () => {

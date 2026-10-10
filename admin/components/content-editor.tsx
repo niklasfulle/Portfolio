@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 type ContentRecord = Record<string, unknown>;
 type ValidationIssue = { field: string; message: string };
@@ -36,14 +37,14 @@ const fieldLabels: Record<string, string> = {
   title: "Titel", descriptionDe: "Beschreibung (Deutsch)", descriptionEn: "Beschreibung (Englisch)",
   image: "Bildpfad oder Bild-URL", url: "Projekt-URL", tags: "Stichpunkte (kommagetrennt)",
   name: "Name", type: "Typ", category: "Kategorie", titleDe: "Titel (Deutsch)", titleEn: "Titel (Englisch)",
-  location: "Ort oder Link", icon: "Icon", date: "Zeitraum", email: "E-Mail", series: "Sortierung", visible: "Auf der Website anzeigen",
+  location: "Ort oder Link", icon: "Icon", date: "Zeitraum", email: "E-Mail", visible: "Auf der Website anzeigen",
 };
 
 const fieldsBySection: Record<ContentKey, string[]> = {
-  aboutMe: ["textDe", "textEn", "visible", "series"],
-  projects: ["title", "descriptionDe", "descriptionEn", "image", "url", "tags", "visible", "series"],
-  skills: ["name", "image", "type", "visible", "series"],
-  experience: ["category", "titleDe", "titleEn", "location", "descriptionDe", "descriptionEn", "icon", "date", "visible", "series"],
+  aboutMe: ["textDe", "textEn", "visible"],
+  projects: ["title", "descriptionDe", "descriptionEn", "image", "url", "tags", "visible"],
+  skills: ["name", "image", "type", "visible"],
+  experience: ["category", "titleDe", "titleEn", "location", "descriptionDe", "descriptionEn", "icon", "date", "visible"],
   contactEmail: ["email"],
 };
 
@@ -147,6 +148,26 @@ export function ContentEditor() {
     });
   }
 
+  function moveItem(recordId: string, offset: -1 | 1) {
+    if (activeSection === "contactEmail") return;
+    setHasUnsavedChanges(true);
+    setValidationIssues([]);
+    setState((current) => {
+      if (!current) return current;
+      const entries = [...current.content[activeSection]];
+      const index = entries.findIndex((entry) => entry.id === recordId);
+      const destination = index + offset;
+      if (index < 0 || destination < 0 || destination >= entries.length) return current;
+
+      [entries[index], entries[destination]] = [entries[destination], entries[index]];
+      const orderedEntries = entries.map((entry, position) => ({
+        ...entry,
+        series: (position + 1) * 10,
+      }));
+      return { ...current, content: { ...current.content, [activeSection]: orderedEntries } };
+    });
+  }
+
   async function saveDraft() {
     if (!state) return;
     setBusy(true);
@@ -232,10 +253,25 @@ export function ContentEditor() {
           <p className="auth-description">Änderungen bleiben privat, bis du sie veröffentlichst.</p>
         </div>
         <div className="editor-actions">
-          <a className="secondary-button" href="/preview" target="_blank" rel="noopener noreferrer">Vorschau öffnen <span aria-hidden="true">↗</span></a>
-          <button className="secondary-button danger-button" type="button" disabled={busy || !hasUnpublishedDraft} onClick={discardDraft}>Entwurf verwerfen</button>
-          <button className="secondary-button" type="button" disabled={busy || !hasUnsavedChanges} onClick={saveDraft}>{busy ? "Bitte warten …" : "Entwurf speichern"}</button>
-          <button className="primary-button" type="button" disabled={busy || !hasUnpublishedDraft || hasUnsavedChanges} onClick={publish}>{busy ? "Bitte warten …" : "Veröffentlichen"}</button>
+          {hasUnsavedChanges ? (
+            <button className="primary-button" type="button" disabled={busy} onClick={saveDraft}>
+              {busy ? "Bitte warten …" : "Entwurf speichern"}
+            </button>
+          ) : hasUnpublishedDraft ? (
+            <button className="primary-button" type="button" disabled={busy} onClick={publish}>
+              {busy ? "Bitte warten …" : "Veröffentlichen"}
+            </button>
+          ) : null}
+          {hasUnpublishedDraft && (
+            <details className="editor-secondary-actions">
+              <summary>Weitere Aktionen</summary>
+              <div className="editor-secondary-actions-popover">
+                <button className="secondary-button danger-button" type="button" disabled={busy} onClick={discardDraft}>
+                  Entwurf verwerfen
+                </button>
+              </div>
+            </details>
+          )}
         </div>
       </div>
 
@@ -266,9 +302,38 @@ export function ContentEditor() {
 
       <div className="editor-list">
         {selectedItems.length === 0 && <p className="editor-empty">Hier ist noch nichts drin. Über „Eintrag hinzufügen“ kannst du den ersten Inhalt anlegen.</p>}
-        {selectedItems.map((entry) => (
+        {selectedItems.map((entry, index) => {
+          const itemLabel = String(entry.title ?? entry.name ?? entry.titleDe ?? entry.email ?? "").trim() || "Eintrag";
+          return (
           <fieldset className="editor-item" key={String(entry.id)}>
-            <legend>{String(entry.title ?? entry.name ?? entry.titleDe ?? entry.email ?? "Eintrag")}</legend>
+            <legend>{itemLabel}</legend>
+            {activeSection !== "contactEmail" && (
+              <div className="editor-item-order">
+                <span>Position {index + 1} von {selectedItems.length}</span>
+                <div>
+                  <button
+                    className="editor-order-button"
+                    type="button"
+                    aria-label={`${itemLabel} nach oben verschieben`}
+                    title="Nach oben verschieben"
+                    disabled={busy || index === 0}
+                    onClick={() => moveItem(String(entry.id), -1)}
+                  >
+                    <ArrowUp aria-hidden="true" size={15} />
+                  </button>
+                  <button
+                    className="editor-order-button"
+                    type="button"
+                    aria-label={`${itemLabel} nach unten verschieben`}
+                    title="Nach unten verschieben"
+                    disabled={busy || index === selectedItems.length - 1}
+                    onClick={() => moveItem(String(entry.id), 1)}
+                  >
+                    <ArrowDown aria-hidden="true" size={15} />
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="editor-fields">
               {fieldsBySection[activeSection].map((field) => {
                 const value = entry[field];
@@ -276,25 +341,35 @@ export function ContentEditor() {
                   return <label className="visibility-field" key={field}><input type="checkbox" disabled={busy} checked={Boolean(value)} onChange={(event) => updateField(String(entry.id), field, event.target.checked)} />{fieldLabels[field]}</label>;
                 }
                 const multiline = field.startsWith("description") || field === "textDe" || field === "textEn";
+                const inputId = `field-${activeSection}-${encodeURIComponent(String(entry.id))}-${field}`;
+                const hintId = field === "tags" ? `${inputId}-hint` : undefined;
+                const fieldMessages = [...new Set(validationIssues
+                  .filter((issue) => issue.field === field)
+                  .map((issue) => issue.message))];
+                const errorId = fieldMessages.length ? `${inputId}-error` : undefined;
+                const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
                 return (
-                  <label className={multiline ? "editor-field editor-field-wide" : "editor-field"} key={field}>
-                    <span>{fieldLabels[field] ?? field}</span>
-                    {field === "tags" && <small>Mindestens sechs Stichpunkte, kommagetrennt (z. B. TypeScript, Next.js, Webentwicklung, …).</small>}
+                  <div className={multiline ? "editor-field editor-field-wide" : "editor-field"} key={field}>
+                    <label htmlFor={inputId}>{fieldLabels[field] ?? field}</label>
+                    {field === "tags" && <small id={hintId}>Mindestens sechs Stichpunkte, kommagetrennt (z. B. TypeScript, Next.js, Webentwicklung, …).</small>}
                     {multiline ? (
-                      <textarea name={`${activeSection}.${String(entry.id)}.${field}`} rows={4} disabled={busy} value={String(value ?? "")} onChange={(event) => updateField(String(entry.id), field, event.target.value)} />
+                      <textarea id={inputId} name={`${activeSection}.${String(entry.id)}.${field}`} rows={4} disabled={busy} value={String(value ?? "")} aria-invalid={fieldMessages.length > 0 || undefined} aria-describedby={describedBy} onChange={(event) => updateField(String(entry.id), field, event.target.value)} />
                     ) : (
                       <input
+                        id={inputId}
                         name={`${activeSection}.${String(entry.id)}.${field}`}
-                        type={field === "series" ? "number" : field === "email" ? "email" : field === "url" || field === "image" ? "url" : "text"}
+                        type={field === "email" ? "email" : field === "url" || field === "image" ? "url" : "text"}
                         autoComplete="off"
                         spellCheck={field === "email" || field === "url" || field === "image" ? false : undefined}
                         disabled={busy}
-                        min={field === "series" ? 0 : undefined}
                         value={String(value ?? "")}
-                        onChange={(event) => updateField(String(entry.id), field, field === "series" ? Number(event.target.value) : event.target.value)}
+                        aria-invalid={fieldMessages.length > 0 || undefined}
+                        aria-describedby={describedBy}
+                        onChange={(event) => updateField(String(entry.id), field, event.target.value)}
                       />
                     )}
-                  </label>
+                    {errorId && <small className="editor-field-error" id={errorId}>{fieldMessages.join(" ")}</small>}
+                  </div>
                 );
               })}
             </div>
@@ -303,19 +378,13 @@ export function ContentEditor() {
             )}
             <button className="text-button danger-button" type="button" disabled={busy} onClick={() => removeItem(String(entry.id))}>Eintrag entfernen</button>
           </fieldset>
-        ))}
+          );
+        })}
       </div>
 
       {message && (
         <div className={`editor-status ${validationIssues.length ? "has-error" : ""}`} role={validationIssues.length ? "alert" : "status"} aria-live={validationIssues.length ? "assertive" : "polite"}>
           <p>{message}</p>
-          {validationIssues.length > 0 && (
-            <ul>
-              {validationIssues.map((issue, index) => (
-                <li key={`${issue.field}-${index}`}><strong>{fieldLabels[issue.field] ?? issue.field}:</strong> {issue.message}</li>
-              ))}
-            </ul>
-          )}
         </div>
       )}
     </section>

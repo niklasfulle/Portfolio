@@ -34,7 +34,7 @@ function assertIsolatedAdminDatabase() {
 
   const database = new URL(databaseUrl);
   const databaseName = decodeURIComponent(database.pathname.slice(1));
-  if (!["localhost", "127.0.0.1", "::1"].includes(database.hostname) || !databaseName.endsWith("_test")) {
+  if (!["localhost", "127.0.0.1", "::1", "db"].includes(database.hostname) || !databaseName.endsWith("_test")) {
     throw new Error("E2E tests are allowed only against a local database whose name ends in _test.");
   }
 }
@@ -151,7 +151,12 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   expect((await stillPublished.json()).content.projects[0].title).toBe("Published project title");
   const preview = await api.get("/preview");
   expect(preview.ok()).toBeTruthy();
-  expect(await preview.text()).toContain("Draft project title");
+  expect(preview.headers()["cache-control"]).toContain("no-store");
+  expect(preview.headers()["x-robots-tag"]).toContain("noindex");
+  const previewHtml = await preview.text();
+  expect(previewHtml).toContain('name="robots"');
+  expect(previewHtml).toContain("noindex");
+  expect(previewHtml).toContain("Draft project title");
 
   const publish = await api.post("/api/content/publish", { headers: { origin } });
   expect(publish.ok()).toBeTruthy();
@@ -191,7 +196,52 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   await expect(adminPage.getByRole("heading", { name: "Inhalte verwalten" })).toBeVisible();
   await expect(adminPage.locator(".dashboard-shell .content-manager")).toBeVisible();
   await expect(adminPage.locator(".dashboard-shell > .auth-card")).toHaveCount(0);
+  await expect(adminPage.getByRole("link", { name: /Vorschau/ })).toHaveCount(1);
+  await expect(adminPage.locator(".dashboard-account-chip")).toHaveCount(1);
+  await expect(adminPage.locator(".sidebar-account")).toHaveCount(0);
+
+  const projectCards = adminPage.locator(".editor-item");
+  await expect(projectCards).toHaveCount(1);
+  await adminPage.getByRole("button", { name: /Eintrag hinzufügen/ }).click();
+  await expect(projectCards).toHaveCount(2);
+  await expect(adminPage.getByRole("button", { name: "Entwurf speichern" })).toHaveCount(1);
+  await expect(adminPage.getByRole("button", { name: "Veröffentlichen" })).toHaveCount(0);
+  await expect(adminPage.locator(".editor-secondary-actions")).toHaveCount(0);
+
+  const moveUp = projectCards.nth(1).getByRole("button", { name: "Eintrag nach oben verschieben" });
+  await moveUp.focus();
+  await moveUp.press("Enter");
+  await expect(projectCards.nth(0).locator("legend")).toHaveText("Eintrag");
+  await expect(projectCards.nth(1).locator("legend")).toHaveText("Draft project title");
+  await expect(projectCards.nth(0).getByRole("button", { name: "Eintrag nach oben verschieben" })).toBeDisabled();
+  await expect(projectCards.nth(1).getByRole("button", { name: "Draft project title nach unten verschieben" })).toBeDisabled();
+
+  const invalidTags = projectCards.nth(1).locator('input[name$=".tags"]');
+  await invalidTags.fill("TypeScript, Next.js");
+  await adminPage.getByRole("button", { name: "Entwurf speichern" }).click();
+  await expect(adminPage.locator(".editor-status[role='alert']")).toContainText(
+    "Bitte korrigiere die markierten Eingaben.",
+  );
+  await expect(invalidTags).toHaveAttribute("aria-invalid", "true");
+  const describedBy = (await invalidTags.getAttribute("aria-describedby"))?.split(/\s+/) ?? [];
+  expect(describedBy.some((id) => id.endsWith("-hint"))).toBe(true);
+  const errorId = describedBy.find((id) => id.endsWith("-error"));
+  expect(errorId).toBeTruthy();
+  await expect(adminPage.locator(`[id="${errorId}"]`)).toHaveText("Mindestens sechs Stichpunkte eintragen.");
   await browserContext.close();
+
+  const mobileContext = await browser.newContext({
+    storageState: await api.storageState(),
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+  });
+  const mobilePage = await mobileContext.newPage();
+  await mobilePage.goto("/admin");
+  await expect(mobilePage.getByRole("heading", { name: "Inhalte verwalten" })).toBeVisible();
+  await expect(mobilePage.getByRole("button", { name: /Eintrag hinzufügen/ })).toBeVisible();
+  expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await mobileContext.close();
 
   await api.post("/api/auth/sign-out", { headers: { origin }, data: {} });
   const recoverySignIn = await api.post("/api/auth/sign-in/email", {

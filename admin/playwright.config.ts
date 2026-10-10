@@ -27,6 +27,7 @@ export default defineConfig({
       command: `npx next dev --hostname 127.0.0.1 --port ${adminPort}`,
       url: `${adminOrigin}/login`,
       env: {
+        ADMIN_E2E: "1",
         ADMIN_APP_ORIGIN: adminOrigin,
         BETTER_AUTH_URL: adminOrigin,
         PORTFOLIO_CONTENT_API_URL: `${mockApiOrigin}/api/admin/content`,

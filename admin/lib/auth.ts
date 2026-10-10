@@ -100,6 +100,17 @@ function createAuthInstance() {
         }
       }),
       after: createAuthMiddleware(async (context) => {
+        if (context.path === "/sign-up/email") {
+          const email = process.env.ADMIN_EMAIL?.trim().toLowerCase() ?? "";
+          if (!email) return;
+          await database.query(
+            `INSERT INTO admin_user_role (user_id, role)
+             SELECT id, 'admin' FROM "user" WHERE lower(email) = $1
+             ON CONFLICT (user_id) DO NOTHING`,
+            [email],
+          );
+          return;
+        }
         const actionByPath: Record<string, string> = {
           "/sign-in/email": "auth.login_succeeded",
           "/two-factor/verify-totp": "auth.mfa_succeeded",

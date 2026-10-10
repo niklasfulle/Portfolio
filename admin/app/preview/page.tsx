@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import PortfolioFrame from "@/components/PortfolioFrame";
 import PortfolioSections from "@/components/PortfolioSections";
 import { contentSchema } from "@/lib/admin-content-schema";
@@ -6,9 +7,13 @@ import type { GithubStatsData } from "@/lib/github-stats";
 import { getAdminDatabase } from "@admin/lib/database";
 import { requestPortfolioContent } from "@admin/lib/portfolio-api";
 import { requireAdminSession } from "@admin/lib/require-admin-session";
+import { mergeDraftSections } from "@admin/lib/content-sections";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, noarchive: true, nosnippet: true },
+};
 
 type PublishedContentResponse = {
   version: number;
@@ -17,14 +22,13 @@ type PublishedContentResponse = {
 };
 
 export default async function AdminPreviewPage() {
-  await requireAdminSession();
+  const session = await requireAdminSession();
 
   const database = getAdminDatabase();
   const [published, draftResult] = await Promise.all([
-    requestPortfolioContent("GET").catch(() => null),
-    database.query<{ payload: unknown }>(
-      "SELECT payload FROM content_draft WHERE id = $1 LIMIT 1",
-      ["portfolio"],
+    requestPortfolioContent("GET", session.user.id).catch(() => null),
+    database.query<{ id: string; payload: unknown; version: number; published_draft_version: number }>(
+      "SELECT id, payload, version, published_draft_version FROM content_draft",
     ),
   ]);
 
@@ -43,7 +47,7 @@ export default async function AdminPreviewPage() {
   }
 
   const publishedData = published.result as PublishedContentResponse;
-  const content = draftResult.rows[0]?.payload ?? publishedData.content;
+  const content = (mergeDraftSections(publishedData, draftResult.rows) as PublishedContentResponse).content;
   const parsed = contentSchema.safeParse(content);
   if (!parsed.success) {
     return (
@@ -61,7 +65,7 @@ export default async function AdminPreviewPage() {
   }
 
   const previewContent = parsed.data;
-  const isDraft = draftResult.rows.length > 0;
+  const isDraft = draftResult.rows.some((row) => row.version > row.published_draft_version);
 
   return (
     <PortfolioFrame publicBaseUrl={process.env.NEXT_PUBLIC_SITE_URL}>

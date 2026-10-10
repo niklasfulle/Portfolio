@@ -11,6 +11,7 @@
 
 # next.js
 /.next/
+/admin/.next-e2e/
 /out/
 
 # production

@@ -5,6 +5,7 @@ import { db } from "@/lib/db/prisma";
 import { getCachedGithubStats } from "@/lib/github-stats-cache";
 import { revalidatePath } from "next/cache";
 import { createContentPublishIdempotencyKey } from "@/lib/content-publish-idempotency";
+import { createAdminServiceAssertion } from "@/lib/admin-service-auth";
 
 jest.mock("@/lib/db/prisma", () => ({
   db: {
@@ -59,6 +60,13 @@ function request(path: string, init?: RequestInit) {
   return new Request(`http://localhost${path}`, init);
 }
 
+function serviceHeaders(method: string, path = "/api/admin/content") {
+  return {
+    authorization: `Bearer ${TOKEN}`,
+    ...createAdminServiceAssertion(TOKEN, { actor: "test-admin", method, pathname: path }),
+  };
+}
+
 beforeEach(() => {
   process.env.ADMIN_CONTENT_API_TOKEN = TOKEN;
   jest.clearAllMocks();
@@ -86,7 +94,7 @@ describe("public portfolio content API", () => {
 
   it("returns current content and GitHub stats without caching", async () => {
     const response = await GET(request("/api/admin/content", {
-      headers: { authorization: `Bearer ${TOKEN}` },
+      headers: serviceHeaders("GET"),
     }));
     const body = await response.json();
 
@@ -102,7 +110,7 @@ describe("public portfolio content API", () => {
   it("rejects invalid updates before opening a database transaction", async () => {
     const response = await PUT(request("/api/admin/content", {
       method: "PUT",
-      headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+      headers: { ...serviceHeaders("PUT"), "content-type": "application/json" },
       body: JSON.stringify({ expectedVersion: 4, idempotencyKey: contentKey, content: { ...content, unexpected: true } }),
     }));
 
@@ -127,7 +135,7 @@ describe("public portfolio content API", () => {
 
     const response = await PUT(request("/api/admin/content", {
       method: "PUT",
-      headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+      headers: { ...serviceHeaders("PUT"), "content-type": "application/json" },
       body: JSON.stringify({ expectedVersion: 4, idempotencyKey: contentKey, content }),
     }));
 
@@ -167,7 +175,7 @@ describe("public portfolio content API", () => {
 
     const response = await PUT(request("/api/admin/content", {
       method: "PUT",
-      headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+      headers: { ...serviceHeaders("PUT"), "content-type": "application/json" },
       body: JSON.stringify({ expectedVersion: 4, idempotencyKey: contentKey, content }),
     }));
 
@@ -185,7 +193,7 @@ describe("public portfolio content API", () => {
 
     const response = await PUT(request("/api/admin/content", {
       method: "PUT",
-      headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+      headers: { ...serviceHeaders("PUT"), "content-type": "application/json" },
       body: JSON.stringify({ expectedVersion: 4, idempotencyKey: contentKey, content }),
     }));
 
@@ -198,7 +206,7 @@ describe("public portfolio content API", () => {
   it("rejects a valid-shaped but mismatched idempotency key", async () => {
     const response = await PUT(request("/api/admin/content", {
       method: "PUT",
-      headers: { authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+      headers: { ...serviceHeaders("PUT"), "content-type": "application/json" },
       body: JSON.stringify({ expectedVersion: 4, idempotencyKey: "f".repeat(64), content }),
     }));
 

@@ -34,6 +34,7 @@ if (!isDevelopment) {
 }
 
 const nextConfig: NextConfig = {
+  distDir: process.env.ADMIN_E2E === "1" ? ".next-e2e" : ".next",
   poweredByHeader: false,
   allowedDevOrigins: ["localhost", "127.0.0.1"],
   outputFileTracingRoot: repositoryRoot,
@@ -47,7 +48,16 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    return [
+      { source: "/(.*)", headers: securityHeaders },
+      {
+        source: "/preview",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive, nosnippet" },
+        ],
+      },
+    ];
   },
 };
 

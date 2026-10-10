@@ -4,3 +4,7 @@ export function hasMfaEnabledSession(session: unknown): boolean {
   return Boolean(user && typeof user === "object" &&
     "twoFactorEnabled" in user && user.twoFactorEnabled === true);
 }
+
+export function isAdminRole(role: unknown): boolean {
+  return role === "admin";
+}

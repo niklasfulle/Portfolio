@@ -47,16 +47,6 @@ export default async function AdminPage() {
           <a className="sidebar-link is-current" href="#editor" aria-current="page">
             <span className="sidebar-link-mark" aria-hidden="true" /> Inhalte verwalten
           </a>
-          <Link className="sidebar-link" href="/preview" target="_blank" rel="noopener noreferrer">
-            <Eye aria-hidden="true" size={16} /> Vorschau öffnen
-          </Link>
-          <div className="sidebar-account">
-            <span className="account-avatar" aria-hidden="true">{session.user.name?.slice(0, 1) || "N"}</span>
-            <span className="account-copy">
-              <strong>{session.user.name || "Administrator"}</strong>
-              <small>{session.user.email}</small>
-            </span>
-          </div>
         </aside>
 
         <div className="dashboard-main">
