@@ -12,13 +12,13 @@ import type {
 } from "@/lib/types";
 
 export type PortfolioSectionsProps = {
-  aboutMe: AbouteMeType[];
-  projects: ProjectType[];
-  skills: string[];
-  experience: ExperienceType[];
-  contactEmail: string;
-  githubStats: GithubStatsData;
-  previewMode?: boolean;
+  readonly aboutMe: AbouteMeType[];
+  readonly projects: ProjectType[];
+  readonly skills: string[];
+  readonly experience: ExperienceType[];
+  readonly contactEmail: string;
+  readonly githubStats: GithubStatsData;
+  readonly previewMode?: boolean;
 };
 
 export default function PortfolioSections({

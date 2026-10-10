@@ -1,9 +1,7 @@
 "use client";
 import { FC } from "react";
 import { useSectionInView } from "@/lib/hooks";
-import { useReducedMotion } from "framer-motion";
-import { motion } from "framer-motion";
-import type { Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Bot, Cloud, Code2, ShieldCheck, TestTube2 } from "lucide-react";
 import type { ComponentType } from "react";
 import {

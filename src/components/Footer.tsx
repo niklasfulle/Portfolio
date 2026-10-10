@@ -1,7 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { useLanguage } from "@/context/language-context";
@@ -25,7 +24,7 @@ const legalLinks = [
   { href: "/terms", de: "Nutzungsbedingungen", en: "Terms" },
 ] as const;
 
-export default function Footer({ publicBaseUrl }: { publicBaseUrl?: string }) {
+export default function Footer({ publicBaseUrl }: { readonly publicBaseUrl?: string }) {
   const { language } = useLanguage();
   const { openPreferences } = useCookieConsent();
   const reducedMotion = useReducedMotion();

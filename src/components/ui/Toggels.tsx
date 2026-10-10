@@ -6,10 +6,19 @@ import { useLanguage } from "@/context/language-context";
 import { useCookieConsent } from "@/context/cookie-consent-context";
 import { useTheme } from "@/context/theme-context";
 
+function getThemeToggleLabel(language: string, functionalStorageAllowed: boolean) {
+  if (functionalStorageAllowed) {
+    return language === "de" ? "Darstellung wechseln" : "Change theme";
+  }
+
+  return language === "de" ? "Cookie-Einstellungen öffnen" : "Open cookie preferences";
+}
+
 export default function Toggels() {
   const { setTheme } = useTheme();
   const { language, toggleLanguage } = useLanguage();
   const { functionalStorageAllowed, openPreferences } = useCookieConsent();
+  const themeToggleLabel = getThemeToggleLabel(language, functionalStorageAllowed);
 
   const toggleTheme = () => {
     if (!functionalStorageAllowed) {
@@ -48,24 +57,10 @@ export default function Toggels() {
         )}
       </motion.button>
       <motion.button
-        aria-label={
-          functionalStorageAllowed
-            ? language === "de"
-              ? "Darstellung wechseln"
-              : "Change theme"
-            : language === "de"
-              ? "Cookie-Einstellungen öffnen"
-              : "Open cookie preferences"
-        }
+        aria-label={themeToggleLabel}
         className="group hidden h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border-[0.07rem] border-black border-opacity-40 bg-white bg-opacity-80 px-6 text-black shadow-md transition-all duration-200 ease-in dark:border-[0.2rem] dark:border-white dark:bg-gray-900 md:flex"
         onClick={toggleTheme}
-        title={
-          functionalStorageAllowed
-            ? undefined
-            : language === "de"
-              ? "Cookie-Einstellungen öffnen"
-              : "Open cookie preferences"
-        }
+        title={functionalStorageAllowed ? undefined : themeToggleLabel}
         initial={{ opacity: 0 }}
         animate={{
           opacity: 1,

@@ -1,8 +1,8 @@
 "use client";
-import { FC, useRef } from "react";
+import type { FC } from "react";
+import { useRef } from "react";
 import Image from "next/image";
-import { useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight, BriefcaseBusiness, GitCommitHorizontal } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
@@ -54,6 +54,106 @@ function getImageCaption(image: string | null, language: string) {
   return null;
 }
 
+function ProjectArtwork({
+  image,
+  title,
+  isProfessional,
+  projectTypeLabel,
+  imageCaption,
+}: {
+  readonly image: string | null;
+  readonly title: string;
+  readonly isProfessional: boolean;
+  readonly projectTypeLabel: string;
+  readonly imageCaption: string | null;
+}) {
+  return (
+    <figure className="shrink-0">
+      <div className="relative h-48 overflow-hidden border-b border-slate-200/80 bg-slate-100 dark:border-slate-800/80 dark:bg-slate-900 sm:h-52">
+        {image ? (
+          <Image
+            src={image}
+            alt={`${title} project preview`}
+            fill
+            sizes="(min-width: 1024px) 31rem, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="relative flex h-full items-end overflow-hidden bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.35),transparent_32%),radial-gradient(circle_at_80%_80%,rgba(129,140,248,0.38),transparent_34%),linear-gradient(135deg,#0f172a,#172554)] p-6"
+          >
+            <div className="absolute -right-10 -top-16 h-48 w-48 rounded-full border border-cyan-300/30" />
+            <div className="absolute -bottom-24 -left-8 h-56 w-56 rounded-full border border-indigo-300/20" />
+          </div>
+        )}
+
+        <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-slate-950/75 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-md">
+          {isProfessional ? (
+            <BriefcaseBusiness aria-hidden="true" className="h-3.5 w-3.5 text-cyan-300" />
+          ) : (
+            <FaGithub aria-hidden="true" className="h-3.5 w-3.5 text-cyan-300" />
+          )}
+          {projectTypeLabel}
+        </div>
+      </div>
+      {imageCaption ? (
+        <figcaption className="border-b border-slate-200/80 px-5 py-2 text-[0.62rem] text-slate-500 dark:border-slate-800/80 dark:text-slate-400 sm:px-6">
+          {imageCaption}
+        </figcaption>
+      ) : null}
+    </figure>
+  );
+}
+
+function ProjectActions({
+  url,
+  commitCount,
+  language,
+  projectVisibilityLabel,
+}: {
+  readonly url: string | null;
+  readonly commitCount?: number;
+  readonly language: string;
+  readonly projectVisibilityLabel: string;
+}) {
+  const isGerman = language === "de";
+
+  return (
+    <div className="mt-auto pt-7">
+      {url && commitCount !== undefined ? (
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-3 py-1.5 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300">
+          <GitCommitHorizontal aria-hidden="true" className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-300" />
+          <span>
+            {commitCount.toLocaleString(isGerman ? "de-DE" : "en-US")} {isGerman ? "Commits" : "commits"}
+          </span>
+        </div>
+      ) : null}
+      <div className="flex items-end justify-between gap-4">
+        {url ? (
+          <Link
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex w-fit items-center gap-2 rounded-full bg-slate-950 px-4 py-2.5 text-xs font-semibold text-white outline-none transition-[transform,background-color] hover:-translate-y-0.5 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-cyan-400 dark:bg-cyan-400 dark:text-slate-950 dark:hover:bg-cyan-300"
+          >
+            <FaGithub aria-hidden="true" className="h-4 w-4" />
+            {isGerman ? "Repository öffnen" : "Open repository"}
+            <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        ) : (
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-300/80 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300">
+            {isGerman ? "Nicht öffentlich" : "Not public"}
+          </span>
+        )}
+        <span className="text-right text-[0.65rem] font-medium uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
+          {projectVisibilityLabel}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 const Project: FC<ProjectProps> = ({
   title,
   descriptionDe,
@@ -92,41 +192,13 @@ const Project: FC<ProjectProps> = ({
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
       <article className="group flex h-full min-h-[28rem] flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/75 shadow-xl shadow-slate-950/5 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-950/70 dark:shadow-black/20">
-        <figure className="shrink-0">
-          <div className="relative h-48 overflow-hidden border-b border-slate-200/80 bg-slate-100 dark:border-slate-800/80 dark:bg-slate-900 sm:h-52">
-            {image ? (
-              <Image
-                src={image}
-                alt={`${title} project preview`}
-                fill
-                sizes="(min-width: 1024px) 31rem, (min-width: 640px) 50vw, 100vw"
-                className="object-cover transition duration-500 group-hover:scale-105"
-              />
-            ) : (
-              <div
-                aria-hidden="true"
-                className="relative flex h-full items-end overflow-hidden bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.35),transparent_32%),radial-gradient(circle_at_80%_80%,rgba(129,140,248,0.38),transparent_34%),linear-gradient(135deg,#0f172a,#172554)] p-6"
-              >
-                <div className="absolute -right-10 -top-16 h-48 w-48 rounded-full border border-cyan-300/30" />
-                <div className="absolute -bottom-24 -left-8 h-56 w-56 rounded-full border border-indigo-300/20" />
-              </div>
-            )}
-
-            <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-slate-950/75 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-md">
-              {isProfessional ? (
-                <BriefcaseBusiness aria-hidden="true" className="h-3.5 w-3.5 text-cyan-300" />
-              ) : (
-                <FaGithub aria-hidden="true" className="h-3.5 w-3.5 text-cyan-300" />
-              )}
-              {projectTypeLabel}
-            </div>
-          </div>
-          {imageCaption ? (
-            <figcaption className="border-b border-slate-200/80 px-5 py-2 text-[0.62rem] text-slate-500 dark:border-slate-800/80 dark:text-slate-400 sm:px-6">
-              {imageCaption}
-            </figcaption>
-          ) : null}
-        </figure>
+        <ProjectArtwork
+          image={image}
+          title={title}
+          isProfessional={isProfessional}
+          projectTypeLabel={projectTypeLabel}
+          imageCaption={imageCaption}
+        />
 
         <div className="flex flex-1 flex-col p-5 sm:p-6">
           <h3 className="text-xl font-semibold tracking-tight text-slate-950 [text-wrap:balance] dark:text-white sm:text-2xl">
@@ -148,37 +220,12 @@ const Project: FC<ProjectProps> = ({
             ))}
           </ul>
 
-          <div className="mt-auto pt-7">
-            {url && commitCount !== undefined ? (
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-3 py-1.5 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300">
-                <GitCommitHorizontal aria-hidden="true" className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-300" />
-                <span>
-                  {commitCount.toLocaleString(language === "de" ? "de-DE" : "en-US")} {language === "de" ? "Commits" : "commits"}
-                </span>
-              </div>
-            ) : null}
-            <div className="flex items-end justify-between gap-4">
-              {url ? (
-            <Link
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex w-fit items-center gap-2 rounded-full bg-slate-950 px-4 py-2.5 text-xs font-semibold text-white outline-none transition-[transform,background-color] hover:-translate-y-0.5 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-cyan-400 dark:bg-cyan-400 dark:text-slate-950 dark:hover:bg-cyan-300"
-            >
-              <FaGithub aria-hidden="true" className="h-4 w-4" />
-              {language === "de" ? "Repository öffnen" : "Open repository"}
-              <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
-          ) : (
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-300/80 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300">
-              {language === "de" ? "Nicht öffentlich" : "Not public"}
-            </span>
-            )}
-              <span className="text-right text-[0.65rem] font-medium uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
-                {projectVisibilityLabel}
-              </span>
-            </div>
-          </div>
+          <ProjectActions
+            url={url}
+            commitCount={commitCount}
+            language={language}
+            projectVisibilityLabel={projectVisibilityLabel}
+          />
         </div>
       </article>
     </motion.div>

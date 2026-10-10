@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useCookieConsent } from "@/context/cookie-consent-context";
 
@@ -21,26 +21,24 @@ function applyTheme(theme: Theme) {
 
 export function ThemeContextProvider({ children }: { readonly children: ReactNode }) {
   const { functionalStorageAllowed } = useCookieConsent();
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
     let nextTheme: Theme = "light";
 
-    if (!functionalStorageAllowed) {
-      applyTheme("light");
-    } else {
+    if (functionalStorageAllowed) {
       const storedTheme = localStorage.getItem("theme");
       nextTheme = storedTheme === "dark" ? "dark" : "light";
-      applyTheme(nextTheme);
     }
+    applyTheme(nextTheme);
 
-    const syncThemeState = window.setTimeout(() => setThemeState(nextTheme), 0);
-    return () => window.clearTimeout(syncThemeState);
+    const syncThemeState = globalThis.setTimeout(() => setTheme(nextTheme), 0);
+    return () => globalThis.clearTimeout(syncThemeState);
   }, [functionalStorageAllowed]);
 
-  const setTheme = useCallback(
+  const updateTheme = useCallback(
     (nextTheme: Theme) => {
-      setThemeState(nextTheme);
+      setTheme(nextTheme);
       applyTheme(nextTheme);
 
       if (functionalStorageAllowed) {
@@ -50,11 +48,9 @@ export function ThemeContextProvider({ children }: { readonly children: ReactNod
     [functionalStorageAllowed]
   );
 
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  const value = useMemo(() => ({ theme, setTheme: updateTheme }), [theme, updateTheme]);
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

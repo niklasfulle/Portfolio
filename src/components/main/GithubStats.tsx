@@ -3,12 +3,12 @@
 import {
   AnimatePresence,
   animate,
+  motion,
   useMotionValue,
   useReducedMotion,
   useTransform,
+  type Variants,
 } from "framer-motion";
-import { motion } from "framer-motion";
-import type { Variants } from "framer-motion";
 import {
   CalendarDays,
   CircleAlert,
@@ -31,6 +31,125 @@ type Metric = {
   icon: ReactNode;
   value: (stats: GithubStatsData) => number;
 };
+
+function getContributionAccessibleLabel(
+  date: string,
+  count: number | null,
+  isGerman: boolean
+) {
+  if (count === null) {
+    return `${date}: ${isGerman ? "keine Daten" : "no data"}`;
+  }
+
+  return `${date}: ${count} ${isGerman ? "Beiträge" : "contributions"}`;
+}
+
+function getLanguageDisclosureLabel(isGerman: boolean, isExpanded: boolean) {
+  if (isGerman) return isExpanded ? "Weniger anzeigen" : "Mehr anzeigen";
+  return isExpanded ? "Show less" : "Show more";
+}
+
+function LanguageShareBar({
+  languages,
+  isGerman,
+  reducedMotion,
+}: {
+  readonly languages: GithubLanguageStat[];
+  readonly isGerman: boolean;
+  readonly reducedMotion: boolean | null;
+}) {
+  return (
+    <ul
+      aria-label={isGerman ? "Sprachanteile" : "Language shares"}
+      className="mt-4 flex h-2 overflow-visible rounded-full bg-slate-200/80 p-0 dark:bg-slate-800"
+    >
+      {languages.map((item, index) => {
+        const hasTooltip =
+          index < 8 || item.percentage >= languageTooltipMinimumPercentage;
+        const accessibleLabel = `${item.name}: ${item.percentage.toFixed(2)}%`;
+
+        return (
+          <motion.li
+            aria-label={accessibleLabel}
+            className="group/segment relative block h-full shrink-0 list-none origin-left first:rounded-l-full last:rounded-r-full focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+            initial={reducedMotion ? { scaleX: 1 } : { scaleX: 0 }}
+            key={item.name}
+            style={{ backgroundColor: item.color, width: `${item.percentage}%` }}
+            tabIndex={hasTooltip ? 0 : -1}
+            title={hasTooltip ? accessibleLabel : undefined}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.7, delay: 0.03 * index }}
+          >
+            {hasTooltip ? (
+              <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-1.5 text-[0.68rem] font-semibold text-white shadow-xl group-hover/segment:block group-focus-visible/segment:block dark:border-slate-500">
+                {accessibleLabel}
+              </span>
+            ) : null}
+          </motion.li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function AdditionalLanguageRows({
+  languages,
+  isGerman,
+  reducedMotion,
+}: {
+  readonly languages: GithubLanguageStat[];
+  readonly isGerman: boolean;
+  readonly reducedMotion: boolean | null;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  if (languages.length === 0) return null;
+
+  return (
+    <div
+      className="mt-3 border-t border-slate-200/80 pt-3 dark:border-slate-800/80"
+      data-testid="github-more-languages"
+    >
+      <button
+        aria-controls="github-more-languages-list"
+        aria-expanded={isExpanded}
+        className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg px-1 py-2 text-left text-xs font-semibold text-cyan-700 outline-none transition-colors hover:text-cyan-500 focus-visible:ring-2 focus-visible:ring-cyan-400 dark:text-cyan-300 dark:hover:text-cyan-200"
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+        type="button"
+      >
+        <span>{getLanguageDisclosureLabel(isGerman, isExpanded)}</span>
+        <span
+          aria-hidden="true"
+          className={`text-base leading-none transition-transform duration-300 ${isExpanded ? "rotate-45" : ""}`}
+        >
+          +
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {isExpanded ? (
+          <motion.div
+            id="github-more-languages-list"
+            initial={reducedMotion ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            <ul className="mt-1 grid gap-x-6 overflow-hidden sm:grid-cols-2">
+              {languages.map((item, index) => (
+                <LanguageRow
+                  index={index + 8}
+                  isGerman={isGerman}
+                  item={item}
+                  key={item.name}
+                  reducedMotion={reducedMotion}
+                />
+              ))}
+            </ul>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 const metrics: Metric[] = [
   {
@@ -210,7 +329,7 @@ function buildContributionWeeks(
   const contributionsByDate = new Map(
     days.map((day) => [day.date, day.count])
   );
-  const lastDate = new Date(`${days[days.length - 1].date}T00:00:00.000Z`);
+  const lastDate = new Date(`${days.at(-1)!.date}T00:00:00.000Z`);
   const firstDate = new Date(lastDate);
   firstDate.setUTCDate(firstDate.getUTCDate() - 364);
   firstDate.setUTCDate(firstDate.getUTCDate() - firstDate.getUTCDay());
@@ -317,9 +436,7 @@ function ContributionCalendar({ language, stats }: GithubStatsProps) {
 
                   return (
                     <motion.span
-                      aria-label={cell.count === null
-                        ? `${cell.date}: ${isGerman ? "keine Daten" : "no data"}`
-                        : `${cell.date}: ${cell.count} ${isGerman ? "Beiträge" : "contributions"}`}
+                      aria-label={getContributionAccessibleLabel(cell.date, cell.count, isGerman)}
                       className={`group/contribution relative h-3 w-3 rounded-[0.2rem] transition-[filter] duration-200 hover:z-20 hover:brightness-125 focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${contributionLevel(cell.count)}`}
                       initial={reducedMotion ? false : { opacity: 0, scale: 0.5 }}
                       key={cell.date}
@@ -328,11 +445,11 @@ function ContributionCalendar({ language, stats }: GithubStatsProps) {
                       animate={{ opacity: cell.count === null ? 0 : 1, scale: 1 }}
                       transition={{ duration: 0.25, delay: reducedMotion ? 0 : Math.min(index * 0.006, 0.8) }}
                     >
-                      {cell.count !== null ? (
+                      {cell.count === null ? null : (
                         <span className={`pointer-events-none absolute left-1/2 z-30 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-slate-200/80 bg-white px-2.5 py-1.5 text-[0.68rem] font-semibold text-slate-700 shadow-xl group-hover/contribution:block group-focus-visible/contribution:block dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 ${tooltipPosition}`}>
                           {cell.count} {isGerman ? "Beiträge" : "contributions"} · {dateFormatter.format(new Date(`${cell.date}T00:00:00.000Z`))}
                         </span>
-                      ) : null}
+                      )}
                     </motion.span>
                   );
                 })}
@@ -581,7 +698,6 @@ export function LanguagesCard({ language, stats }: GithubStatsProps) {
   const topLanguage = stats.languages[0];
   const visibleLanguages = stats.languages.slice(0, 8);
   const additionalLanguages = stats.languages.slice(8);
-  const [showAdditionalLanguages, setShowAdditionalLanguages] = useState(false);
 
   return (
     <motion.article
@@ -614,38 +730,11 @@ export function LanguagesCard({ language, stats }: GithubStatsProps) {
         </div>
       </div>
 
-      <div
-        aria-label={isGerman ? "Sprachanteile" : "Language shares"}
-        className="mt-4 flex h-2 overflow-visible rounded-full bg-slate-200/80 dark:bg-slate-800"
-        role="list"
-      >
-        {stats.languages.map((item: GithubLanguageStat, index: number) => {
-          const hasTooltip =
-            index < 8 || item.percentage >= languageTooltipMinimumPercentage;
-
-          return (
-            <motion.button
-              aria-label={`${item.name}: ${item.percentage.toFixed(2)}%`}
-              className="group/segment relative block h-full shrink-0 border-0 bg-transparent p-0 first:rounded-l-full last:rounded-r-full focus-visible:z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-              initial={reducedMotion ? { scaleX: 1 } : { scaleX: 0 }}
-              key={item.name}
-              role="listitem"
-              style={{ backgroundColor: item.color, width: `${item.percentage}%` }}
-              tabIndex={hasTooltip ? 0 : -1}
-              title={hasTooltip ? `${item.name}: ${item.percentage.toFixed(2)}%` : undefined}
-              type="button"
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.7, delay: 0.03 * index }}
-            >
-              {hasTooltip ? (
-                <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-1.5 text-[0.68rem] font-semibold text-white shadow-xl group-hover/segment:block group-focus-visible/segment:block dark:border-slate-500">
-                  {item.name}: {item.percentage.toFixed(2)}%
-                </span>
-              ) : null}
-            </motion.button>
-          );
-        })}
-      </div>
+      <LanguageShareBar
+        languages={stats.languages}
+        isGerman={isGerman}
+        reducedMotion={reducedMotion}
+      />
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[0.68rem] text-slate-500 dark:text-slate-400 sm:text-xs">
         <span className="inline-flex items-center gap-1.5 font-medium text-cyan-700 dark:text-cyan-300">
@@ -675,59 +764,11 @@ export function LanguagesCard({ language, stats }: GithubStatsProps) {
         ))}
       </ul>
 
-      {additionalLanguages.length > 0 ? (
-        <div
-          className="mt-3 border-t border-slate-200/80 pt-3 dark:border-slate-800/80"
-          data-testid="github-more-languages"
-        >
-          <button
-            aria-controls="github-more-languages-list"
-            aria-expanded={showAdditionalLanguages}
-            className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg px-1 py-2 text-left text-xs font-semibold text-cyan-700 outline-none transition-colors hover:text-cyan-500 focus-visible:ring-2 focus-visible:ring-cyan-400 dark:text-cyan-300 dark:hover:text-cyan-200"
-            onClick={() => setShowAdditionalLanguages((isOpen) => !isOpen)}
-            type="button"
-          >
-            <span>
-              {showAdditionalLanguages
-                ? isGerman
-                  ? "Weniger anzeigen"
-                  : "Show less"
-                : isGerman
-                  ? "Mehr anzeigen"
-                  : "Show more"}
-            </span>
-            <span
-              aria-hidden="true"
-              className={`text-base leading-none transition-transform duration-300 ${showAdditionalLanguages ? "rotate-45" : ""}`}
-            >
-              +
-            </span>
-          </button>
-          <AnimatePresence initial={false}>
-            {showAdditionalLanguages ? (
-              <motion.div
-                id="github-more-languages-list"
-                initial={reducedMotion ? false : { height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                <ul className="mt-1 grid gap-x-6 overflow-hidden sm:grid-cols-2">
-                  {additionalLanguages.map((item, index) => (
-                    <LanguageRow
-                      index={index + 8}
-                      isGerman={isGerman}
-                      item={item}
-                      key={item.name}
-                      reducedMotion={reducedMotion}
-                    />
-                  ))}
-                </ul>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </div>
-      ) : null}
+      <AdditionalLanguageRows
+        languages={additionalLanguages}
+        isGerman={isGerman}
+        reducedMotion={reducedMotion}
+      />
     </motion.article>
   );
 }

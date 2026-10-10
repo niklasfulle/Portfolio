@@ -575,7 +575,7 @@ async function getAuthenticatedRepositories(): Promise<GithubRepository[]> {
 async function getRepositories() {
   if (process.env.GITHUB_TOKEN) return getAuthenticatedRepositories();
 
-      return fetchGithubJson<GithubRepository[]>(
+  return fetchGithubJson<GithubRepository[]>(
     `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`
   );
 }

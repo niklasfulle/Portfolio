@@ -12,8 +12,8 @@ import Socials from "@/ui/Socials";
 import Toggels from "@/ui/Toggels";
 
 type PortfolioFrameProps = {
-  children: ReactNode;
-  publicBaseUrl?: string;
+  readonly children: ReactNode;
+  readonly publicBaseUrl?: string;
 };
 
 export default function PortfolioFrame({ children, publicBaseUrl }: PortfolioFrameProps) {

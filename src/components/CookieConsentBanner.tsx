@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useReducedMotion } from "framer-motion";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Cookie } from "lucide-react";
 import { useCookieConsent } from "@/context/cookie-consent-context";
 import { useLanguage } from "@/context/language-context";
