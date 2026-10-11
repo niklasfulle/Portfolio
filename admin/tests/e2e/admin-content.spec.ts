@@ -211,9 +211,10 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   const moveUp = projectCards.nth(1).getByRole("button", { name: "Eintrag nach oben verschieben" });
   await moveUp.focus();
   await moveUp.press("Enter");
-  await expect(projectCards.nth(0).locator("legend")).toHaveText("Eintrag");
-  await expect(projectCards.nth(1).locator("legend")).toHaveText("Draft project title");
+  await expect(projectCards.nth(0).locator("summary").getByText("Eintrag", { exact: true })).toBeVisible();
+  await expect(projectCards.nth(1).locator("summary").getByText("Draft project title", { exact: true })).toBeVisible();
   await expect(projectCards.nth(0).getByRole("button", { name: "Eintrag nach oben verschieben" })).toBeDisabled();
+  await projectCards.nth(1).locator("summary").click();
   await expect(projectCards.nth(1).getByRole("button", { name: "Draft project title nach unten verschieben" })).toBeDisabled();
 
   const invalidTags = projectCards.nth(1).locator('input[name$=".tags"]');
