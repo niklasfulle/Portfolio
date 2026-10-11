@@ -97,7 +97,7 @@ export function SetupTwoFactor() {
             <ul className="recovery-list">{backupCodes.map((backupCode) => <li key={backupCode}><code>{backupCode}</code></li>)}</ul>
             <form className="auth-form" onSubmit={verifyEnrollment}>
               <label htmlFor="enrollment-code">Code aus der App</label>
-              <input id="enrollment-code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} />
+              <input id="enrollment-code" autoFocus inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} />
               {error && <p className="form-error" role="alert">{error}</p>}
               <button className="primary-button" type="submit" disabled={pending}>{pending ? "Prüfe Code …" : "MFA bestätigen"}</button>
             </form>
@@ -107,7 +107,7 @@ export function SetupTwoFactor() {
             <p className="auth-description">Scanne diesen QR-Code mit deiner Authenticator-App und bestätige anschließend einen Code.</p>
             <TotpEnrollmentCode uri={totpUri} />
             <label htmlFor="enrollment-code">Code aus der App</label>
-            <input id="enrollment-code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} />
+            <input id="enrollment-code" autoFocus inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} />
             {error && <p className="form-error" role="alert">{error}</p>}
             <button className="primary-button" type="submit" disabled={pending}>{pending ? "Prüfe Code …" : "MFA bestätigen"}</button>
           </form>

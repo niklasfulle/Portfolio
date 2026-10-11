@@ -62,7 +62,7 @@ function createRecord(section: ContentKey, series: number, id: string): ContentR
 export function ContentEditor() {
   const [state, setState] = useState<EditorState | null>(null);
   const [activeSection, setActiveSection] = useState<ContentKey>("projects");
-  const [expandedRecordId, setExpandedRecordId] = useState<string | null>(null);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
@@ -86,6 +86,11 @@ export function ContentEditor() {
     () => state?.content[activeSection] ?? [],
     [activeSection, state],
   );
+  const selectedEntry = selectedItems.find((entry) => entry.id === selectedRecordId) ?? selectedItems[0];
+  const selectedIndex = selectedEntry ? selectedItems.indexOf(selectedEntry) : -1;
+  const selectedItemLabel = selectedEntry
+    ? String(selectedEntry.title ?? selectedEntry.name ?? selectedEntry.titleDe ?? selectedEntry.email ?? "").trim() || "Eintrag"
+    : "";
   const hasUnpublishedDraft = Boolean(
     state?.hasDraft && state.draftVersion > state.publishedDraftVersion,
   );
@@ -116,7 +121,7 @@ export function ContentEditor() {
 
   function addItem() {
     const id = crypto.randomUUID();
-    setExpandedRecordId(id);
+    setSelectedRecordId(id);
     setHasUnsavedChanges(true);
     setValidationIssues([]);
     setState((current) => {
@@ -250,9 +255,9 @@ export function ContentEditor() {
     <section id="editor" className="content-manager" aria-label="Portfolio-Inhalte verwalten">
       <div className="editor-heading">
         <div>
-          <p className="eyebrow">PORTFOLIO-INHALTE</p>
-          <h2>Inhalte bearbeiten</h2>
-          <p className="auth-description">Änderungen bleiben privat, bis du sie veröffentlichst.</p>
+          <p className="eyebrow">ARBEITSBEREICH</p>
+          <h2>Editor</h2>
+          <p className="auth-description">Entwürfe bleiben privat, bis du sie veröffentlichst.</p>
         </div>
         <div className="editor-actions">
           {hasUnsavedChanges ? (
@@ -301,7 +306,7 @@ export function ContentEditor() {
               aria-pressed={activeSection === section.key}
               onClick={() => {
                 setActiveSection(section.key);
-                setExpandedRecordId(null);
+                setSelectedRecordId(null);
                 setValidationIssues([]);
               }}
             >
@@ -311,119 +316,140 @@ export function ContentEditor() {
           ))}
         </nav>
 
-        <div className="editor-main-panel">
+        <div className="editor-record-pane">
           <div className="section-list-heading">
             <div>
               <p className="eyebrow">{selectedItems.length} {selectedItems.length === 1 ? "EINTRAG" : "EINTRÄGE"}</p>
               <h3>{sections.find((section) => section.key === activeSection)?.label}</h3>
-              <p>Wähle einen Eintrag zum Bearbeiten. Änderungen werden erst nach dem Veröffentlichen öffentlich.</p>
             </div>
-            <button className="add-item-button" type="button" disabled={busy} onClick={addItem}>+ Eintrag hinzufügen</button>
+            <button className="add-item-button" type="button" disabled={busy} aria-label="Eintrag hinzufügen" onClick={addItem}>+ Eintrag</button>
           </div>
 
-          <div className="editor-list">
-        {selectedItems.length === 0 && <p className="editor-empty">Hier ist noch nichts drin. Über „Eintrag hinzufügen“ kannst du den ersten Inhalt anlegen.</p>}
-        {selectedItems.map((entry, index) => {
-          const itemLabel = String(entry.title ?? entry.name ?? entry.titleDe ?? entry.email ?? "").trim() || "Eintrag";
-          return (
-          <details
-            className="editor-item"
-            key={String(entry.id)}
-            open={expandedRecordId === String(entry.id)}
-            onToggle={(event) => {
-              if (event.currentTarget.open) setExpandedRecordId(String(entry.id));
-              else if (expandedRecordId === String(entry.id)) setExpandedRecordId(null);
-            }}
-          >
-            <summary className="editor-item-summary">
-              <span className="editor-item-summary-copy">
-                <strong>{itemLabel}</strong>
-                <small>{activeSection === "contactEmail" ? "Kontaktadresse" : `Position ${index + 1}`}</small>
-              </span>
-              {activeSection !== "contactEmail" && (
-                <span className={`editor-item-visibility ${entry.visible === false ? "is-hidden" : "is-visible"}`}>
-                  {entry.visible === false ? "Ausgeblendet" : "Sichtbar"}
-                </span>
-              )}
-              <span className="editor-item-chevron" aria-hidden="true">⌄</span>
-            </summary>
-            <div className="editor-item-content">
-            {activeSection !== "contactEmail" && (
-              <div className="editor-item-order">
-                <span>Position {index + 1} von {selectedItems.length}</span>
-                <div>
-                  <button
-                    className="editor-order-button"
-                    type="button"
-                    aria-label={`${itemLabel} nach oben verschieben`}
-                    title="Nach oben verschieben"
-                    disabled={busy || index === 0}
-                    onClick={() => moveItem(String(entry.id), -1)}
-                  >
-                    <ArrowUp aria-hidden="true" size={15} />
-                  </button>
-                  <button
-                    className="editor-order-button"
-                    type="button"
-                    aria-label={`${itemLabel} nach unten verschieben`}
-                    title="Nach unten verschieben"
-                    disabled={busy || index === selectedItems.length - 1}
-                    onClick={() => moveItem(String(entry.id), 1)}
-                  >
-                    <ArrowDown aria-hidden="true" size={15} />
-                  </button>
-                </div>
-              </div>
-            )}
-            <div className="editor-fields">
-              {fieldsBySection[activeSection].map((field) => {
-                const value = entry[field];
-                if (field === "visible") {
-                  return <label className="visibility-field" key={field}><input type="checkbox" disabled={busy} checked={Boolean(value)} onChange={(event) => updateField(String(entry.id), field, event.target.checked)} />{fieldLabels[field]}</label>;
-                }
-                const multiline = field.startsWith("description") || field === "textDe" || field === "textEn";
-                const inputId = `field-${activeSection}-${encodeURIComponent(String(entry.id))}-${field}`;
-                const hintId = field === "tags" ? `${inputId}-hint` : undefined;
-                const fieldMessages = [...new Set(validationIssues
-                  .filter((issue) => issue.field === field)
-                  .map((issue) => issue.message))];
-                const errorId = fieldMessages.length ? `${inputId}-error` : undefined;
-                const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
-                return (
-                  <div className={multiline ? "editor-field editor-field-wide" : "editor-field"} key={field}>
-                    <label htmlFor={inputId}>{fieldLabels[field] ?? field}</label>
-                    {field === "tags" && <small id={hintId}>Mindestens sechs Stichpunkte, kommagetrennt (z. B. TypeScript, Next.js, Webentwicklung, …).</small>}
-                    {multiline ? (
-                      <textarea id={inputId} name={`${activeSection}.${String(entry.id)}.${field}`} rows={4} disabled={busy} value={String(value ?? "")} aria-invalid={fieldMessages.length > 0 || undefined} aria-describedby={describedBy} onChange={(event) => updateField(String(entry.id), field, event.target.value)} />
-                    ) : (
-                      <input
-                        id={inputId}
-                        name={`${activeSection}.${String(entry.id)}.${field}`}
-                        type={field === "email" ? "email" : field === "url" || field === "image" ? "url" : "text"}
-                        autoComplete="off"
-                        spellCheck={field === "email" || field === "url" || field === "image" ? false : undefined}
-                        disabled={busy}
-                        value={String(value ?? "")}
-                        aria-invalid={fieldMessages.length > 0 || undefined}
-                        aria-describedby={describedBy}
-                        onChange={(event) => updateField(String(entry.id), field, event.target.value)}
-                      />
-                    )}
-                    {errorId && <small className="editor-field-error" id={errorId}>{fieldMessages.join(" ")}</small>}
-                  </div>
-                );
-              })}
-            </div>
-            {activeSection !== "contactEmail" && entry.visible !== false && (
-              <button className="text-button danger-button" type="button" disabled={busy} onClick={() => hideItem(String(entry.id))}>Ausblenden</button>
-            )}
-            <button className="text-button danger-button" type="button" disabled={busy} onClick={() => removeItem(String(entry.id))}>Eintrag entfernen</button>
-            </div>
-          </details>
-          );
-        })}
+          <div className="editor-list" aria-label="Einträge">
+            {selectedItems.length === 0 && <p className="editor-empty">Noch keine Einträge. Füge den ersten Inhalt hinzu.</p>}
+            {selectedItems.map((entry, index) => {
+              const itemLabel = String(entry.title ?? entry.name ?? entry.titleDe ?? entry.email ?? "").trim() || "Eintrag";
+              const preview = String(entry.descriptionDe ?? entry.date ?? entry.type ?? entry.textDe ?? "").trim();
+              return (
+                <button
+                  className="editor-item"
+                  key={String(entry.id)}
+                  type="button"
+                  disabled={busy}
+                  aria-pressed={selectedEntry?.id === entry.id}
+                  onClick={() => { setSelectedRecordId(String(entry.id)); setValidationIssues([]); }}
+                >
+                  <span className="editor-item-number">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="editor-item-summary-copy">
+                    <strong>{itemLabel}</strong>
+                    {preview && <small>{preview}</small>}
+                  </span>
+                  {activeSection !== "contactEmail" && (
+                    <span className={`editor-item-visibility ${entry.visible === false ? "is-hidden" : "is-visible"}`}>
+                      {entry.visible === false ? "Ausgeblendet" : "Sichtbar"}
+                    </span>
+                  )}
+                  <span className="editor-item-chevron" aria-hidden="true">›</span>
+                </button>
+              );
+            })}
           </div>
         </div>
+
+        <section className="editor-detail-panel" aria-labelledby="editor-detail-title">
+          {selectedEntry ? (
+            <>
+              <header className="editor-detail-heading">
+                <div>
+                  <p className="eyebrow">{activeSection === "contactEmail" ? "KONTAKTADRESSE" : `EINTRAG ${selectedIndex + 1} VON ${selectedItems.length}`}</p>
+                  <h3 id="editor-detail-title">{selectedItemLabel}</h3>
+                </div>
+                {activeSection !== "contactEmail" && (
+                  <span className={`editor-item-visibility ${selectedEntry.visible === false ? "is-hidden" : "is-visible"}`}>
+                    {selectedEntry.visible === false ? "Ausgeblendet" : "Sichtbar"}
+                  </span>
+                )}
+              </header>
+              {activeSection !== "contactEmail" && (
+                <div className="editor-item-order">
+                  <span>Reihenfolge der Anzeige</span>
+                  <div>
+                    <button
+                      className="editor-order-button"
+                      type="button"
+                      aria-label={`${selectedItemLabel} nach oben verschieben`}
+                      title="Nach oben verschieben"
+                      disabled={busy || selectedIndex === 0}
+                      onClick={() => moveItem(String(selectedEntry.id), -1)}
+                    >
+                      <ArrowUp aria-hidden="true" size={15} />
+                    </button>
+                    <button
+                      className="editor-order-button"
+                      type="button"
+                      aria-label={`${selectedItemLabel} nach unten verschieben`}
+                      title="Nach unten verschieben"
+                      disabled={busy || selectedIndex === selectedItems.length - 1}
+                      onClick={() => moveItem(String(selectedEntry.id), 1)}
+                    >
+                      <ArrowDown aria-hidden="true" size={15} />
+                    </button>
+                  </div>
+                </div>
+              )}
+              <div className="editor-fields">
+                {fieldsBySection[activeSection].map((field) => {
+                  const value = selectedEntry[field];
+                  if (field === "visible") {
+                    return <label className="visibility-field" key={field}><input type="checkbox" disabled={busy} checked={Boolean(value)} onChange={(event) => updateField(String(selectedEntry.id), field, event.target.checked)} />{fieldLabels[field]}</label>;
+                  }
+                  const multiline = field.startsWith("description") || field === "textDe" || field === "textEn";
+                  const inputId = `field-${activeSection}-${encodeURIComponent(String(selectedEntry.id))}-${field}`;
+                  const hintId = field === "tags" ? `${inputId}-hint` : undefined;
+                  const fieldMessages = [...new Set(validationIssues
+                    .filter((issue) => issue.field === field)
+                    .map((issue) => issue.message))];
+                  const errorId = fieldMessages.length ? `${inputId}-error` : undefined;
+                  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+                  return (
+                    <div className={multiline ? "editor-field editor-field-wide" : "editor-field"} key={field}>
+                      <label htmlFor={inputId}>{fieldLabels[field] ?? field}</label>
+                      {field === "tags" && <small id={hintId}>Mindestens sechs Stichpunkte, kommagetrennt (z. B. TypeScript, Next.js, Webentwicklung, …).</small>}
+                      {multiline ? (
+                        <textarea id={inputId} name={`${activeSection}.${String(selectedEntry.id)}.${field}`} rows={4} disabled={busy} value={String(value ?? "")} aria-invalid={fieldMessages.length > 0 || undefined} aria-describedby={describedBy} onChange={(event) => updateField(String(selectedEntry.id), field, event.target.value)} />
+                      ) : (
+                        <input
+                          id={inputId}
+                          name={`${activeSection}.${String(selectedEntry.id)}.${field}`}
+                          type={field === "email" ? "email" : field === "url" || field === "image" ? "url" : "text"}
+                          autoComplete="off"
+                          spellCheck={field === "email" || field === "url" || field === "image" ? false : undefined}
+                          disabled={busy}
+                          value={String(value ?? "")}
+                          aria-invalid={fieldMessages.length > 0 || undefined}
+                          aria-describedby={describedBy}
+                          onChange={(event) => updateField(String(selectedEntry.id), field, event.target.value)}
+                        />
+                      )}
+                      {errorId && <small className="editor-field-error" id={errorId}>{fieldMessages.join(" ")}</small>}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="editor-detail-actions">
+                {activeSection !== "contactEmail" && selectedEntry.visible !== false && (
+                  <button className="text-button danger-button" type="button" disabled={busy} onClick={() => hideItem(String(selectedEntry.id))}>Ausblenden</button>
+                )}
+                <button className="text-button danger-button" type="button" disabled={busy} onClick={() => removeItem(String(selectedEntry.id))}>Eintrag entfernen</button>
+              </div>
+            </>
+          ) : (
+            <div className="editor-detail-empty">
+              <h3 id="editor-detail-title">Noch kein Eintrag</h3>
+              <p>Füge einen Eintrag hinzu, um ihn hier zu bearbeiten.</p>
+            </div>
+          )}
+        </section>
       </div>
 
       {message && (

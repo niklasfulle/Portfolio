@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
-import { contentSchema } from "@/lib/admin-content-schema";
+import { contentSchema, previewContentSchema } from "@/lib/admin-content-schema";
 import { hasMfaEnabledSession, isAdminRole } from "@admin/lib/session-policy";
 import { isTrustedMutationOrigin } from "@admin/lib/csrf";
 import { ADMIN_MUTATION_LIMIT, isAdminMutationRateLimited } from "@admin/lib/mutation-rate-limit";
@@ -42,6 +42,16 @@ test("content schema requires at least six non-empty project key points", () => 
   assert.equal(contentSchema.safeParse(content).success, false);
   content.projects[0].tags = "TypeScript, Next.js, Webentwicklung, CI/CD, Docker, PostgreSQL";
   assert.equal(contentSchema.safeParse(content).success, true);
+});
+
+test("preview accepts legacy project key-point counts without weakening publishing or URL safety", () => {
+  const content = validContent();
+  content.projects[0].tags = "TypeScript, Next.js";
+  assert.equal(contentSchema.safeParse(content).success, false);
+  assert.equal(previewContentSchema.safeParse(content).success, true);
+
+  content.projects[0].image = "javascript:alert(1)";
+  assert.equal(previewContentSchema.safeParse(content).success, false);
 });
 
 test("content schema rejects executable and protocol-relative asset URLs", () => {

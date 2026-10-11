@@ -31,7 +31,7 @@ export default function TwoFactorPage() {
         <p className="auth-description">Gib den aktuellen Code aus deiner Authenticator-App ein.</p>
         <form className="auth-form" onSubmit={submit}>
           <label htmlFor="totp-code">Einmalcode</label>
-          <input id="totp-code" name="totp-code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} />
+          <input id="totp-code" name="totp-code" autoFocus inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} />
           {error && <p className="form-error" role="alert">{error}</p>}
           <button className="primary-button" type="submit" disabled={pending}>{pending ? "Prüfe Code …" : "Bestätigen"}</button>
         </form>

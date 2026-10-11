@@ -23,7 +23,7 @@ export default async function AdminPage() {
         <Link className="admin-brand" href="/admin" aria-label="Portfolio Admin – Startseite">
           <span className="admin-brand-mark" aria-hidden="true">N</span>
           <span className="admin-brand-copy">
-            <strong>Niklas Fulle</strong>
+            <strong>{session.user.name || "Administrator"}</strong>
             <small>Portfolio Studio</small>
           </span>
         </Link>
@@ -50,10 +50,6 @@ export default async function AdminPage() {
               <p className="dashboard-intro-copy">
                 Bearbeite dein Portfolio, prüfe Änderungen in der Vorschau und veröffentliche sie erst, wenn alles passt.
               </p>
-            </div>
-            <div className="dashboard-account-chip">
-              <span className="account-avatar" aria-hidden="true">{session.user.name?.slice(0, 1) || "N"}</span>
-              <span><strong>{session.user.name || "Administrator"}</strong><small>{session.user.email}</small></span>
             </div>
           </section>
 

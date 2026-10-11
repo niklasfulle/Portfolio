@@ -81,6 +81,13 @@ export const contentSchema = z.object({
   }
 });
 
+// Existing published records may predate the six-key-point editorial rule.
+// Keep structural and URL checks for rendering, without blocking the entire
+// private preview on legacy tag counts. Saving/publishing still uses contentSchema.
+export const previewContentSchema = contentSchema.safeExtend({
+  projects: z.array(projectSchema.safeExtend({ tags: z.string().max(2000) })).max(500),
+});
+
 export const updateContentSchema = z.object({
   expectedVersion: z.number().int().min(0),
   idempotencyKey: z.string().regex(/^[a-f0-9]{64}$/),

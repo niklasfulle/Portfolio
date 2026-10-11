@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import PortfolioFrame from "@/components/PortfolioFrame";
 import PortfolioSections from "@/components/PortfolioSections";
-import { contentSchema } from "@/lib/admin-content-schema";
+import { previewContentSchema } from "@/lib/admin-content-schema";
 import type { GithubStatsData } from "@/lib/github-stats";
 import { getAdminDatabase } from "@admin/lib/database";
 import { requestPortfolioContent } from "@admin/lib/portfolio-api";
@@ -48,7 +48,7 @@ export default async function AdminPreviewPage() {
 
   const publishedData = published.result as PublishedContentResponse;
   const content = (mergeDraftSections(publishedData, draftResult.rows) as PublishedContentResponse).content;
-  const parsed = contentSchema.safeParse(content);
+  const parsed = previewContentSchema.safeParse(content);
   if (!parsed.success) {
     return (
       <main className="auth-shell">

@@ -92,6 +92,7 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   await setupPage.getByLabel("Passwort").fill("Integration-Test-Password-2026!");
   await setupPage.getByRole("button", { name: "MFA-Schlüssel erstellen" }).click();
   await expect(setupPage.getByRole("img", { name: "QR-Code für die Authenticator-App" })).toBeVisible();
+  await expect(setupPage.getByLabel("Code aus der App")).toBeFocused();
   await setupPage.getByText("Manuelle Einrichtung anzeigen").click();
   const enrollmentUri = await setupPage.locator("code.secret-value").textContent();
   assert.ok(enrollmentUri);
@@ -119,6 +120,12 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   expect(signIn.ok()).toBeTruthy();
   expect((await signIn.json()).twoFactorRedirect).toBe(true);
   expect((await api.get("/api/content")).status()).toBe(401);
+  const mfaContext = await browser.newContext({ storageState: await api.storageState() });
+  const mfaPage = await mfaContext.newPage();
+  await mfaPage.goto(`${origin}/two-factor`);
+  await expect(mfaPage.getByRole("heading", { name: "Code bestätigen" })).toBeVisible();
+  await expect(mfaPage.getByLabel("Einmalcode")).toBeFocused();
+  await mfaContext.close();
   const secondFactor = await api.post("/api/auth/two-factor/verify-totp", {
     headers: { origin },
     data: { code: currentTotp(totpSecret) },
@@ -197,7 +204,7 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   await expect(adminPage.locator(".dashboard-shell .content-manager")).toBeVisible();
   await expect(adminPage.locator(".dashboard-shell > .auth-card")).toHaveCount(0);
   await expect(adminPage.getByRole("link", { name: /Vorschau/ })).toHaveCount(1);
-  await expect(adminPage.locator(".dashboard-account-chip")).toHaveCount(1);
+  await expect(adminPage.locator(".admin-brand-copy strong")).toHaveText("CMS Integration Test");
   await expect(adminPage.locator(".sidebar-account")).toHaveCount(0);
 
   const projectCards = adminPage.locator(".editor-item");
@@ -208,16 +215,17 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   await expect(adminPage.getByRole("button", { name: "Veröffentlichen" })).toHaveCount(0);
   await expect(adminPage.locator(".editor-secondary-actions")).toHaveCount(0);
 
-  const moveUp = projectCards.nth(1).getByRole("button", { name: "Eintrag nach oben verschieben" });
+  const moveUp = adminPage.getByRole("button", { name: "Eintrag nach oben verschieben" });
   await moveUp.focus();
   await moveUp.press("Enter");
-  await expect(projectCards.nth(0).locator("summary").getByText("Eintrag", { exact: true })).toBeVisible();
-  await expect(projectCards.nth(1).locator("summary").getByText("Draft project title", { exact: true })).toBeVisible();
-  await expect(projectCards.nth(0).getByRole("button", { name: "Eintrag nach oben verschieben" })).toBeDisabled();
-  await projectCards.nth(1).locator("summary").click();
-  await expect(projectCards.nth(1).getByRole("button", { name: "Draft project title nach unten verschieben" })).toBeDisabled();
+  await expect(projectCards.nth(0)).toContainText("Eintrag");
+  await expect(projectCards.nth(0)).toHaveAttribute("aria-pressed", "true");
+  await expect(projectCards.nth(1)).toContainText("Draft project title");
+  await expect(adminPage.getByRole("button", { name: "Eintrag nach oben verschieben" })).toBeDisabled();
+  await projectCards.nth(1).click();
+  await expect(adminPage.getByRole("button", { name: "Draft project title nach unten verschieben" })).toBeDisabled();
 
-  const invalidTags = projectCards.nth(1).locator('input[name$=".tags"]');
+  const invalidTags = adminPage.locator('input[name$=".tags"]');
   await invalidTags.fill("TypeScript, Next.js");
   await adminPage.getByRole("button", { name: "Entwurf speichern" }).click();
   await expect(adminPage.locator(".editor-status[role='alert']")).toContainText(
