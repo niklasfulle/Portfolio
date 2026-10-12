@@ -5,8 +5,18 @@ export function isTrustedMutationOrigin(request: Request): boolean {
 
   try {
     const requestOrigin = new URL(originHeader).origin;
-    const trustedOrigin = new URL(configuredOrigin).origin;
-    return requestOrigin === trustedOrigin;
+    const trustedUrl = new URL(configuredOrigin);
+    const requestUrl = new URL(requestOrigin);
+    if (requestOrigin === trustedUrl.origin) return true;
+
+    const isLocalhostAlias =
+      requestUrl.protocol === "http:" &&
+      trustedUrl.protocol === "http:" &&
+      requestUrl.port === trustedUrl.port &&
+      ((requestUrl.hostname === "localhost" && trustedUrl.hostname === "127.0.0.1") ||
+        (requestUrl.hostname === "127.0.0.1" && trustedUrl.hostname === "localhost"));
+
+    return isLocalhostAlias;
   } catch {
     return false;
   }

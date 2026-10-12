@@ -135,7 +135,7 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
 
   const invalidDraft = {
     ...liveContent,
-    projects: [{ ...liveContent.projects[0], tags: "TypeScript, Next.js" }],
+    projects: [{ ...liveContent.projects[0], url: "https://github.com/example/repo", tags: "TypeScript, Next.js" }],
   };
   const rejectedDraft = await api.put("/api/content", {
     headers: { origin },
@@ -144,7 +144,7 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   expect(rejectedDraft.status()).toBe(400);
   expect(await rejectedDraft.json()).toMatchObject({
     message: "Bitte korrigiere die markierten Eingaben.",
-    issues: [{ field: "tags", message: "Mindestens sechs Stichpunkte eintragen." }],
+    issues: [{ field: "tags", message: "Bei GitHub-Repositories mindestens sechs Stichpunkte eintragen." }],
   });
 
   const save = await api.put("/api/content", {
@@ -211,8 +211,8 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   await expect(projectCards).toHaveCount(1);
   await adminPage.getByRole("button", { name: /Eintrag hinzufügen/ }).click();
   await expect(projectCards).toHaveCount(2);
-  await expect(adminPage.getByRole("button", { name: "Entwurf speichern" })).toHaveCount(1);
-  await expect(adminPage.getByRole("button", { name: "Veröffentlichen" })).toHaveCount(0);
+  await expect(adminPage.getByRole("button", { name: "Speichern & Vorschau" })).toHaveCount(1);
+  await expect(adminPage.getByRole("button", { name: "Veröffentlichen", exact: true })).toHaveCount(0);
   await expect(adminPage.locator(".editor-secondary-actions")).toHaveCount(0);
 
   const moveUp = adminPage.getByRole("button", { name: "Eintrag nach oben verschieben" });
@@ -225,9 +225,16 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   await projectCards.nth(1).click();
   await expect(adminPage.getByRole("button", { name: "Draft project title nach unten verschieben" })).toBeDisabled();
 
+  await projectCards.nth(0).click();
+  adminPage.once("dialog", (dialog) => dialog.accept());
+  await adminPage.getByRole("button", { name: "Eintrag entfernen" }).click();
+  await expect(projectCards).toHaveCount(1);
+
   const invalidTags = adminPage.locator('input[name$=".tags"]');
+  const projectUrl = adminPage.locator('input[name$=".url"]');
+  await projectUrl.fill("https://github.com/example/repo");
   await invalidTags.fill("TypeScript, Next.js");
-  await adminPage.getByRole("button", { name: "Entwurf speichern" }).click();
+  await adminPage.getByRole("button", { name: "Speichern & Vorschau" }).click();
   await expect(adminPage.locator(".editor-status[role='alert']")).toContainText(
     "Bitte korrigiere die markierten Eingaben.",
   );
@@ -236,7 +243,29 @@ test("MFA-gated editor previews private drafts and publishes or discards them", 
   expect(describedBy.some((id) => id.endsWith("-hint"))).toBe(true);
   const errorId = describedBy.find((id) => id.endsWith("-error"));
   expect(errorId).toBeTruthy();
-  await expect(adminPage.locator(`[id="${errorId}"]`)).toHaveText("Mindestens sechs Stichpunkte eintragen.");
+  await expect(adminPage.locator(`[id="${errorId}"]`)).toHaveText(
+    "Bei GitHub-Repositories mindestens sechs Stichpunkte eintragen.",
+  );
+
+  await invalidTags.fill("TypeScript, Next.js, Webentwicklung, PostgreSQL, Playwright, CI/CD");
+  const titleInput = adminPage.locator('input[name$=".title"]');
+  await titleInput.fill("Saved through the admin editor");
+  await adminPage.getByRole("button", { name: "Speichern & Vorschau" }).click();
+  await expect(adminPage).toHaveURL(/\/preview$/);
+  const savedEditorState = await (await api.get("/api/content")).json();
+  expect(savedEditorState.content.projects.find((project: { id: string }) => project.id === "cms-e2e-project").title)
+    .toBe("Saved through the admin editor");
+
+  await expect(adminPage.getByText("Saved through the admin editor", { exact: true })).toBeVisible();
+  await expect(adminPage.getByRole("button", { name: "Jetzt veröffentlichen" })).toBeVisible();
+  await expect(adminPage.getByRole("button", { name: "Veröffentlichen", exact: true })).toHaveCount(0);
+  adminPage.once("dialog", (dialog) => dialog.accept());
+  await adminPage.getByRole("button", { name: "Jetzt veröffentlichen" }).click();
+  await expect(adminPage.getByRole("status").filter({ hasText: "Vorschau veröffentlicht." })).toBeVisible();
+  const publiclySaved = await api.get(contentApiUrl, {
+    headers: { authorization: `Bearer ${process.env.ADMIN_CONTENT_API_TOKEN}` },
+  });
+  expect((await publiclySaved.json()).content.projects[0].title).toBe("Saved through the admin editor");
   await browserContext.close();
 
   const mobileContext = await browser.newContext({

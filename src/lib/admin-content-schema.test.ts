@@ -40,15 +40,22 @@ describe("admin content validation", () => {
     },
   );
 
-  it("requires at least six non-empty project key points and rejects duplicate IDs", () => {
+  it("requires six key points for GitHub repositories and rejects duplicate IDs", () => {
     expect(contentSchema.safeParse({
       ...content,
-      projects: [{ ...project, tags: "TypeScript, Next.js, Tests, CI/CD, PostgreSQL" }],
+      projects: [{ ...project, url: "https://github.com/example/repo", tags: "TypeScript, Next.js, Tests, CI/CD, PostgreSQL" }],
     }).success).toBe(false);
     expect(contentSchema.safeParse({
       ...content,
       projects: [project, { ...project, title: "Duplicate" }],
     }).success).toBe(false);
+  });
+
+  it("allows fewer than six key points for projects without a GitHub repository URL", () => {
+    expect(contentSchema.safeParse({
+      ...content,
+      projects: [{ ...project, url: "/projects/portfolio", tags: "Konzept, Entwicklung" }],
+    }).success).toBe(true);
   });
 
   it("requires the publish key to match the version and content", () => {

@@ -26,10 +26,7 @@ const projectSchema = z.object({
   descriptionEn: z.string().max(10_000),
   image: safeUrlSchema.nullable(),
   url: safeUrlSchema.nullable(),
-  tags: z.string().max(2000).refine(
-    (value) => value.split(",").filter((tag) => tag.trim().length > 0).length >= 6,
-    "Add at least six comma-separated project key points.",
-  ),
+  tags: z.string().max(2000),
   visible: z.boolean(),
   series: z.number().int().min(0).max(100_000),
 }).strict();
@@ -59,13 +56,17 @@ const contactSchema = z.object({
   email: z.email().max(254),
 }).strict();
 
-export const contentSchema = z.object({
+const contentBaseSchema = z.object({
   aboutMe: z.array(aboutSchema).max(200),
   projects: z.array(projectSchema).max(500),
   skills: z.array(skillSchema).max(500),
   experience: z.array(experienceSchema).max(500),
   contactEmail: z.array(contactSchema).max(10),
-}).strict().superRefine((content, context) => {
+}).strict();
+
+type ContentData = z.infer<typeof contentBaseSchema>;
+
+function validateUniqueIds(content: ContentData, context: z.RefinementCtx) {
   for (const collection of ["aboutMe", "projects", "skills", "experience", "contactEmail"] as const) {
     const ids = new Set<string>();
     content[collection].forEach((entry, index) => {
@@ -73,20 +74,52 @@ export const contentSchema = z.object({
         context.addIssue({
           code: "custom",
           message: "Entry IDs must be unique within a content section.",
-          path: [index, "id"],
+          path: [collection, index, "id"],
         });
       }
       ids.add(entry.id);
     });
   }
+}
+
+function isGitHubRepositoryUrl(value: string | null) {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    const pathSegments = url.pathname.split("/").filter(Boolean);
+    return url.protocol === "https:" &&
+      (url.hostname === "github.com" || url.hostname === "www.github.com") &&
+      pathSegments.length >= 2;
+  } catch {
+    return false;
+  }
+}
+
+function validateGitHubProjectKeyPoints(content: ContentData, context: z.RefinementCtx) {
+  content.projects.forEach((project, index) => {
+    if (!isGitHubRepositoryUrl(project.url)) return;
+    const keyPointCount = project.tags.split(",").filter((tag) => tag.trim().length > 0).length;
+    if (keyPointCount < 6) {
+      context.addIssue({
+        code: "custom",
+        message: "GitHub repositories need at least six comma-separated key points.",
+        path: ["projects", index, "tags"],
+      });
+    }
+  });
+}
+
+export const contentSchema = contentBaseSchema.superRefine((content, context) => {
+  validateUniqueIds(content, context);
+  validateGitHubProjectKeyPoints(content, context);
 });
 
 // Existing published records may predate the six-key-point editorial rule.
 // Keep structural and URL checks for rendering, without blocking the entire
 // private preview on legacy tag counts. Saving/publishing still uses contentSchema.
-export const previewContentSchema = contentSchema.safeExtend({
+export const previewContentSchema = contentBaseSchema.safeExtend({
   projects: z.array(projectSchema.safeExtend({ tags: z.string().max(2000) })).max(500),
-});
+}).superRefine(validateUniqueIds);
 
 export const updateContentSchema = z.object({
   expectedVersion: z.number().int().min(0),

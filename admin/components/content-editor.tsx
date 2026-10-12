@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 type ContentRecord = Record<string, unknown>;
@@ -60,6 +62,7 @@ function createRecord(section: ContentKey, series: number, id: string): ContentR
 }
 
 export function ContentEditor() {
+  const router = useRouter();
   const [state, setState] = useState<EditorState | null>(null);
   const [activeSection, setActiveSection] = useState<ContentKey>("projects");
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
@@ -203,26 +206,9 @@ export function ContentEditor() {
       }
       setState({ ...state, draftVersion: result.version, hasDraft: true });
       setHasUnsavedChanges(false);
-      setMessage("Entwurf gespeichert.");
+      router.push("/preview");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Speichern fehlgeschlagen.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function publish() {
-    if (!state || !window.confirm("Diesen gespeicherten Entwurf jetzt öffentlich veröffentlichen?")) return;
-    setBusy(true);
-    setMessage("");
-    try {
-      const response = await fetch("/api/content/publish", { method: "POST" });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message ?? "Veröffentlichung fehlgeschlagen.");
-      setState({ ...state, sourceVersion: result.publishedVersion, publishedVersion: result.publishedVersion, publishedDraftVersion: state.draftVersion, currentPublishedVersion: result.publishedVersion, publishedAt: result.publishedAt });
-      setMessage("Inhalte veröffentlicht.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Veröffentlichung fehlgeschlagen.");
     } finally {
       setBusy(false);
     }
@@ -262,12 +248,10 @@ export function ContentEditor() {
         <div className="editor-actions">
           {hasUnsavedChanges ? (
             <button className="primary-button" type="button" disabled={busy} onClick={saveDraft}>
-              {busy ? "Bitte warten …" : "Entwurf speichern"}
+              {busy ? "Speichere Entwurf …" : "Speichern & Vorschau"}
             </button>
           ) : hasUnpublishedDraft ? (
-            <button className="primary-button" type="button" disabled={busy} onClick={publish}>
-              {busy ? "Bitte warten …" : "Veröffentlichen"}
-            </button>
+            <Link className="primary-button" href="/preview">Vorschau öffnen</Link>
           ) : null}
           {hasUnpublishedDraft && (
             <details className="editor-secondary-actions">
@@ -414,7 +398,7 @@ export function ContentEditor() {
                   return (
                     <div className={multiline ? "editor-field editor-field-wide" : "editor-field"} key={field}>
                       <label htmlFor={inputId}>{fieldLabels[field] ?? field}</label>
-                      {field === "tags" && <small id={hintId}>Mindestens sechs Stichpunkte, kommagetrennt (z. B. TypeScript, Next.js, Webentwicklung, …).</small>}
+                      {field === "tags" && <small id={hintId}>Bei GitHub-Repositories mindestens sechs Stichpunkte, kommagetrennt (z. B. TypeScript, Next.js, Webentwicklung, …).</small>}
                       {multiline ? (
                         <textarea id={inputId} name={`${activeSection}.${String(selectedEntry.id)}.${field}`} rows={4} disabled={busy} value={String(value ?? "")} aria-invalid={fieldMessages.length > 0 || undefined} aria-describedby={describedBy} onChange={(event) => updateField(String(selectedEntry.id), field, event.target.value)} />
                       ) : (

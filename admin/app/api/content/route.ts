@@ -127,7 +127,7 @@ export async function PUT(request: Request) {
       const issues = error.issues.slice(0, 20).map((issue) => {
         const field = issue.path.at(-1);
         let message = "Bitte Eingabe prüfen.";
-        if (field === "tags") message = "Mindestens sechs Stichpunkte eintragen.";
+        if (field === "tags") message = "Bei GitHub-Repositories mindestens sechs Stichpunkte eintragen.";
         else if (field === "url" || field === "image") message = "Nur HTTPS-URLs oder lokale Pfade mit einem einzelnen / sind erlaubt.";
         else if (field === "email" && issue.code === "invalid_format") message = "Bitte eine gültige E-Mail-Adresse eingeben.";
         else if (issue.code === "too_small") message = "Dieses Feld darf nicht leer sein.";

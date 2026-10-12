@@ -38,20 +38,34 @@ test("content schema accepts normal HTTPS and same-site project links", () => {
 
 test("content schema requires at least six non-empty project key points", () => {
   const content = validContent();
+  content.projects[0].url = "https://github.com/example/repo";
   content.projects[0].tags = "TypeScript, Next.js, Webentwicklung, CI/CD, Docker";
   assert.equal(contentSchema.safeParse(content).success, false);
   content.projects[0].tags = "TypeScript, Next.js, Webentwicklung, CI/CD, Docker, PostgreSQL";
   assert.equal(contentSchema.safeParse(content).success, true);
 });
 
+test("content schema does not require six key points for non-GitHub projects", () => {
+  const content = validContent();
+  content.projects[0].tags = "Konzept, Entwicklung, Dokumentation";
+  assert.equal(contentSchema.safeParse(content).success, true);
+});
+
 test("preview accepts legacy project key-point counts without weakening publishing or URL safety", () => {
   const content = validContent();
+  content.projects[0].url = "https://github.com/example/repo";
   content.projects[0].tags = "TypeScript, Next.js";
   assert.equal(contentSchema.safeParse(content).success, false);
   assert.equal(previewContentSchema.safeParse(content).success, true);
 
   content.projects[0].image = "javascript:alert(1)";
   assert.equal(previewContentSchema.safeParse(content).success, false);
+
+  const legacyGitHubContent = validContent();
+  legacyGitHubContent.projects[0].url = "https://github.com/example/repo";
+  legacyGitHubContent.projects[0].tags = "TypeScript, Next.js";
+  assert.equal(contentSchema.safeParse(legacyGitHubContent).success, false);
+  assert.equal(previewContentSchema.safeParse(legacyGitHubContent).success, true);
 });
 
 test("content schema rejects executable and protocol-relative asset URLs", () => {
@@ -100,6 +114,31 @@ test("mutation origin accepts only the configured admin origin", () => {
     isTrustedMutationOrigin(new Request("https://admin.example.test/api/content", {
       method: "PUT",
       headers: { origin: "https://evil.example.test" },
+    })),
+    false,
+  );
+});
+
+test("local admin mutation origin accepts localhost when loopback IP is configured", () => {
+  process.env.ADMIN_APP_ORIGIN = "http://127.0.0.1:3001";
+  assert.equal(
+    isTrustedMutationOrigin(new Request("http://localhost:3001/api/content", {
+      method: "PUT",
+      headers: { origin: "http://localhost:3001" },
+    })),
+    true,
+  );
+  assert.equal(
+    isTrustedMutationOrigin(new Request("http://localhost:3002/api/content", {
+      method: "PUT",
+      headers: { origin: "http://localhost:3002" },
+    })),
+    false,
+  );
+  assert.equal(
+    isTrustedMutationOrigin(new Request("https://localhost:3001/api/content", {
+      method: "PUT",
+      headers: { origin: "https://localhost:3001" },
     })),
     false,
   );
